@@ -6,7 +6,6 @@
     <title>Equity Path Forecaster | Camac Consulting</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
-        /* Camac Consulting Brand Identity */
         :root {
             --camac-dark: #001935;
             --camac-teal: #41797e;
@@ -36,21 +35,19 @@
         
         .input-hint { font-size: 9px; font-style: italic; color: #64748b; line-height: 1.3; margin-top: 5px; display: block; }
 
-        /* Preset Buttons */
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 6px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-bear { background: #fee2e2; color: var(--bear-red); }
         .btn-neutral { background: #f1f5f9; color: #1e293b; }
         .btn-bull { background: #dcfce7; color: var(--bull-green); }
-        .btn-preset:hover { filter: brightness(0.95); }
 
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
+        #resetBtn { background: #e2e8f0; color: #475569; }
         #exportBtn { background: var(--camac-teal); color: white; }
         #probBtn { background: var(--camac-accent); color: white; }
-        button.main-btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
-        button:disabled { background: #94a3b8; cursor: not-allowed; }
+        button.main-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
         .chart-container { height: 420px; margin-bottom: 30px; position: relative; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; }
         #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -63,8 +60,7 @@
         td { border-bottom: 1px solid #eee; padding: 12px; }
         
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 15px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
-        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 12px; padding: 10px 25px; border-radius: 4px; transition: 0.3s; }
-        .footer-nav a:hover { background-color: var(--white); color: var(--camac-dark); }
+        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 12px; padding: 10px 25px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -82,7 +78,7 @@
         </div>
         <div class="stat-card">
             <p id="probLabel">Prob. of Success</p>
-            <h2 id="probDisplay">--%</h2>
+            <h2 id="probDisplay">SET TARGET</h2>
         </div>
         <div class="stat-card">
             <p>Bullish Ceiling (90th)</p>
@@ -104,7 +100,6 @@
         <div>
             <label>Manual Price Entry</label>
             <input type="number" id="manualPrice" placeholder="Override API..." step="0.01">
-            <span class="input-hint">Used if ticker is unavailable.</span>
         </div>
         <div>
             <label>Time Horizon (Days)</label>
@@ -113,7 +108,6 @@
         <div>
             <label>Simulations (Max 50k)</label>
             <input type="number" id="sims" value="1000">
-            <span class="input-hint">Higher = More precision.</span>
         </div>
         <div>
             <label>Drift (Annual %)</label>
@@ -124,13 +118,14 @@
         </div>
         <div>
             <label>Price Target ($)</label>
-            <input type="number" id="priceTarget" value="150">
-            <span class="input-hint">Goal for Probability of Success.</span>
+            <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
+            <span class="input-hint">Enter a target to see probability.</span>
         </div>
         
         <div class="btn-group">
-            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
-            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export Data</button>
+            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate</button>
+            <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
+            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export</button>
             <button id="probBtn" class="main-btn" onclick="calculateProbability()">Update Goal</button>
         </div>
     </div>
@@ -138,7 +133,7 @@
     <div class="chart-container">
         <div id="loader">
             <div class="spinner"></div>
-            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark); letter-spacing:1px;">CALCULATING PROBABILITIES...</p>
+            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark);">CALCULATING...</p>
         </div>
         <canvas id="mainChart"></canvas>
     </div>
@@ -167,12 +162,21 @@ let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [] };
 const apiKey = '6PQ2Z7ZB4JQDZ3LS';
 
-// Preset Management
+function resetForm() {
+    document.getElementById('symbol').value = "NVDA";
+    document.getElementById('manualPrice').value = "";
+    document.getElementById('days').value = "30";
+    document.getElementById('sims').value = "1000";
+    document.getElementById('drift').value = "10.0";
+    document.getElementById('priceTarget').value = "";
+    updateDriftContext();
+    analyzeAndRun();
+}
+
 function setPreset(type) {
     const driftInput = document.getElementById('drift');
     const targetInput = document.getElementById('priceTarget');
-    const livePriceText = document.getElementById('livePrice').innerText.replace('$', '');
-    const currentPrice = parseFloat(livePriceText) || 100;
+    const currentPrice = parseFloat(document.getElementById('livePrice').innerText.replace('$', '')) || 100;
 
     if (type === 'bear') {
         driftInput.value = "-5.0";
@@ -185,29 +189,20 @@ function setPreset(type) {
         targetInput.value = (currentPrice * 1.08).toFixed(2);
     }
     updateDriftContext();
+    calculateProbability();
 }
 
-// Dynamic Explanation Logic
 function updateDriftContext() {
     const drift = parseFloat(document.getElementById('drift').value);
     const contextBox = document.getElementById('driftContext');
     let text = "";
-
     if (isNaN(drift)) return;
-
-    if (drift <= 0) {
-        text = "<strong>Defensive:</strong> Modeling a flat market or a bearish position.";
-    } else if (drift > 0 && drift <= 5) {
-        text = "<strong>Conservative:</strong> Typical for Bonds or Inflation-Adjusted returns.";
-    } else if (drift > 5 && drift <= 9) {
-        text = "<strong>Moderate:</strong> standard institutional long-term equity growth.";
-    } else if (drift > 9 && drift <= 12) {
-        text = "<strong>Historical:</strong> Matches the ~10% long-term S&P 500 average.";
-    } else if (drift > 12 && drift <= 20) {
-        text = "<strong>Aggressive:</strong> Tech-heavy sector bias or bull momentum.";
-    } else {
-        text = "<strong>Speculative:</strong> Significantly outperforming historic market caps.";
-    }
+    if (drift <= 0) text = "<strong>Defensive:</strong> Modeling a flat or bearish market position.";
+    else if (drift <= 5) text = "<strong>Conservative:</strong> Typical for Bonds or Inflation-Adjusted returns.";
+    else if (drift <= 9) text = "<strong>Moderate:</strong> Standard institutional long-term equity growth.";
+    else if (drift <= 12) text = "<strong>Historical:</strong> Matches the ~10% long-term S&P 500 average.";
+    else if (drift <= 20) text = "<strong>Aggressive:</strong> Tech-heavy sector bias or bull momentum.";
+    else text = "<strong>Speculative:</strong> Significantly outperforming historic market caps.";
     contextBox.innerHTML = `<strong>Context:</strong> ${text}`;
 }
 
@@ -222,7 +217,7 @@ async function analyzeAndRun() {
 
     if (!isNaN(manualPrice) && manualPrice > 0) {
         document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
-        runMonteCarlo(manualPrice, 0.022); // ~35% Annual Vol default
+        runMonteCarlo(manualPrice, 0.022);
         return;
     }
 
@@ -230,25 +225,19 @@ async function analyzeAndRun() {
         const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${apiKey}`);
         const data = await response.json();
         const timeSeries = data["Time Series (Daily)"];
-        
-        if (!timeSeries) throw new Error("API Limit");
+        if (!timeSeries) throw new Error();
 
         const prices = Object.values(timeSeries).map(d => parseFloat(d["4. close"])).reverse();
         const currentPrice = prices[prices.length - 1];
-
         let returns = [];
-        for (let i = 1; i < prices.length; i++) {
-            returns.push(Math.log(prices[i] / prices[i-1]));
-        }
+        for (let i = 1; i < prices.length; i++) returns.push(Math.log(prices[i] / prices[i-1]));
         const variance = returns.reduce((a, b) => a + Math.pow(b, 2), 0) / (returns.length - 1);
         const dailyVol = Math.sqrt(variance);
 
         document.getElementById('livePrice').innerText = `$${currentPrice.toFixed(2)}`;
         document.getElementById('tickerLabel').innerText = `${symbol} MARKET`;
-
         runMonteCarlo(currentPrice, dailyVol);
     } catch (e) {
-        alert("API Limit Reached. Showing Sample Data. Use Manual Entry to override.");
         runMonteCarlo(130.00, 0.022);
         document.getElementById('livePrice').innerText = "$130.00";
     }
@@ -259,18 +248,13 @@ function runMonteCarlo(startPrice, vol) {
     let sims = Math.min(parseInt(document.getElementById('sims').value), 50000);
     const drift = (parseFloat(document.getElementById('drift').value) / 100) / 252;
 
-    // Safety timeout to ensure loader renders
     setTimeout(() => {
         let results = Array.from({length: days + 1}, () => []);
-
         for (let s = 0; s < sims; s++) {
             let p = startPrice;
             results[0].push(p);
             for (let t = 1; t <= days; t++) {
-                // Target-Based Math: Median follows drift exactly
-                const shock = boxMuller();
-                const val = drift + (vol * shock);
-                p *= Math.exp(val);
+                p *= Math.exp(drift + (vol * boxMuller()));
                 results[t].push(p);
             }
         }
@@ -296,12 +280,10 @@ function updateUI(results, days, sims) {
         labels.push(`Day ${t}`);
         const v10 = results[t][i10], v50 = results[t][i50], v90 = results[t][i90];
         p10.push(v10); p50.push(v50); p90.push(v90);
-        
         if (t % 5 === 0 || t === days) {
             rows += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
         }
     }
-
     currentResults = { allPaths: results[days], p10, p50, p90, labels, symbol: document.getElementById('symbol').value };
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
@@ -313,52 +295,51 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Median Projection', data: p50, borderColor: '#41797e', borderWidth: 3, fill: false, pointRadius: 0 },
-                { label: 'Upper Band (90th)', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
-                { label: 'Lower Band (10th)', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
+                { label: 'Median', data: p50, borderColor: '#41797e', borderWidth: 3, fill: false, pointRadius: 0 },
+                { label: '90th P', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
+                { label: '10th P', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
             ]
         },
-        options: { 
-            responsive: true, 
-            maintainAspectRatio: false, 
-            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
-            scales: { y: { ticks: { callback: v => '$' + v.toLocaleString() } } }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
 function calculateProbability() {
-    const target = parseFloat(document.getElementById('priceTarget').value);
+    const targetInput = document.getElementById('priceTarget');
+    const target = parseFloat(targetInput.value);
+    const display = document.getElementById('probDisplay');
+    const label = document.getElementById('probLabel');
+
+    if (isNaN(target) || target === 0) {
+        display.innerText = "SET TARGET";
+        display.style.color = "white";
+        label.innerText = "Prob. of Success";
+        return;
+    }
+
     const finalPrices = currentResults.allPaths;
-    if (!finalPrices.length) return;
+    if (!finalPrices || finalPrices.length === 0) return;
+    
     const successes = finalPrices.filter(p => p >= target).length;
     const prob = ((successes / finalPrices.length) * 100).toFixed(1);
     
-    const display = document.getElementById('probDisplay');
     display.innerText = prob + "%";
-    document.getElementById('probLabel').innerText = `Prob. of $${target}`;
-
-    // Color code probability
-    if (prob < 30) display.style.color = "#fca5a5";
-    else if (prob < 60) display.style.color = "#fde047";
-    else display.style.color = "#86efac";
+    label.innerText = `Prob. of $${target}`;
+    display.style.color = prob < 30 ? "#fca5a5" : (prob < 60 ? "#fde047" : "#86efac");
 }
 
 function downloadCSV() {
-    let csv = "Interval,Bearish (10th),Median (50th),Bullish (90th)\n";
+    let csv = "Interval,10th,50th,90th\n";
     currentResults.labels.forEach((l, i) => {
         csv += `${l},${currentResults.p10[i].toFixed(4)},${currentResults.p50[i].toFixed(4)},${currentResults.p90[i].toFixed(4)}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `Camac_Forecast_${currentResults.symbol}.csv`; a.click();
+    a.href = url; a.download = `Forecast_${currentResults.symbol}.csv`; a.click();
 }
 
-window.onload = () => {
-    updateDriftContext();
-    analyzeAndRun();
-};
+window.onload = () => { updateDriftContext(); analyzeAndRun(); };
 </script>
 </body>
 </html>

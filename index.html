@@ -12,8 +12,8 @@
             --camac-light: #f4f7f9;
             --camac-accent: #64748b;
             --white: #ffffff;
-            --bear-red: #991b1b;
-            --bull-green: #166534;
+            --pessimistic-red: #991b1b;
+            --optimistic-green: #166534;
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
@@ -37,9 +37,10 @@
 
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 6px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
-        .btn-bear { background: #fee2e2; color: var(--bear-red); }
+        .btn-pessimistic { background: #fee2e2; color: var(--pessimistic-red); }
         .btn-neutral { background: #f1f5f9; color: #1e293b; }
-        .btn-bull { background: #dcfce7; color: var(--bull-green); }
+        .btn-optimistic { background: #dcfce7; color: var(--optimistic-green); }
+        .btn-preset:hover { opacity: 0.8; }
 
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
@@ -81,7 +82,7 @@
             <h2 id="probDisplay">SET TARGET</h2>
         </div>
         <div class="stat-card">
-            <p>Bullish Ceiling (90th)</p>
+            <p>Target Confidence (90th)</p>
             <h2 id="targetDisplay">---</h2>
         </div>
     </div>
@@ -90,11 +91,11 @@
         <div>
             <label>Asset Ticker</label>
             <input type="text" id="symbol" value="NVDA">
-            <label style="margin-top:12px;">Market Drift Presets</label>
+            <label style="margin-top:12px;">Market Sentiment Presets</label>
             <div class="preset-group">
-                <button class="btn-preset btn-bear" onclick="setPreset('bear')">BEAR</button>
+                <button class="btn-preset btn-pessimistic" onclick="setPreset('pessimistic')">PESSIMISTIC</button>
                 <button class="btn-preset btn-neutral" onclick="setPreset('neutral')">NEUTRAL</button>
-                <button class="btn-preset btn-bull" onclick="setPreset('bull')">BULL</button>
+                <button class="btn-preset btn-optimistic" onclick="setPreset('optimistic')">OPTIMISTIC</button>
             </div>
         </div>
         <div>
@@ -110,7 +111,7 @@
             <input type="number" id="sims" value="1000">
         </div>
         <div>
-            <label>Drift (Annual %)</label>
+            <label>Expected Drift (Annual %)</label>
             <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
             <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-style: normal; font-size: 9px; min-height: 35px; color: #333;">
                 Loading strategy context...
@@ -119,21 +120,21 @@
         <div>
             <label>Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <span class="input-hint">User defined target for probability card.</span>
+            <span class="input-hint">Define a goal to see probability of achievement.</span>
         </div>
         
         <div class="btn-group">
-            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate</button>
+            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
             <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
-            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export</button>
-            <button id="probBtn" class="main-btn" onclick="calculateProbability()">Update Goal</button>
+            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export Data</button>
+            <button id="probBtn" class="main-btn" onclick="calculateProbability()">Recalculate</button>
         </div>
     </div>
 
     <div class="chart-container">
         <div id="loader">
             <div class="spinner"></div>
-            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark);">CALCULATING...</p>
+            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark);">RUNNING MONTE CARLO SIMULATION...</p>
         </div>
         <canvas id="mainChart"></canvas>
     </div>
@@ -154,7 +155,7 @@
 </div>
 
 <div class="footer-nav">
-    <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">EXPAND VIEW</a>
+    <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">EXPAND WORKSPACE</a>
 </div>
 
 <script>
@@ -176,13 +177,12 @@ function resetForm() {
 function setPreset(type) {
     const driftInput = document.getElementById('drift');
     
-    // Updated: Presets only affect the Drift input.
-    if (type === 'bear') {
+    if (type === 'pessimistic') {
         driftInput.value = "-5.0";
     } else if (type === 'neutral') {
-        driftInput.value = "7.0";
-    } else if (type === 'bull') {
-        driftInput.value = "15.0";
+        driftInput.value = "10.0"; 
+    } else if (type === 'optimistic') {
+        driftInput.value = "20.0";
     }
     updateDriftContext();
 }
@@ -192,13 +192,19 @@ function updateDriftContext() {
     const contextBox = document.getElementById('driftContext');
     let text = "";
     if (isNaN(drift)) return;
-    if (drift <= 0) text = "<strong>Defensive:</strong> Modeling a flat or bearish market position.";
-    else if (drift <= 5) text = "<strong>Conservative:</strong> Typical for Bonds or Inflation-Adjusted returns.";
-    else if (drift <= 9) text = "<strong>Moderate:</strong> Standard institutional long-term equity growth.";
-    else if (drift <= 12) text = "<strong>Historical:</strong> Matches the ~10% long-term S&P 500 average.";
-    else if (drift <= 20) text = "<strong>Aggressive:</strong> Tech-heavy sector bias or bull momentum.";
-    else text = "<strong>Speculative:</strong> Significantly outperforming historic market caps.";
-    contextBox.innerHTML = `<strong>Context:</strong> ${text}`;
+
+    if (drift <= 0) {
+        text = "<strong>Pessimistic:</strong> Modeling a market correction or sustained downturn.";
+    } else if (drift <= 6) {
+        text = "<strong>Cautious:</strong> Expecting low growth or high-inflation environments.";
+    } else if (drift <= 11) {
+        text = "<strong>Neutral:</strong> Aligning with the ~10% historical long-term equity average.";
+    } else if (drift <= 22) {
+        text = "<strong>Optimistic:</strong> Expecting strong sector momentum and bull-run conditions.";
+    } else {
+        text = "<strong>Exceptional:</strong> Modeling speculative performance significantly above market norms.";
+    }
+    contextBox.innerHTML = `<strong>Sentiment:</strong> ${text}`;
 }
 
 async function analyzeAndRun() {
@@ -233,8 +239,9 @@ async function analyzeAndRun() {
         document.getElementById('tickerLabel').innerText = `${symbol} MARKET`;
         runMonteCarlo(currentPrice, dailyVol);
     } catch (e) {
+        // Fallback for API limit/error
         runMonteCarlo(130.00, 0.022);
-        document.getElementById('livePrice').innerText = "$130.00";
+        document.getElementById('livePrice').innerText = "$130.00 (Demo Mode)";
     }
 }
 
@@ -290,12 +297,18 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Median', data: p50, borderColor: '#41797e', borderWidth: 3, fill: false, pointRadius: 0 },
-                { label: '90th P', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
-                { label: '10th P', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
+                { label: 'Median Projection', data: p50, borderColor: '#41797e', borderWidth: 3, fill: false, pointRadius: 0 },
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { font: { size: 10, weight: 'bold' } } }
+            }
+        }
     });
 }
 
@@ -319,19 +332,19 @@ function calculateProbability() {
     const prob = ((successes / finalPrices.length) * 100).toFixed(1);
     
     display.innerText = prob + "%";
-    label.innerText = `Prob. of $${target}`;
+    label.innerText = `Prob. of reaching $${target}`;
     display.style.color = prob < 30 ? "#fca5a5" : (prob < 60 ? "#fde047" : "#86efac");
 }
 
 function downloadCSV() {
-    let csv = "Interval,10th,50th,90th\n";
+    let csv = "Interval,Pessimistic_10th,Median_50th,Optimistic_90th\n";
     currentResults.labels.forEach((l, i) => {
         csv += `${l},${currentResults.p10[i].toFixed(4)},${currentResults.p50[i].toFixed(4)},${currentResults.p90[i].toFixed(4)}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `Forecast_${currentResults.symbol}.csv`; a.click();
+    a.href = url; a.download = `Forecaster_Export_${currentResults.symbol}.csv`; a.click();
 }
 
 window.onload = () => { updateDriftContext(); analyzeAndRun(); };

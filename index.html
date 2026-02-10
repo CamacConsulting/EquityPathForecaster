@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +33,7 @@
         .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
+        input:focus { outline: 2px solid var(--camac-teal); border-color: transparent; }
         
         .input-hint { font-size: 9px; font-style: italic; color: #64748b; line-height: 1.3; margin-top: 5px; display: block; }
 
@@ -74,7 +76,7 @@
 
     <div class="stats-bar">
         <div class="stat-card dark">
-            <p id="tickerLabel">Market Price</p>
+            <p id="tickerLabel">Entry Price</p>
             <h2 id="livePrice">---</h2>
         </div>
         <div class="stat-card">
@@ -89,9 +91,9 @@
 
     <div class="controls">
         <div>
-            <label>Asset Ticker</label>
+            <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" value="NVDA">
-            <label style="margin-top:12px;"> Select Market Sentiment (updates drift below) </label>
+            <label style="margin-top:12px;"> Market Sentiment </label>
             <div class="preset-group">
                 <button class="btn-preset btn-pessimistic" onclick="setPreset('pessimistic')">PESSIMISTIC</button>
                 <button class="btn-preset btn-neutral" onclick="setPreset('neutral')">NEUTRAL</button>
@@ -99,8 +101,9 @@
             </div>
         </div>
         <div>
-            <label>Enter Stock Price ($)</label>
-            <input type="number" id="manualPrice" placeholder="Override API..." step="0.01">
+            <label>Current Stock Price ($)</label>
+            <input type="number" id="manualPrice" value="100.00" step="0.01">
+            <span class="input-hint">Required: Starting price for the simulation.</span>
         </div>
         <div>
             <label>Time Horizon (Days)</label>
@@ -161,11 +164,10 @@
 <script>
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [] };
-const apiKey = '6PQ2Z7ZB4JQDZ3LS';
 
 function resetForm() {
     document.getElementById('symbol').value = "NVDA";
-    document.getElementById('manualPrice').value = "";
+    document.getElementById('manualPrice').value = "100.00";
     document.getElementById('days').value = "30";
     document.getElementById('sims').value = "1000";
     document.getElementById('drift').value = "10.0";
@@ -207,42 +209,28 @@ function updateDriftContext() {
     contextBox.innerHTML = `<strong>Sentiment:</strong> ${text}`;
 }
 
-async function analyzeAndRun() {
+function analyzeAndRun() {
     const symbol = document.getElementById('symbol').value.toUpperCase();
     const manualPrice = parseFloat(document.getElementById('manualPrice').value);
     const loader = document.getElementById('loader');
     const btn = document.getElementById('runBtn');
 
-    loader.style.display = 'block';
-    btn.disabled = true;
-
-    if (!isNaN(manualPrice) && manualPrice > 0) {
-        document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
-        runMonteCarlo(manualPrice, 0.022);
+    if (isNaN(manualPrice) || manualPrice <= 0) {
+        alert("Please enter a valid starting price.");
         return;
     }
 
-    try {
-        const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${apiKey}`);
-        const data = await response.json();
-        const timeSeries = data["Time Series (Daily)"];
-        if (!timeSeries) throw new Error();
+    loader.style.display = 'block';
+    btn.disabled = true;
 
-        const prices = Object.values(timeSeries).map(d => parseFloat(d["4. close"])).reverse();
-        const currentPrice = prices[prices.length - 1];
-        let returns = [];
-        for (let i = 1; i < prices.length; i++) returns.push(Math.log(prices[i] / prices[i-1]));
-        const variance = returns.reduce((a, b) => a + Math.pow(b, 2), 0) / (returns.length - 1);
-        const dailyVol = Math.sqrt(variance);
-
-        document.getElementById('livePrice').innerText = `$${currentPrice.toFixed(2)}`;
-        document.getElementById('tickerLabel').innerText = `${symbol} MARKET`;
-        runMonteCarlo(currentPrice, dailyVol);
-    } catch (e) {
-        // Fallback for API limit/error
-        runMonteCarlo(130.00, 0.022);
-        document.getElementById('livePrice').innerText = "$130.00 (Demo Mode)";
-    }
+    // Use user input price. 
+    // volatility (vol) is defaulted to 0.02 (2% daily) as there is no historical data without API.
+    const estimatedDailyVol = 0.02; 
+    
+    document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
+    document.getElementById('tickerLabel').innerText = `${symbol} PRICE`;
+    
+    runMonteCarlo(manualPrice, estimatedDailyVol);
 }
 
 function runMonteCarlo(startPrice, vol) {
@@ -307,6 +295,13 @@ function updateUI(results, days, sims) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { labels: { font: { size: 10, weight: 'bold' } } }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value) { return '$' + value; }
+                    }
+                }
             }
         }
     });

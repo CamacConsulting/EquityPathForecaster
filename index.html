@@ -90,7 +90,7 @@
         <div>
             <label>Asset Ticker</label>
             <input type="text" id="symbol" value="NVDA">
-            <label style="margin-top:12px;">Market Presets</label>
+            <label style="margin-top:12px;">Market Drift Presets</label>
             <div class="preset-group">
                 <button class="btn-preset btn-bear" onclick="setPreset('bear')">BEAR</button>
                 <button class="btn-preset btn-neutral" onclick="setPreset('neutral')">NEUTRAL</button>
@@ -119,7 +119,7 @@
         <div>
             <label>Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <span class="input-hint">Enter a target to see probability.</span>
+            <span class="input-hint">User defined target for probability card.</span>
         </div>
         
         <div class="btn-group">
@@ -175,21 +175,16 @@ function resetForm() {
 
 function setPreset(type) {
     const driftInput = document.getElementById('drift');
-    const targetInput = document.getElementById('priceTarget');
-    const currentPrice = parseFloat(document.getElementById('livePrice').innerText.replace('$', '')) || 100;
-
+    
+    // Updated: Presets only affect the Drift input.
     if (type === 'bear') {
         driftInput.value = "-5.0";
-        targetInput.value = (currentPrice * 0.95).toFixed(2);
     } else if (type === 'neutral') {
         driftInput.value = "7.0";
-        targetInput.value = (currentPrice * 1.02).toFixed(2);
     } else if (type === 'bull') {
         driftInput.value = "15.0";
-        targetInput.value = (currentPrice * 1.08).toFixed(2);
     }
     updateDriftContext();
-    calculateProbability();
 }
 
 function updateDriftContext() {

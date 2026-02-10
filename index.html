@@ -73,7 +73,7 @@
         <div><label>Horizon (Days)</label><input type="number" id="days" value="30"></div>
         <div><label>Simulations</label><input type="number" id="sims" value="1000"></div>
         <div><label>Drift (Annual %)</label><input type="number" id="drift" value="5.0" step="0.1"></div>
-        <div><label>Price Goal ($)</label><input type="number" id="priceTarget" placeholder="Enter Goal..."></div>
+        <div><label>Price Goal ($)</label><input type="number" id="priceTarget" value="150"></div>
         
         <div class="btn-group">
             <button id="runBtn" onclick="analyzeAndRun()">Generate Forecast</button>
@@ -187,9 +187,8 @@ function updateUI(results, days, sims) {
 }
 
 function calculateProbability() {
-    const targetVal = document.getElementById('priceTarget').value;
-    const target = parseFloat(targetVal);
-    if (targetVal === "" || isNaN(target)) {
+    const target = parseFloat(document.getElementById('priceTarget').value);
+    if (isNaN(target)) {
         document.getElementById('probDisplay').innerText = "---";
         return;
     }
@@ -238,6 +237,3 @@ function downloadCSV() {
 }
 
 window.onload = analyzeAndRun;
-</script>
-</body>
-</html>

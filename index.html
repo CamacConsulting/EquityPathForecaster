@@ -99,7 +99,7 @@
             <input type="number" id="days" value="30">
         </div>
         <div>
-            <label>Simulations</label>
+            <label>Simulations (Max 50k)</label>
             <input type="number" id="sims" value="1000">
         </div>
         <div>
@@ -165,8 +165,7 @@ async function analyzeAndRun() {
         document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
         document.getElementById('tickerLabel').innerText = `${symbol} (MANUAL)`;
         runMonteCarlo(manualPrice, 0.025);
-        loader.style.display = 'none';
-        btn.disabled = false;
+        // runMonteCarlo handles its own loader/btn cleanup via updateUI
         return;
     }
 
@@ -202,31 +201,45 @@ async function analyzeAndRun() {
             runMonteCarlo(130.00, 0.022); 
             document.getElementById('livePrice').innerText = `$130.00`;
             document.getElementById('tickerLabel').innerText = `SAMPLE DATA`;
+        } else {
+            document.getElementById('loader').style.display = 'none';
+            btn.disabled = false;
         }
-    } finally {
-        loader.style.display = 'none';
-        btn.disabled = false;
     }
 }
 
 function runMonteCarlo(startPrice, vol) {
     const days = parseInt(document.getElementById('days').value);
-    const sims = parseInt(document.getElementById('sims').value);
-    const drift = (parseFloat(document.getElementById('drift').value) / 100) / 252; // Daily drift
-
-    let results = Array.from({length: days + 1}, () => []);
-
-    for (let s = 0; s < sims; s++) {
-        let p = startPrice;
-        results[0].push(p);
-        for (let t = 1; t <= days; t++) {
-            const shock = boxMuller();
-            const val = (drift - 0.5 * Math.pow(vol, 2)) + (vol * shock);
-            p *= Math.exp(val);
-            results[t].push(p);
-        }
+    let sims = parseInt(document.getElementById('sims').value);
+    
+    // SAFETY CAP: Prevents browser crash
+    const MAX_SIMS = 50000;
+    if (sims > MAX_SIMS) {
+        alert(`Performance Safety: Capping simulations at ${MAX_SIMS.toLocaleString()}.`);
+        sims = MAX_SIMS;
+        document.getElementById('sims').value = MAX_SIMS;
     }
-    updateUI(results, days, sims);
+
+    const drift = (parseFloat(document.getElementById('drift').value) / 100) / 252;
+
+    // Use setTimeout to allow the UI to render the "Loader" before the CPU intensive loop starts
+    setTimeout(() => {
+        let results = Array.from({length: days + 1}, () => []);
+
+        for (let s = 0; s < sims; s++) {
+            let p = startPrice;
+            results[0].push(p);
+            for (let t = 1; t <= days; t++) {
+                const shock = boxMuller();
+                const val = (drift - 0.5 * Math.pow(vol, 2)) + (vol * shock);
+                p *= Math.exp(val);
+                results[t].push(p);
+            }
+        }
+        updateUI(results, days, sims);
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('runBtn').disabled = false;
+    }, 50);
 }
 
 function boxMuller() {
@@ -238,14 +251,26 @@ function boxMuller() {
 
 function updateUI(results, days, sims) {
     let labels = [], p10 = [], p50 = [], p90 = [], rows = "";
-    const i10 = Math.floor(sims * 0.1), i50 = Math.floor(sims * 0.5), i90 = Math.floor(sims * 0.9);
+    
+    // Dynamic index calculation based on any simulation count
+    const i10 = Math.max(0, Math.floor(sims * 0.1));
+    const i50 = Math.max(0, Math.floor(sims * 0.5));
+    const i90 = Math.max(0, Math.min(sims - 1, Math.floor(sims * 0.9)));
 
     for (let t = 0; t <= days; t++) {
         results[t].sort((a,b) => a-b);
         labels.push(`Day ${t}`);
-        p10.push(results[t][i10]); p50.push(results[t][i50]); p90.push(results[t][i90]);
+        
+        const val10 = results[t][i10];
+        const val50 = results[t][i50];
+        const val90 = results[t][i90];
+
+        p10.push(val10); 
+        p50.push(val50); 
+        p90.push(val90);
+
         if (t % 5 === 0 || t === days) {
-            rows += `<tr><td>Day ${t}</td><td>$${p10[t].toFixed(2)}</td><td>$${p50[t].toFixed(2)}</td><td>$${p90[t].toFixed(2)}</td></tr>`;
+            rows += `<tr><td>Day ${t}</td><td>$${val10.toFixed(2)}</td><td>$${val50.toFixed(2)}</td><td>$${val90.toFixed(2)}</td></tr>`;
         }
     }
 

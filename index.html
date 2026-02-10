@@ -15,7 +15,7 @@
         }
 
         body { font-family: "Segoe UI", Roboto, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
-        .container { max-width: 1000px; margin: auto; padding-bottom: 140px; } 
+        .container { max-width: 1000px; margin: auto; padding-bottom: 120px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
@@ -48,16 +48,7 @@
         th { background: var(--camac-dark); color: white; padding: 12px; text-align: left; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px; }
 
-        /* Disclaimer Styling */
         .disclaimer { font-size: 11px; color: #64748b; line-height: 1.6; text-align: center; padding: 20px; border-top: 1px solid #e2e8f0; font-style: italic; }
-
-        /* Mobile Responsiveness Fixes */
-        @media (max-width: 600px) {
-            .stats-bar { grid-template-columns: 1fr; }
-            .btn-group { grid-template-columns: 1fr; }
-            .header-area h1 { font-size: 22px; }
-            .chart-container { height: 300px; }
-        }
         
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 15px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 20px; }
         .footer-nav span { color: white; font-size: 10px; text-transform: uppercase; opacity: 0.7; }

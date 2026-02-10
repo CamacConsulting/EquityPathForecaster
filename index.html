@@ -91,7 +91,7 @@
         <div>
             <label>Asset Ticker</label>
             <input type="text" id="symbol" value="NVDA">
-            <label style="margin-top:12px;"> Select Market Sentiment (updates Drift below) </label>
+            <label style="margin-top:12px;"> Select Market Sentiment </label>
             <div class="preset-group">
                 <button class="btn-preset btn-pessimistic" onclick="setPreset('pessimistic')">PESSIMISTIC</button>
                 <button class="btn-preset btn-neutral" onclick="setPreset('neutral')">NEUTRAL</button>
@@ -103,9 +103,9 @@
             <input type="number" id="manualPrice" placeholder="Override API..." step="0.01">
         </div>
         <div>
-    <label>Time Horizon (Days)</label>
-    <input type="number" id="days" placeholder="Enter days...">
-</div>
+            <label>Time Horizon (Days)</label>
+            <input type="number" id="days" value="30">
+        </div>
         <div>
             <label>Simulations (Max 50k)</label>
             <input type="number" id="sims" value="1000">

@@ -42,6 +42,17 @@
             color: var(--camac-dark);
         }
 
+        /* User Instruction Note Styling */
+        .instruction-note {
+            font-size: 11px;
+            color: var(--camac-accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-style: italic;
+        }
+
         .controls { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -113,6 +124,10 @@
         Analysis pending... Please generate a forecast.
     </div>
 
+    <div class="instruction-note">
+        <span>ℹ️ Data shown is a default baseline. Input your specific ticker and parameters below to run a custom analysis.</span>
+    </div>
+
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
@@ -132,7 +147,7 @@
 
         <div>
             <label>Current Price ($)</label>
-            <input type="number" id="manualPrice" value="100.00" step="0.01">
+            <input type="number" id="manualPrice" value="190.00" step="0.01">
             
             <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
             <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
@@ -324,6 +339,7 @@ function downloadCSV() { /* Simple csv generation logic */ }
 
 window.onload = () => { 
     setPreset('neutral', document.getElementById('btn-neut'));
+    // This will now run the chart with the new default 190 price on load
     analyzeAndRun(); 
 };
 </script>

@@ -38,7 +38,7 @@
             margin-bottom: 20px; 
             border-radius: 4px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             color: var(--camac-dark);
         }
 
@@ -140,7 +140,7 @@
     </div>
 
     <div id="insightSummary" class="summary-box">
-        Analysis pending... Please generate a forecast.
+        <strong>Status:</strong> Analysis pending. Input your asset parameters and price target below, then click <strong>"Generate Forecast"</strong> to run the Monte Carlo simulation.
     </div>
 
     <div class="controls">
@@ -357,8 +357,6 @@ function generateSummary() {
     const symbol = document.getElementById('symbol').value.toUpperCase();
     const start = currentResults.startPrice;
     const days = currentResults.labels.length - 1;
-    
-    // Get the final values from the arrays
     const finalN = currentResults.p50[currentResults.p50.length - 1];
     const finalP = currentResults.p10[currentResults.p10.length - 1];
     const finalO = currentResults.p90[currentResults.p90.length - 1];
@@ -366,8 +364,8 @@ function generateSummary() {
     let changePct = (((finalN - start) / start) * 100).toFixed(1);
 
     document.getElementById('insightSummary').innerHTML = `
-        <strong>${symbol}</strong> is projected to move <strong>${changePct}%</strong> over ${days} days. 
-        Confidence range: <strong>$${finalP.toFixed(2)}</strong> to <strong>$${finalO.toFixed(2)}</strong>.
+        <strong>${symbol} Analysis:</strong> Projected to move <strong>${changePct}%</strong> over the next ${days} days. 
+        The expected confidence range (10th-90th percentile) is between <strong>$${finalP.toFixed(2)}</strong> and <strong>$${finalO.toFixed(2)}</strong>.
     `;
 }
 
@@ -395,7 +393,7 @@ function saveChartImage() {
 
 window.onload = () => { 
     setPreset('neutral', document.getElementById('btn-neut'));
-    analyzeAndRun(); 
+    // Note: analyzeAndRun is not called automatically here so user can see the initial note first.
 };
 </script>
 </body>

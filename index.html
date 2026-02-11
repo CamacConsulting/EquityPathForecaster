@@ -52,7 +52,6 @@
         .btn-neutral { background: #f1f5f9; color: #1e293b; }
         .btn-optimistic { background: #dcfce7; color: var(--optimistic-green); }
         
-        /* ACTIVE STATE STYLING */
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .btn-preset:hover { opacity: 0.8; }
 
@@ -117,6 +116,10 @@
                 <button id="btn-opti" class="btn-preset btn-optimistic" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
             <span class="input-hint">Updates the Drift section upon selection.</span>
+
+            <label style="margin-top: 15px;">Simulations (Max 50k)</label>
+            <input type="number" id="sims" value="1000">
+            <span class="input-hint">Higher counts improve accuracy.</span>
         </div>
 
         <div>
@@ -139,9 +142,6 @@
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
             <span class="input-hint">Probability of achievement.</span>
-
-            <label style="margin-top: 15px;">Simulations (Max 50k)</label>
-            <input type="number" id="sims" value="1000">
         </div>
         
         <div class="btn-group">

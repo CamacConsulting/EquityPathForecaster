@@ -17,7 +17,7 @@
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
-        .container { max-width: 1000px; margin: auto; padding-bottom: 120px; } 
+        .container { max-width: 1000px; margin: auto; padding-bottom: 140px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
@@ -71,6 +71,8 @@
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
         th { background: var(--camac-dark); color: white; padding: 12px; text-align: left; text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px; }
+
+        .powered-by { text-align: center; margin-top: 40px; font-size: 11px; color: var(--camac-accent); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 15px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 12px; padding: 10px 25px; border-radius: 4px; }
@@ -172,6 +174,10 @@
             <tbody></tbody>
         </table>
     </div>
+
+    <div class="powered-by">
+        Powered by Camac Consulting
+    </div>
 </div>
 
 <div class="footer-nav">
@@ -190,9 +196,7 @@ function resetForm() {
     document.getElementById('drift').value = "10.0";
     document.getElementById('priceTarget').value = "";
     
-    document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-    
-    updateDriftContext();
+    setPreset('neutral', document.getElementById('btn-neut'));
     analyzeAndRun();
 }
 
@@ -345,7 +349,10 @@ function downloadCSV() {
     a.href = url; a.download = `Forecaster_Export_${currentResults.symbol}.csv`; a.click();
 }
 
-window.onload = () => { updateDriftContext(); analyzeAndRun(); };
+window.onload = () => { 
+    setPreset('neutral', document.getElementById('btn-neut'));
+    analyzeAndRun(); 
+};
 </script>
 </body>
 </html>

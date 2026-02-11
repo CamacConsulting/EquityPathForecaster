@@ -43,12 +43,12 @@
         .btn-optimistic { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset:hover { opacity: 0.8; }
 
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+        /* Adjusted to 3 columns since Recalculate is gone */
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
         #resetBtn { background: #e2e8f0; color: #475569; }
         #exportBtn { background: var(--camac-teal); color: white; }
-        #probBtn { background: var(--camac-accent); color: white; }
         button.main-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
         .chart-container { height: 420px; margin-bottom: 30px; position: relative; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; }
@@ -129,7 +129,6 @@
             <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
             <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
             <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export Data</button>
-            <button id="probBtn" class="main-btn" onclick="calculateProbability()">Recalculate</button>
         </div>
     </div>
 
@@ -222,8 +221,6 @@ function analyzeAndRun() {
     loader.style.display = 'block';
     btn.disabled = true;
 
-    // Use user input price. 
-    // volatility (vol) is defaulted to 0.02 (2% daily) as there is no historical data without API.
     const estimatedDailyVol = 0.02; 
     
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;

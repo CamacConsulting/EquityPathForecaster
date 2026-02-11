@@ -67,7 +67,7 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* UPDATED TABLE STYLING */
+        /* TABLE STYLING - CENTERED & EQUAL */
         .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
         th { 
@@ -81,7 +81,7 @@
             word-wrap: break-word;
         }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
-        tbody tr:nth-child(even) { background-color: #f8fafc; } /* Zebra striping */
+        tbody tr:nth-child(even) { background-color: #f8fafc; }
 
         .powered-by { text-align: center; margin-top: 40px; font-size: 11px; color: var(--camac-accent); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
         
@@ -312,16 +312,51 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Median Projection', data: p50, borderColor: '#41797e', borderWidth: 3, fill: false, pointRadius: 0 },
-                { label: 'Bullish (90th)', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
-                { label: 'Bearish (10th)', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
+                { 
+                    label: 'Bullish (90th)', 
+                    data: p90, 
+                    borderColor: '#166534', 
+                    backgroundColor: 'rgba(22, 101, 52, 0.05)', 
+                    borderWidth: 2,
+                    fill: false, 
+                    pointRadius: 0 
+                },
+                { 
+                    label: 'Median Projection', 
+                    data: p50, 
+                    borderColor: '#41797e', 
+                    borderWidth: 4, 
+                    fill: false, 
+                    pointRadius: 0 
+                },
+                { 
+                    label: 'Bearish (10th)', 
+                    data: p10, 
+                    borderColor: '#991b1b', 
+                    borderWidth: 2,
+                    fill: false, 
+                    pointRadius: 0 
+                }
             ]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { font: { size: 10, weight: 'bold' } } } },
-            scales: { y: { ticks: { callback: function(value) { return '$' + value; } } } }
+            plugins: { 
+                legend: { 
+                    labels: { 
+                        font: { size: 10, weight: 'bold' },
+                        usePointStyle: true
+                    } 
+                } 
+            },
+            scales: { 
+                y: { 
+                    ticks: { callback: function(value) { return '$' + value; } },
+                    grid: { color: '#f1f5f9' }
+                },
+                x: { grid: { display: false } }
+            }
         }
     });
 }

@@ -29,7 +29,18 @@
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        /* GRID CONTROLS: Forced 3 columns */
+        .controls { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            background: var(--camac-light); 
+            padding: 25px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            border: 1px solid #e2e8f0; 
+        }
+
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
         input:focus { outline: 2px solid var(--camac-teal); border-color: transparent; }
@@ -43,7 +54,6 @@
         .btn-optimistic { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset:hover { opacity: 0.8; }
 
-        /* Adjusted to 3 columns since Recalculate is gone */
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
@@ -63,6 +73,12 @@
         
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 15px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 12px; padding: 10px 25px; border-radius: 4px; }
+
+        /* Responsive Fix for small screens */
+        @media (max-width: 768px) {
+            .controls { grid-template-columns: 1fr; }
+            .btn-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -90,27 +106,29 @@
 
     <div class="controls">
         <div>
-            <label> Enter Asset Name / Ticker</label>
+            <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" value="NVDA">
-            <label style="margin-top:12px;"> Market Sentiment (updates drift below) </label>
             <div class="preset-group">
-                <button class="btn-preset btn-pessimistic" onclick="setPreset('pessimistic')">PESSIMISTIC</button>
-                <button class="btn-preset btn-neutral" onclick="setPreset('neutral')">NEUTRAL</button>
-                <button class="btn-preset btn-optimistic" onclick="setPreset('optimistic')">OPTIMISTIC</button>
+                <button class="btn-preset btn-pessimistic" onclick="setPreset('pessimistic')">PESS</button>
+                <button class="btn-preset btn-neutral" onclick="setPreset('neutral')">NEUT</button>
+                <button class="btn-preset btn-optimistic" onclick="setPreset('optimistic')">OPTI</button>
             </div>
         </div>
         <div>
-            <label> Enter Current Equity Price ($)</label>
+            <label>Current Equity Price ($)</label>
             <input type="number" id="manualPrice" value="100.00" step="0.01">
-            <span class="input-hint">Required: Starting price for the simulation.</span>
+            <span class="input-hint">Required: Starting simulation price.</span>
         </div>
         <div>
-            <label> Enter Time Horizon (Days)</label>
+            <label>Time Horizon (Days)</label>
             <input type="number" id="days" value="30">
+            <span class="input-hint">Trading days to project.</span>
         </div>
+
         <div>
-            <label> Enter Simulations (Max 50k)</label>
+            <label>Simulations (Max 50k)</label>
             <input type="number" id="sims" value="1000">
+            <span class="input-hint">Higher counts improve accuracy.</span>
         </div>
         <div>
             <label>Expected Drift (Annual %)</label>
@@ -122,7 +140,7 @@
         <div>
             <label>Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <span class="input-hint">Define a goal to see probability of achievement.</span>
+            <span class="input-hint">Probability of achievement.</span>
         </div>
         
         <div class="btn-group">
@@ -176,14 +194,9 @@ function resetForm() {
 
 function setPreset(type) {
     const driftInput = document.getElementById('drift');
-    
-    if (type === 'pessimistic') {
-        driftInput.value = "-5.0";
-    } else if (type === 'neutral') {
-        driftInput.value = "10.0"; 
-    } else if (type === 'optimistic') {
-        driftInput.value = "20.0";
-    }
+    if (type === 'pessimistic') driftInput.value = "-5.0";
+    else if (type === 'neutral') driftInput.value = "10.0"; 
+    else if (type === 'optimistic') driftInput.value = "20.0";
     updateDriftContext();
 }
 
@@ -193,17 +206,12 @@ function updateDriftContext() {
     let text = "";
     if (isNaN(drift)) return;
 
-    if (drift <= 0) {
-        text = "<strong>Pessimistic:</strong> Modeling a market correction or sustained downturn.";
-    } else if (drift <= 6) {
-        text = "<strong>Cautious:</strong> Expecting low growth or high-inflation environments.";
-    } else if (drift <= 11) {
-        text = "<strong>Neutral:</strong> Aligning with the ~10% historical long-term equity average.";
-    } else if (drift <= 22) {
-        text = "<strong>Optimistic:</strong> Expecting strong sector momentum and bull-run conditions.";
-    } else {
-        text = "<strong>Exceptional:</strong> Modeling speculative performance significantly above market norms.";
-    }
+    if (drift <= 0) text = "<strong>Pessimistic:</strong> Modeling a market correction.";
+    else if (drift <= 6) text = "<strong>Cautious:</strong> Expecting low growth/inflation.";
+    else if (drift <= 11) text = "<strong>Neutral:</strong> Aligning with ~10% historical average.";
+    else if (drift <= 22) text = "<strong>Optimistic:</strong> Expecting strong momentum.";
+    else text = "<strong>Exceptional:</strong> Modeling speculative bull-run.";
+    
     contextBox.innerHTML = `<strong>Sentiment:</strong> ${text}`;
 }
 
@@ -222,7 +230,6 @@ function analyzeAndRun() {
     btn.disabled = true;
 
     const estimatedDailyVol = 0.02; 
-    
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
     document.getElementById('tickerLabel').innerText = `${symbol} PRICE`;
     
@@ -289,16 +296,8 @@ function updateUI(results, days, sims) {
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            plugins: {
-                legend: { labels: { font: { size: 10, weight: 'bold' } } }
-            },
-            scales: {
-                y: {
-                    ticks: {
-                        callback: function(value) { return '$' + value; }
-                    }
-                }
-            }
+            plugins: { legend: { labels: { font: { size: 10, weight: 'bold' } } } },
+            scales: { y: { ticks: { callback: function(value) { return '$' + value; } } } }
         }
     });
 }
@@ -318,7 +317,6 @@ function calculateProbability() {
 
     const finalPrices = currentResults.allPaths;
     if (!finalPrices || finalPrices.length === 0) return;
-    
     const successes = finalPrices.filter(p => p >= target).length;
     const prob = ((successes / finalPrices.length) * 100).toFixed(1);
     

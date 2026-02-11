@@ -18,7 +18,7 @@
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
-        .container { max-width: 1000px; margin: auto; padding-bottom: 140px; } 
+        .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
@@ -56,8 +56,6 @@
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
         
-        .input-hint { font-size: 9px; font-style: italic; color: #64748b; line-height: 1.3; margin-top: 5px; display: block; }
-
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
@@ -77,7 +75,6 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Table Watermark Logic */
         .table-wrapper { 
             position: relative; 
             overflow-x: auto; 
@@ -93,19 +90,30 @@
             transform: translate(-50%, -50%) rotate(-15deg);
             font-size: 40px;
             font-weight: 900;
-            color: rgba(65, 121, 126, 0.05); /* Very light teal */
+            color: rgba(65, 121, 126, 0.05);
             pointer-events: none;
             z-index: 1;
-            white-space: nowrap;
         }
 
         table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
-        tbody tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }
 
-        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 15px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
-        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 12px; padding: 10px 25px; border-radius: 4px; }
+        .footer-nav { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: var(--camac-dark); 
+            padding: 20px 0; 
+            border-top: 4px solid var(--camac-teal); 
+            text-align: center; 
+            z-index: 1000; 
+        }
+        .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
+        .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+        .footer-brand span { color: var(--camac-teal); }
+        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -139,14 +147,13 @@
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" value="NVDA">
-            
             <label style="margin-top: 15px;">Forecast Bias</label>
             <div class="preset-group">
                 <button id="btn-pess" class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <label style="margin-top: 15px;">Simulations (Max 50k)</label>
+            <label style="margin-top: 15px;">Simulations</label>
             <input type="number" id="sims" value="1000">
         </div>
 
@@ -188,9 +195,9 @@
             <thead>
                 <tr>
                     <th>Time Interval</th>
-                    <th>Pessimistic (10th P)</th>
-                    <th>Neutral (50th P)</th>
-                    <th>Optimistic (90th P)</th>
+                    <th>Pessimistic</th>
+                    <th>Neutral</th>
+                    <th>Optimistic</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -199,14 +206,16 @@
 </div>
 
 <div class="footer-nav">
-    <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">EXPAND WORKSPACE</a>
+    <div class="footer-content">
+        <div class="footer-brand">Powered by <span>Camac Consulting</span></div>
+        <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">Expand Workspace</a>
+    </div>
 </div>
 
 <script>
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [] };
 
-// Fix for dark background in exported images + Watermark placement
 const whiteBackgroundPlugin = {
     id: 'customCanvasBackgroundColor',
     beforeDraw: (chart) => {
@@ -215,14 +224,11 @@ const whiteBackgroundPlugin = {
         ctx.globalCompositeOperation = 'destination-over';
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, chart.width, chart.height);
-        
-        // Watermark in the TOP RIGHT (cleanest space in chart)
         ctx.globalCompositeOperation = 'source-over';
         ctx.font = 'bold 11px Segoe UI';
-        ctx.fillStyle = 'rgba(65, 121, 126, 0.4)'; // Subtle Camac Teal
+        ctx.fillStyle = 'rgba(65, 121, 126, 0.4)';
         ctx.textAlign = 'right';
         ctx.fillText('CAMAC CONSULTING | EQUITY FORECAST', chart.width - 20, 30);
-        
         ctx.restore();
     }
 };
@@ -231,7 +237,6 @@ function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     if(element) element.classList.add('active');
-    
     if (type === 'pessimistic') driftInput.value = "-5.0";
     else if (type === 'neutral') driftInput.value = "10.0"; 
     else if (type === 'optimistic') driftInput.value = "20.0";
@@ -255,8 +260,7 @@ function analyzeAndRun() {
 
 function runMonteCarlo(startPrice, vol) {
     const days = parseInt(document.getElementById('days').value);
-    const simsInput = parseInt(document.getElementById('sims').value) || 1000;
-    const sims = Math.min(simsInput, 50000);
+    const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 50000);
     const drift = (parseFloat(document.getElementById('drift').value) / 100) / 252;
 
     setTimeout(() => {
@@ -305,15 +309,17 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, tension: 0.1, pointRadius: 0 },
-                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, tension: 0.1, pointRadius: 0 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, tension: 0.1, pointRadius: 0 }
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, tension: 0.1, pointRadius: 0, pointHoverRadius: 6 },
+                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, tension: 0.1, pointRadius: 0, pointHoverRadius: 8 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, tension: 0.1, pointRadius: 0, pointHoverRadius: 6 }
             ]
         },
         options: { 
             responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false }, // Restored Crosshair interaction
             plugins: { 
-                legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } }
+                legend: { position: 'bottom', labels: { usePointStyle: true } },
+                tooltip: { backgroundColor: 'rgba(0, 25, 53, 0.9)', padding: 10 }
             },
             scales: { y: { ticks: { callback: v => '$' + v } } }
         },
@@ -336,7 +342,6 @@ function calculateProbability() {
 
     const successes = currentResults.allPaths.filter(p => p >= target).length;
     const prob = ((successes / currentResults.allPaths.length) * 100);
-    
     display.innerText = prob.toFixed(1) + "%";
     label.innerText = `Prob. of reaching $${target}`;
 

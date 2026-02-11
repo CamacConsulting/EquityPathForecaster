@@ -75,13 +75,14 @@
         .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
         #resetBtn { background: #e2e8f0; color: #475569; }
         #exportBtn { background: var(--camac-teal); color: white; }
+        #saveImgBtn { background: var(--camac-accent); color: white; }
 
-        .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #fcfdfe; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+        .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
         #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -168,6 +169,7 @@
             <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
             <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
             <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export Data</button>
+            <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">Save Image</button>
         </div>
     </div>
 
@@ -322,7 +324,6 @@ function calculateProbability() {
     display.innerText = prob.toFixed(1) + "%";
     label.innerText = `Prob. of reaching $${target}`;
 
-    // Color logic based on probability percentage
     if (prob < 30) {
         card.style.background = "var(--pessimistic-red)";
     } else if (prob > 70) {
@@ -345,7 +346,51 @@ function generateSummary() {
 }
 
 function resetForm() { location.reload(); }
-function downloadCSV() { /* Export logic */ }
+
+function downloadCSV() {
+    if (!currentResults.labels || currentResults.labels.length === 0) {
+        alert("No data available to export. Please generate a forecast first.");
+        return;
+    }
+
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Time Interval,Pessimistic (10th P),Neutral (50th P),Optimistic (90th P)\n";
+
+    currentResults.labels.forEach((label, index) => {
+        const row = [
+            label,
+            currentResults.p10[index].toFixed(4),
+            currentResults.p50[index].toFixed(4),
+            currentResults.p90[index].toFixed(4)
+        ].join(",");
+        csvContent += row + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    const fileName = `EquityPath_Export_${document.getElementById('symbol').value}_${new Date().toISOString().slice(0,10)}.csv`;
+    
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function saveChartImage() {
+    if (!chart) {
+        alert("Please generate a forecast first.");
+        return;
+    }
+    const imageData = chart.toBase64Image();
+    const link = document.createElement('a');
+    const symbol = document.getElementById('symbol').value.toUpperCase();
+    link.href = imageData;
+    link.download = `EquityPath_Chart_${symbol}_${new Date().toISOString().slice(0,10)}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
 window.onload = () => { 
     setPreset('neutral', document.getElementById('btn-neut'));

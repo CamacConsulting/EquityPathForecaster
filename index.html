@@ -214,7 +214,7 @@
 
 <script>
 let chart;
-let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [] };
+let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
 const whiteBackgroundPlugin = {
     id: 'customCanvasBackgroundColor',
@@ -316,7 +316,7 @@ function updateUI(results, days, sims) {
         },
         options: { 
             responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false }, // Restored Crosshair interaction
+            interaction: { mode: 'index', intersect: false },
             plugins: { 
                 legend: { position: 'bottom', labels: { usePointStyle: true } },
                 tooltip: { backgroundColor: 'rgba(0, 25, 53, 0.9)', padding: 10 }
@@ -340,8 +340,11 @@ function calculateProbability() {
         return;
     }
 
-    const successes = currentResults.allPaths.filter(p => p >= target).length;
-    const prob = ((successes / currentResults.allPaths.length) * 100);
+    const finalPrices = currentResults.allPaths;
+    if (!finalPrices || finalPrices.length === 0) return;
+    const successes = finalPrices.filter(p => p >= target).length;
+    const prob = ((successes / finalPrices.length) * 100);
+    
     display.innerText = prob.toFixed(1) + "%";
     label.innerText = `Prob. of reaching $${target}`;
 
@@ -353,9 +356,19 @@ function calculateProbability() {
 function generateSummary() {
     const symbol = document.getElementById('symbol').value.toUpperCase();
     const start = currentResults.startPrice;
+    const days = currentResults.labels.length - 1;
+    
+    // Get the final values from the arrays
     const finalN = currentResults.p50[currentResults.p50.length - 1];
+    const finalP = currentResults.p10[currentResults.p10.length - 1];
+    const finalO = currentResults.p90[currentResults.p90.length - 1];
+    
     let changePct = (((finalN - start) / start) * 100).toFixed(1);
-    document.getElementById('insightSummary').innerHTML = `<strong>${symbol}</strong> is projected to move <strong>${changePct}%</strong> over ${currentResults.labels.length - 1} days.`;
+
+    document.getElementById('insightSummary').innerHTML = `
+        <strong>${symbol}</strong> is projected to move <strong>${changePct}%</strong> over ${days} days. 
+        Confidence range: <strong>$${finalP.toFixed(2)}</strong> to <strong>$${finalO.toFixed(2)}</strong>.
+    `;
 }
 
 function resetForm() { location.reload(); }

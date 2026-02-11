@@ -56,6 +56,9 @@
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
         
+        /* Note Styles */
+        .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.2; }
+
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
@@ -146,20 +149,25 @@
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
-            <input type="text" id="symbol" value="NVDA">
+            <input type="text" id="symbol" placeholder="e.g. AAPL or Bitcoin">
+            <p class="input-note">The name of the equity or asset being analyzed.</p>
+            
             <label style="margin-top: 15px;">Forecast Bias</label>
             <div class="preset-group">
                 <button id="btn-pess" class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
+            
             <label style="margin-top: 15px;">Simulations</label>
             <input type="number" id="sims" value="1000">
         </div>
 
         <div>
             <label>Current Price ($)</label>
-            <input type="number" id="manualPrice" value="190.00" step="0.01">
+            <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
+            <p class="input-note">The starting market price for the simulation.</p>
+
             <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
             <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
             <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
@@ -169,7 +177,9 @@
 
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" value="30">
+            <input type="number" id="days" placeholder="e.g. 30">
+            <p class="input-note">The duration of the forecast in calendar days.</p>
+
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
         </div>
@@ -252,7 +262,13 @@ function updateDriftContext() {
 
 function analyzeAndRun() {
     const manualPrice = parseFloat(document.getElementById('manualPrice').value);
-    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Enter valid price.");
+    const symbol = document.getElementById('symbol').value;
+    const days = parseInt(document.getElementById('days').value);
+
+    if (!symbol) return alert("Please enter an Asset Name / Ticker.");
+    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Please enter a valid Current Price.");
+    if (isNaN(days) || days <= 0) return alert("Please enter a valid Time Horizon (Days).");
+
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
     runMonteCarlo(manualPrice, 0.02);
@@ -354,7 +370,8 @@ function calculateProbability() {
 }
 
 function generateSummary() {
-    const symbol = document.getElementById('symbol').value.toUpperCase();
+    const symbolInput = document.getElementById('symbol').value;
+    const symbol = symbolInput ? symbolInput.toUpperCase() : "ASSET";
     const start = currentResults.startPrice;
     const days = currentResults.labels.length - 1;
     const finalN = currentResults.p50[currentResults.p50.length - 1];
@@ -393,7 +410,6 @@ function saveChartImage() {
 
 window.onload = () => { 
     setPreset('neutral', document.getElementById('btn-neut'));
-    // Note: analyzeAndRun is not called automatically here so user can see the initial note first.
 };
 </script>
 </body>

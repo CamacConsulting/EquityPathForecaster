@@ -42,16 +42,6 @@
             color: var(--camac-dark);
         }
 
-        .instruction-note {
-            font-size: 11px;
-            color: var(--camac-accent);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-style: italic;
-        }
-
         .controls { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
@@ -124,10 +114,6 @@
         Analysis pending... Please generate a forecast.
     </div>
 
-    <div class="instruction-note">
-        <span>ℹ️ Information below is a default baseline. Enter your own asset details and click <strong>Generate Forecast</strong> to update.</span>
-    </div>
-
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
@@ -142,7 +128,6 @@
 
             <label style="margin-top: 15px;">Simulations (Max 50k)</label>
             <input type="number" id="sims" value="1000">
-            <span class="input-hint">Higher values increase projection accuracy.</span>
         </div>
 
         <div>
@@ -162,7 +147,6 @@
             
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <span class="input-hint">Calculates probability of success for target.</span>
         </div>
         
         <div class="btn-group">
@@ -204,6 +188,27 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [] };
 
+// Fix for dark background in exported images
+const whiteBackgroundPlugin = {
+    id: 'customCanvasBackgroundColor',
+    beforeDraw: (chart) => {
+        const {ctx} = chart;
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        
+        // Bonus: Watermark for branding
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.fillStyle = '#41797e';
+        ctx.textAlign = 'right';
+        ctx.fillText('Camac Consulting', chart.width - 20, chart.height - 10);
+        
+        ctx.restore();
+    }
+};
+
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
@@ -212,7 +217,6 @@ function setPreset(type, element) {
     if (type === 'pessimistic') driftInput.value = "-5.0";
     else if (type === 'neutral') driftInput.value = "10.0"; 
     else if (type === 'optimistic') driftInput.value = "20.0";
-    
     updateDriftContext();
 }
 
@@ -283,23 +287,19 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, pointRadius: 3, pointHoverRadius: 6, tension: 0.1 },
-                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, pointRadius: 4, pointHoverRadius: 8, tension: 0.1 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, pointRadius: 3, pointHoverRadius: 6, tension: 0.1 }
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, tension: 0.1 },
+                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, tension: 0.1 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, tension: 0.1 }
             ]
         },
         options: { 
             responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
             plugins: { 
-                legend: { labels: { usePointStyle: true, font: { weight: 'bold' } } },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 25, 53, 0.9)',
-                    callbacks: { label: (ctx) => ` ${ctx.dataset.label}: $${ctx.raw.toFixed(2)}` }
-                }
+                legend: { labels: { usePointStyle: true } }
             },
-            scales: { y: { ticks: { callback: v => '$' + v }, grid: { color: '#eef2f6' } }, x: { grid: { display: false } } }
-        }
+            scales: { y: { ticks: { callback: v => '$' + v } } }
+        },
+        plugins: [whiteBackgroundPlugin] // Fix applied here
     });
 }
 
@@ -316,80 +316,45 @@ function calculateProbability() {
         return;
     }
 
-    const finalPrices = currentResults.allPaths;
-    if (!finalPrices || finalPrices.length === 0) return;
-    const successes = finalPrices.filter(p => p >= target).length;
-    const prob = ((successes / finalPrices.length) * 100);
+    const successes = currentResults.allPaths.filter(p => p >= target).length;
+    const prob = ((successes / currentResults.allPaths.length) * 100);
     
     display.innerText = prob.toFixed(1) + "%";
     label.innerText = `Prob. of reaching $${target}`;
 
-    if (prob < 30) {
-        card.style.background = "var(--pessimistic-red)";
-    } else if (prob > 70) {
-        card.style.background = "var(--optimistic-green)";
-    } else {
-        card.style.background = "var(--camac-teal)";
-    }
+    if (prob < 30) card.style.background = "var(--pessimistic-red)";
+    else if (prob > 70) card.style.background = "var(--optimistic-green)";
+    else card.style.background = "var(--camac-teal)";
 }
 
 function generateSummary() {
     const symbol = document.getElementById('symbol').value.toUpperCase();
     const start = currentResults.startPrice;
     const finalN = currentResults.p50[currentResults.p50.length - 1];
-    const finalP = currentResults.p10[currentResults.p10.length - 1];
-    const finalO = currentResults.p90[currentResults.p90.length - 1];
-    const days = currentResults.labels.length - 1;
     let changePct = (((finalN - start) / start) * 100).toFixed(1);
-
-    document.getElementById('insightSummary').innerHTML = `<strong>${symbol}</strong> is projected to move <strong>${changePct}%</strong> over ${days} days. Confidence range: <strong>$${finalP.toFixed(2)}</strong> to <strong>$${finalO.toFixed(2)}</strong>.`;
+    document.getElementById('insightSummary').innerHTML = `<strong>${symbol}</strong> is projected to move <strong>${changePct}%</strong> over ${currentResults.labels.length - 1} days.`;
 }
 
 function resetForm() { location.reload(); }
 
 function downloadCSV() {
-    if (!currentResults.labels || currentResults.labels.length === 0) {
-        alert("No data available to export. Please generate a forecast first.");
-        return;
-    }
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Time Interval,Pessimistic (10th P),Neutral (50th P),Optimistic (90th P)\n";
-
-    currentResults.labels.forEach((label, index) => {
-        const row = [
-            label,
-            currentResults.p10[index].toFixed(4),
-            currentResults.p50[index].toFixed(4),
-            currentResults.p90[index].toFixed(4)
-        ].join(",");
-        csvContent += row + "\n";
+    if (!currentResults.labels.length) return alert("Generate data first.");
+    let csvContent = "data:text/csv;charset=utf-8,Time Interval,Pessimistic,Neutral,Optimistic\n";
+    currentResults.labels.forEach((l, i) => {
+        csvContent += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`;
     });
-
-    const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
-    const fileName = `EquityPath_Export_${document.getElementById('symbol').value}_${new Date().toISOString().slice(0,10)}.csv`;
-    
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
+    link.setAttribute("href", encodeURI(csvContent));
+    link.setAttribute("download", `Equity_Data_${document.getElementById('symbol').value}.csv`);
     link.click();
-    document.body.removeChild(link);
 }
 
 function saveChartImage() {
-    if (!chart) {
-        alert("Please generate a forecast first.");
-        return;
-    }
-    const imageData = chart.toBase64Image();
+    if (!chart) return alert("Generate forecast first.");
     const link = document.createElement('a');
-    const symbol = document.getElementById('symbol').value.toUpperCase();
-    link.href = imageData;
-    link.download = `EquityPath_Chart_${symbol}_${new Date().toISOString().slice(0,10)}.png`;
-    document.body.appendChild(link);
+    link.href = chart.toBase64Image();
+    link.download = `Equity_Forecast_${document.getElementById('symbol').value}.png`;
     link.click();
-    document.body.removeChild(link);
 }
 
 window.onload = () => { 

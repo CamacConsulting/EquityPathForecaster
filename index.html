@@ -12,8 +12,8 @@
             --camac-light: #f4f7f9;
             --camac-accent: #64748b;
             --white: #ffffff;
-            --pessimistic-red: #991b1b;
-            --optimistic-green: #166534;
+            --bearish-red: #991b1b;
+            --bullish-green: #166534;
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
@@ -47,10 +47,10 @@
         .input-hint { font-size: 9px; font-style: italic; color: #64748b; line-height: 1.3; margin-top: 5px; display: block; }
 
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
-        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 8px; font-weight: bold; transition: 0.2s; white-space: nowrap; }
-        .btn-pessimistic { background: #fee2e2; color: var(--pessimistic-red); }
+        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; white-space: nowrap; }
+        .btn-bearish { background: #fee2e2; color: var(--bearish-red); }
         .btn-neutral { background: #f1f5f9; color: #1e293b; }
-        .btn-optimistic { background: #dcfce7; color: var(--optimistic-green); }
+        .btn-bullish { background: #dcfce7; color: var(--bullish-green); }
         
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .btn-preset:hover { opacity: 0.8; }
@@ -113,9 +113,9 @@
             
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
-                <button id="btn-pess" class="btn-preset btn-pessimistic" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
+                <button id="btn-bear" class="btn-preset btn-bearish" onclick="setPreset('bearish', this)">BEARISH</button>
                 <button id="btn-neut" class="btn-preset btn-neutral" onclick="setPreset('neutral', this)">NEUTRAL</button>
-                <button id="btn-opti" class="btn-preset btn-optimistic" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
+                <button id="btn-bull" class="btn-preset btn-bullish" onclick="setPreset('bullish', this)">BULLISH</button>
             </div>
             <span class="input-hint">Updates the Drift section upon selection.</span>
 
@@ -206,9 +206,9 @@ function setPreset(type, element) {
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     if(element) element.classList.add('active');
 
-    if (type === 'pessimistic') driftInput.value = "-5.0";
+    if (type === 'bearish') driftInput.value = "-5.0";
     else if (type === 'neutral') driftInput.value = "10.0"; 
-    else if (type === 'optimistic') driftInput.value = "20.0";
+    else if (type === 'bullish') driftInput.value = "20.0";
     
     updateDriftContext();
 }
@@ -219,10 +219,10 @@ function updateDriftContext() {
     let text = "";
     if (isNaN(drift)) return;
 
-    if (drift <= 0) text = "<strong>Pessimistic:</strong> Modeling a market correction.";
+    if (drift <= 0) text = "<strong>Bearish:</strong> Modeling a market correction.";
     else if (drift <= 6) text = "<strong>Cautious:</strong> Expecting low growth/inflation.";
     else if (drift <= 11) text = "<strong>Neutral:</strong> Aligning with ~10% historical average.";
-    else if (drift <= 22) text = "<strong>Optimistic:</strong> Expecting strong momentum.";
+    else if (drift <= 22) text = "<strong>Bullish:</strong> Expecting strong momentum.";
     else text = "<strong>Exceptional:</strong> Modeling speculative bull-run.";
     
     contextBox.innerHTML = `<strong>Sentiment:</strong> ${text}`;
@@ -302,8 +302,8 @@ function updateUI(results, days, sims) {
             labels: labels,
             datasets: [
                 { label: 'Median Projection', data: p50, borderColor: '#41797e', borderWidth: 3, fill: false, pointRadius: 0 },
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
+                { label: 'Bullish (90th)', data: p90, borderColor: '#001935', backgroundColor: 'rgba(0, 25, 53, 0.05)', fill: 2, pointRadius: 0 },
+                { label: 'Bearish (10th)', data: p10, borderColor: '#94a3b8', borderDash: [5,5], fill: false, pointRadius: 0 }
             ]
         },
         options: { 
@@ -339,7 +339,7 @@ function calculateProbability() {
 }
 
 function downloadCSV() {
-    let csv = "Interval,Pessimistic_10th,Median_50th,Optimistic_90th\n";
+    let csv = "Interval,Bearish_10th,Median_50th,Bullish_90th\n";
     currentResults.labels.forEach((l, i) => {
         csv += `${l},${currentResults.p10[i].toFixed(4)},${currentResults.p50[i].toFixed(4)},${currentResults.p90[i].toFixed(4)}\n`;
     });

@@ -25,7 +25,7 @@
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background 0.3s ease; }
         .stat-card.dark { background: var(--camac-dark); }
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
@@ -42,7 +42,6 @@
             color: var(--camac-dark);
         }
 
-        /* User Instruction Note Styling */
         .instruction-note {
             font-size: 11px;
             color: var(--camac-accent);
@@ -110,7 +109,7 @@
             <p id="tickerLabel">Entry Price</p>
             <h2 id="livePrice">---</h2>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" id="probCard">
             <p id="probLabel">Prob. of Success</p>
             <h2 id="probDisplay">SET TARGET</h2>
         </div>
@@ -125,7 +124,7 @@
     </div>
 
     <div class="instruction-note">
-        <span>ℹ️ Data shown is a default baseline. Input your specific ticker and parameters below to run a custom analysis.</span>
+        <span>ℹ️ Information below is a default baseline. Enter your own asset details and click <strong>Generate Forecast</strong> to update.</span>
     </div>
 
     <div class="controls">
@@ -306,20 +305,31 @@ function calculateProbability() {
     const target = parseFloat(document.getElementById('priceTarget').value);
     const display = document.getElementById('probDisplay');
     const label = document.getElementById('probLabel');
+    const card = document.getElementById('probCard');
 
     if (isNaN(target) || target === 0) {
         display.innerText = "SET TARGET";
         label.innerText = "Prob. of Success";
+        card.style.background = "var(--camac-teal)";
         return;
     }
 
     const finalPrices = currentResults.allPaths;
     if (!finalPrices || finalPrices.length === 0) return;
     const successes = finalPrices.filter(p => p >= target).length;
-    const prob = ((successes / finalPrices.length) * 100).toFixed(1);
+    const prob = ((successes / finalPrices.length) * 100);
     
-    display.innerText = prob + "%";
+    display.innerText = prob.toFixed(1) + "%";
     label.innerText = `Prob. of reaching $${target}`;
+
+    // Color logic based on probability percentage
+    if (prob < 30) {
+        card.style.background = "var(--pessimistic-red)";
+    } else if (prob > 70) {
+        card.style.background = "var(--optimistic-green)";
+    } else {
+        card.style.background = "var(--camac-teal)";
+    }
 }
 
 function generateSummary() {
@@ -335,11 +345,10 @@ function generateSummary() {
 }
 
 function resetForm() { location.reload(); }
-function downloadCSV() { /* Simple csv generation logic */ }
+function downloadCSV() { /* Export logic */ }
 
 window.onload = () => { 
     setPreset('neutral', document.getElementById('btn-neut'));
-    // This will now run the chart with the new default 190 price on load
     analyzeAndRun(); 
 };
 </script>

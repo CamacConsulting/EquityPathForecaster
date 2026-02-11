@@ -77,11 +77,32 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+        /* Table Watermark Logic */
+        .table-wrapper { 
+            position: relative; 
+            overflow-x: auto; 
+            border-radius: 8px; 
+            border: 1px solid #eee; 
+            background: #ffffff;
+        }
+        .table-wrapper::after {
+            content: "CAMAC CONSULTING";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 40px;
+            font-weight: 900;
+            color: rgba(65, 121, 126, 0.05); /* Very light teal */
+            pointer-events: none;
+            z-index: 1;
+            white-space: nowrap;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
-        tbody tr:nth-child(even) { background-color: #f8fafc; }
+        tbody tr:nth-child(even) { background-color: rgba(248, 250, 252, 0.7); }
 
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 15px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 12px; padding: 10px 25px; border-radius: 4px; }
@@ -125,7 +146,6 @@
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-
             <label style="margin-top: 15px;">Simulations (Max 50k)</label>
             <input type="number" id="sims" value="1000">
         </div>
@@ -133,7 +153,6 @@
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" value="190.00" step="0.01">
-            
             <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
             <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
             <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
@@ -144,7 +163,6 @@
         <div>
             <label>Time Horizon (Days)</label>
             <input type="number" id="days" value="30">
-            
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
         </div>
@@ -188,7 +206,7 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [] };
 
-// Fix for dark background in exported images
+// Fix for dark background in exported images + Watermark placement
 const whiteBackgroundPlugin = {
     id: 'customCanvasBackgroundColor',
     beforeDraw: (chart) => {
@@ -198,12 +216,12 @@ const whiteBackgroundPlugin = {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, chart.width, chart.height);
         
-        // Bonus: Watermark for branding
+        // Watermark in the TOP RIGHT (cleanest space in chart)
         ctx.globalCompositeOperation = 'source-over';
-        ctx.font = 'bold 12px Segoe UI';
-        ctx.fillStyle = '#41797e';
+        ctx.font = 'bold 11px Segoe UI';
+        ctx.fillStyle = 'rgba(65, 121, 126, 0.4)'; // Subtle Camac Teal
         ctx.textAlign = 'right';
-        ctx.fillText('Camac Consulting', chart.width - 20, chart.height - 10);
+        ctx.fillText('CAMAC CONSULTING | EQUITY FORECAST', chart.width - 20, 30);
         
         ctx.restore();
     }
@@ -287,19 +305,19 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, tension: 0.1 },
-                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, tension: 0.1 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, tension: 0.1 }
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, tension: 0.1, pointRadius: 0 },
+                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, tension: 0.1, pointRadius: 0 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, tension: 0.1, pointRadius: 0 }
             ]
         },
         options: { 
             responsive: true, maintainAspectRatio: false,
             plugins: { 
-                legend: { labels: { usePointStyle: true } }
+                legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } }
             },
             scales: { y: { ticks: { callback: v => '$' + v } } }
         },
-        plugins: [whiteBackgroundPlugin] // Fix applied here
+        plugins: [whiteBackgroundPlugin]
     });
 }
 

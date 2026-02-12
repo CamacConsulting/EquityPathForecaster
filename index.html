@@ -10,248 +10,381 @@
             --camac-dark: #001935;
             --camac-teal: #41797e;
             --camac-light: #f4f7f9;
+            --camac-accent: #64748b;
             --white: #ffffff;
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
+            --neutral-slate: #1e293b;
         }
 
-        body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); color: #333; margin: 0; }
-        
-        /* Dashboard View */
-        #dashboardView { max-width: 1100px; margin: auto; padding: 20px 20px 180px 20px; }
+        body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
+        .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
-        .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; }
-        .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; letter-spacing: 3px; }
+        .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
+        .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
-        .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; }
+        .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background 0.3s ease; }
         .stat-card.dark { background: var(--camac-dark); }
-        .stat-card h2 { margin: 5px 0 0 0; font-size: 24px; font-weight: 300; }
-        .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; }
+        .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
+        .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        /* Full Page Simulation View (The "New Page") */
-        #fullScaleView { display: none; background: #fff; min-height: 100vh; padding: 40px; box-sizing: border-box; }
-        .full-view-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--camac-dark); padding-bottom: 15px; margin-bottom: 30px; }
-        
-        /* Inputs & Controls */
-        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; background: var(--camac-light); padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 30px; }
+        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: var(--camac-dark); }
+
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
-        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; box-sizing: border-box; }
+        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
+        
         .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
 
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
-        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; }
-        .btn-preset.active { border: 2px solid var(--camac-dark); background: #e2e8f0; }
+        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
+        .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
+        .btn-neut { background: #f1f5f9; color: var(--neutral-slate); }
+        .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
+        .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; }
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+        button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
+        #runBtn { background: var(--camac-dark); color: white; }
+        #resetBtn { background: #e2e8f0; color: #475569; }
+        #exportBtn { background: var(--camac-teal); color: white; }
+        #saveImgBtn { background: var(--camac-accent); color: white; }
 
-        /* Graphics */
-        .chart-container { height: 550px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; position: relative; }
+        .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+        #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Enter/Exit View Buttons */
-        .view-toggle-bar { background: var(--camac-dark); text-align: center; padding: 20px; border-radius: 8px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
-        .view-toggle-bar:hover { background: var(--camac-teal); }
-        .view-toggle-bar span { color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
+        .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
+        .table-wrapper::after { content: "CAMAC CONSULTING"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); font-size: 40px; font-weight: 900; color: rgba(65, 121, 126, 0.05); pointer-events: none; z-index: 1; }
 
-        .exit-btn { background: #eee; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 800; font-size: 11px; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
+        th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
+        td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
 
-        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 100; }
-        .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
+        .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
+        .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+        .footer-brand span { color: var(--camac-teal); }
+        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; text-transform: uppercase; }
+        
+        @media (max-width: 768px) {
+            .controls { grid-template-columns: 1fr; }
+            .stats-bar { grid-template-columns: 1fr; }
+            .btn-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<div id="dashboardView">
+<div class="container">
     <div class="header-area">
         <p class="brand-sub">Camac Consulting</p>
-        <h1>Executive Dashboard</h1>
+        <h1>Equity Path Forecaster</h1>
     </div>
 
     <div class="stats-bar">
-        <div class="stat-card dark"><p>Entry Price</p><h2 id="dashPrice">$0.00</h2></div>
-        <div class="stat-card"><p>Target Probability</p><h2 id="dashProb">-%</h2></div>
-        <div class="stat-card"><p>Median Forecast</p><h2 id="dashMedian">$0.00</h2></div>
-        <div class="stat-card"><p>90th Percentile</p><h2 id="dashUpper">$0.00</h2></div>
-    </div>
-
-    <div style="background: var(--camac-light); padding: 40px; border-radius: 8px; text-align: center; border: 1px dashed var(--camac-teal);">
-        <h3 style="color: var(--camac-dark); margin-top: 0;">Market Trajectory Analysis</h3>
-        <p style="color: #64748b; font-size: 14px; max-width: 600px; margin: 10px auto 25px auto;">Use the full-scale simulation engine to calculate complex price paths using Geometric Brownian Motion. Adjust volatility, drift, and time horizons to see institutional-grade forecasting.</p>
-        
-        <div class="view-toggle-bar" onclick="showFullScale()">
-            <span>Enter Full-Scale Forecaster →</span>
+        <div class="stat-card dark">
+            <p id="tickerLabel">Entry Price</p>
+            <h2 id="livePrice">---</h2>
+        </div>
+        <div class="stat-card" id="probCard">
+            <p id="probLabel">Prob. of Success</p>
+            <h2 id="probDisplay">SET TARGET</h2>
+        </div>
+        <div class="stat-card">
+            <p id="highConfLabel">Optimistic Path (90th)</p>
+            <h2 id="targetDisplay">---</h2>
         </div>
     </div>
-</div>
 
-<div id="fullScaleView">
-    <div class="full-view-header">
-        <div>
-            <p class="brand-sub" style="margin:0;">Camac Consulting</p>
-            <h2 style="margin:0; text-transform: uppercase; letter-spacing: 1px; color: var(--camac-dark);">Simulation Engine</h2>
-        </div>
-        <button class="exit-btn" onclick="showDashboard()">← Exit to Dashboard</button>
+    <div id="insightSummary" class="summary-box">
+        <strong>Status:</strong> Analysis pending. Input your asset parameters below.
     </div>
 
     <div class="controls">
         <div>
-            <label>Asset Ticker</label>
-            <input type="text" id="symbol" placeholder="e.g. BTC">
-            <p class="input-note">Identifier for charting and reporting.</p>
+            <label>Asset Name / Ticker</label>
+            <input type="text" id="symbol" placeholder="e.g. AAPL">
+            <p class="input-note">Asset name for chart labeling.</p>
             
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
-                <button class="btn-preset" id="pessBtn" onclick="setPreset('pessimistic')">PESSIMISTIC</button>
-                <button class="btn-preset active" id="neutBtn" onclick="setPreset('neutral')">NEUTRAL</button>
-                <button class="btn-preset" id="optiBtn" onclick="setPreset('optimistic')">OPTIMISTIC</button>
+                <button id="btn-pess" class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
+                <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
+                <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note">Auto-fills Drift and Volatility expectations.</p>
+            <p class="input-note">Updates Drift and Volatility settings automatically.</p>
         </div>
+
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <p class="input-note">The starting valuation for the simulation.</p>
             
-            <label style="margin-top: 15px;">Annual Drift (%)</label>
-            <input type="number" id="drift" value="10.0">
-            <p class="input-note">Expected annual rate of return (µ).</p>
+            <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
+            <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
             
             <label style="margin-top: 15px;">Annual Volatility (%)</label>
-            <input type="number" id="volatility" value="20">
-            <p class="input-note">Expected price variance / risk (σ).</p>
+            <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
+            
+            <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
+                <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
+            </div>
         </div>
+
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" value="30">
-            <p class="input-note">Duration of the simulated path.</p>
+            <input type="number" id="days" placeholder="e.g. 30" value="30">
             
             <label style="margin-top: 15px;">Price Target ($)</label>
-            <input type="number" id="priceTarget">
-            <p class="input-note">Calculates the probability of touching this price.</p>
+            <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
             
             <label style="margin-top: 15px;">Simulations</label>
             <input type="number" id="sims" value="1000">
-            <p class="input-note">Higher numbers (up to 100k) increase accuracy.</p>
+            <p class="input-note">Statistical depth (1k-10k recommended).</p>
         </div>
+        
         <div class="btn-group">
-            <button class="main-btn" style="background:var(--camac-dark); color:white;" onclick="runSimulation()">Run Engine</button>
-            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="downloadCSV()">Export Data</button>
-            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="saveChart()">Save Image</button>
-            <button class="main-btn" style="background:#ddd;" onclick="location.reload()">Reset</button>
+            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
+            <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
+            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export CSV</button>
+            <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">Save PNG</button>
         </div>
     </div>
 
     <div class="chart-container">
-        <canvas id="fullChart"></canvas>
+        <div id="loader">
+            <div class="spinner"></div>
+            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark);">CALCULATING...</p>
+        </div>
+        <canvas id="mainChart"></canvas>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Interval</th>
+                    <th>Pessimistic (10th)</th>
+                    <th>Neutral (50th)</th>
+                    <th>Optimistic (90th)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 </div>
 
-<div class="footer-nav"><div class="footer-brand">Powered by CAMAC CONSULTING</div></div>
+<div class="footer-nav">
+    <div class="footer-content">
+        <div class="footer-brand">Powered by <span>Camac Consulting</span></div>
+        <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">Expand Workspace</a>
+    </div>
+</div>
 
 <script>
 let chart;
-let results = { p10:[], p50:[], p90:[], lastPrices:[], labels:[] };
+let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
-const brandingPlugin = {
-    id: 'branding',
-    afterDraw: (chart) => {
-        const ctx = chart.ctx;
+const whiteBackgroundPlugin = {
+    id: 'customCanvasBackgroundColor',
+    beforeDraw: (chart) => {
+        const {ctx} = chart;
         ctx.save();
-        ctx.font = 'bold 12px Arial';
-        ctx.fillStyle = 'rgba(0, 25, 53, 0.2)';
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.font = 'bold 11px Segoe UI';
+        ctx.fillStyle = 'rgba(65, 121, 126, 0.4)';
         ctx.textAlign = 'right';
-        ctx.fillText('CAMAC CONSULTING', chart.width - 20, 25);
+        ctx.fillText('CAMAC CONSULTING | EQUITY FORECAST', chart.width - 20, 30);
         ctx.restore();
     }
 };
-Chart.register(brandingPlugin);
 
-function showFullScale() {
-    document.getElementById('dashboardView').style.display = 'none';
-    document.getElementById('fullScaleView').style.display = 'block';
-}
-
-function showDashboard() {
-    document.getElementById('fullScaleView').style.display = 'none';
-    document.getElementById('dashboardView').style.display = 'block';
-}
-
-function setPreset(type) {
-    const d = document.getElementById('drift'), v = document.getElementById('volatility');
+function setPreset(type, element) {
+    const driftInput = document.getElementById('drift');
+    const volInput = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-    if (type === 'pessimistic') { d.value = "-5.0"; v.value = "35"; document.getElementById('pessBtn').classList.add('active'); }
-    else if (type === 'neutral') { d.value = "10.0"; v.value = "20"; document.getElementById('neutBtn').classList.add('active'); }
-    else if (type === 'optimistic') { d.value = "20.0"; v.value = "15"; document.getElementById('optiBtn').classList.add('active'); }
+    if(element) element.classList.add('active');
+
+    if (type === 'pessimistic') {
+        driftInput.value = "-5.0";
+        volInput.value = "45";
+    } else if (type === 'neutral') {
+        driftInput.value = "10.0";
+        volInput.value = "20";
+    } else if (type === 'optimistic') {
+        driftInput.value = "20.0";
+        volInput.value = "15";
+    }
+    updateDriftContext();
 }
 
-function runSimulation() {
-    const price = parseFloat(document.getElementById('manualPrice').value);
-    const sims = parseInt(document.getElementById('sims').value) || 1000;
-    const days = parseInt(document.getElementById('days').value) || 30;
-    const drift = parseFloat(document.getElementById('drift').value)/100;
-    const vol = parseFloat(document.getElementById('volatility').value)/100;
-    const target = parseFloat(document.getElementById('priceTarget').value);
+function updateDriftContext() {
+    const drift = parseFloat(document.getElementById('drift').value);
+    const vol = parseFloat(document.getElementById('volatility').value) || 0;
+    const contextBox = document.getElementById('driftContext');
+    
+    let driftText = drift <= 0 ? "Pessimistic Outlook." : (drift <= 11 ? "Neutral Baseline." : "Optimistic Growth Case.");
+    
+    let riskText = "Low";
+    let riskColor = "var(--optimistic-green)";
+    if (vol > 60) { riskText = "Extreme (Crypto/Meme)"; riskColor = "#7f1d1d"; }
+    else if (vol > 35) { riskText = "High (Growth/Tech)"; riskColor = "var(--pessimistic-red)"; }
+    else if (vol > 20) { riskText = "Moderate (Equity)"; riskColor = "#b45309"; }
 
-    if(!price) return alert("Enter starting price.");
+    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
+}
 
-    let paths = Array.from({length: days + 1}, () => new Float32Array(sims));
-    const dt = 1/252;
+function analyzeAndRun() {
+    const manualPrice = parseFloat(document.getElementById('manualPrice').value);
+    const symbol = document.getElementById('symbol').value;
+    const days = parseInt(document.getElementById('days').value);
 
-    for(let s=0; s<sims; s++) {
-        let p = price; paths[0][s] = p;
-        for(let t=1; t<=days; t++) {
-            let z = Math.sqrt(-2.0 * Math.log(Math.random()||0.001)) * Math.cos(2.0 * Math.PI * Math.random());
-            p *= Math.exp((drift - 0.5 * vol**2)*dt + vol*Math.sqrt(dt)*z);
-            paths[t][s] = p;
+    if (!symbol) return alert("Please enter an Asset Name / Ticker.");
+    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Please enter a valid Current Price.");
+    if (isNaN(days) || days <= 0) return alert("Please enter a valid Time Horizon.");
+
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
+    runMonteCarlo(manualPrice);
+}
+
+function runMonteCarlo(startPrice) {
+    const days = parseInt(document.getElementById('days').value);
+    const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 50000);
+    const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
+    const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
+
+    const dt = 1 / 252;
+    const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
+    const dailyVol = annualVol * Math.sqrt(dt);
+
+    setTimeout(() => {
+        let results = Array.from({length: days + 1}, () => []);
+        for (let s = 0; s < sims; s++) {
+            let p = startPrice;
+            results[0].push(p);
+            for (let t = 1; t <= days; t++) {
+                p *= Math.exp(dailyDrift + (dailyVol * boxMuller()));
+                results[t].push(p);
+            }
+        }
+        updateUI(results, days, sims);
+        document.getElementById('loader').style.display = 'none';
+    }, 50);
+}
+
+function boxMuller() {
+    let u = Math.random(), v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
+}
+
+function updateUI(results, days, sims) {
+    let labels = [], p10 = [], p50 = [], p90 = [], rows = "";
+    const i10 = Math.floor(sims * 0.1), i50 = Math.floor(sims * 0.5), i90 = Math.floor(sims * 0.9);
+
+    for (let t = 0; t <= days; t++) {
+        results[t].sort((a,b) => a-b);
+        labels.push(`Day ${t}`);
+        const v10 = results[t][i10], v50 = results[t][i50], v90 = results[t][i90];
+        p10.push(v10); p50.push(v50); p90.push(v90);
+        if (t % 5 === 0 || t === days) {
+            rows += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
         }
     }
+    currentResults = { allPaths: results[days], p10, p50, p90, labels, startPrice: results[0][0] };
+    document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
+    document.querySelector("#dataTable tbody").innerHTML = rows;
+    
+    generateSummary();
+    calculateProbability();
 
-    results.labels = []; results.p10 = []; results.p50 = []; results.p90 = [];
-    for(let t=0; t<=days; t++) {
-        let sorted = paths[t].sort();
-        results.labels.push(`Day ${t}`);
-        results.p10.push(sorted[Math.floor(sims*0.1)]);
-        results.p50.push(sorted[Math.floor(sims*0.5)]);
-        results.p90.push(sorted[Math.floor(sims*0.9)]);
-    }
-    results.lastPrices = paths[days];
-
-    // Update Dashboard & Full View Stats
-    const finalMedian = results.p50[days];
-    const finalUpper = results.p90[days];
-    const prob = target ? (results.lastPrices.reduce((a,v)=>v>=target?a+1:a,0)/sims*100).toFixed(1) : "-";
-
-    document.getElementById('dashPrice').innerText = `$${price.toFixed(2)}`;
-    document.getElementById('dashMedian').innerText = `$${finalMedian.toFixed(2)}`;
-    document.getElementById('dashUpper').innerText = `$${finalUpper.toFixed(2)}`;
-    document.getElementById('dashProb').innerText = prob + (target ? "%" : "");
-
-    if(chart) chart.destroy();
-    chart = new Chart(document.getElementById('fullChart'), {
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
         type: 'line',
         data: {
-            labels: results.labels,
+            labels: labels,
             datasets: [
-                { label: 'Median', data: results.p50, borderColor: '#001935', borderWidth: 3, pointRadius: 0 },
-                { label: '90th Percentile', data: results.p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
-                { label: '10th Percentile', data: results.p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: 'rgba(22, 101, 52, 0.1)', borderWidth: 2, fill: false, pointRadius: 0 },
+                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', borderWidth: 4, fill: false, pointRadius: 0 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, fill: false, pointRadius: 0 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { 
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true } }
+            },
+            scales: { y: { ticks: { callback: v => '$' + v } } }
+        },
+        plugins: [whiteBackgroundPlugin]
     });
 }
 
-function downloadCSV() {
-    let csv = "Day,P10,P50,P90\n";
-    results.labels.forEach((l, i) => csv += `${l},${results.p10[i]},${results.p50[i]},${results.p90[i]}\n`);
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = 'sim_data.csv'; a.click();
+function calculateProbability() {
+    const target = parseFloat(document.getElementById('priceTarget').value);
+    const display = document.getElementById('probDisplay');
+    const card = document.getElementById('probCard');
+
+    if (isNaN(target) || target === 0) {
+        display.innerText = "SET TARGET";
+        card.style.background = "var(--camac-teal)";
+        return;
+    }
+
+    const finalPrices = currentResults.allPaths;
+    if (!finalPrices || finalPrices.length === 0) return;
+    const successes = finalPrices.filter(p => p >= target).length;
+    const prob = ((successes / finalPrices.length) * 100);
+    
+    display.innerText = prob.toFixed(1) + "%";
+    if (prob < 30) card.style.background = "var(--pessimistic-red)";
+    else if (prob > 70) card.style.background = "var(--optimistic-green)";
+    else card.style.background = "var(--camac-teal)";
 }
 
-function saveChart() {
-    const a = document.createElement('a'); a.href = document.getElementById('fullChart').toDataURL(); a.download = 'forecast.png'; a.click();
+function generateSummary() {
+    const symbol = (document.getElementById('symbol').value || "ASSET").toUpperCase();
+    const start = currentResults.startPrice;
+    const finalN = currentResults.p50[currentResults.p50.length - 1];
+    let changePct = (((finalN - start) / start) * 100).toFixed(1);
+
+    document.getElementById('insightSummary').innerHTML = `
+        <strong>${symbol} Analysis:</strong> Projected median move of <strong>${changePct}%</strong>. 
+        Expected range (10th-90th) is <strong>$${currentResults.p10[currentResults.p10.length-1].toFixed(2)}</strong> to <strong>$${currentResults.p90[currentResults.p90.length-1].toFixed(2)}</strong>.
+    `;
 }
+
+function resetForm() { location.reload(); }
+
+function downloadCSV() {
+    if (!currentResults.labels.length) return alert("Generate data first.");
+    let csvContent = "data:text/csv;charset=utf-8,Interval,Pessimistic,Neutral,Optimistic\n";
+    currentResults.labels.forEach((l, i) => {
+        csvContent += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`;
+    });
+    const link = document.createElement("a");
+    link.setAttribute("href", encodeURI(csvContent));
+    link.setAttribute("download", "Equity_Forecast_Data.csv");
+    link.click();
+}
+
+function saveChartImage() {
+    if (!chart) return alert("Generate forecast first.");
+    const link = document.createElement('a');
+    link.href = chart.toBase64Image();
+    link.download = `Forecast_Chart.png`;
+    link.click();
+}
+
+window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };
 </script>
 </body>
 </html>

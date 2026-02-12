@@ -15,6 +15,7 @@
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
             --neutral-slate: #1e293b;
+            --warning-orange: #ea580c;
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
@@ -32,44 +33,14 @@
 
         .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; line-height: 1.6; color: #475569; }
 
-        .info-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 14px;
-            height: 14px;
-            background: var(--camac-accent);
-            color: white;
-            border-radius: 50%;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: help;
-            margin-left: 5px;
-            position: relative;
-            vertical-align: middle;
-        }
-        .info-icon:hover::after {
-            content: "Confidence is calculated as a function of volatility and time. Higher market turbulence or longer durations decrease forecast certainty.";
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--camac-dark);
-            color: white;
-            padding: 10px;
-            border-radius: 4px;
-            width: 220px;
-            font-size: 11px;
-            font-weight: normal;
-            line-height: 1.4;
-            z-index: 100;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
-        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
+        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; transition: border-color 0.2s; }
         .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
+
+        /* Warning UI */
+        input.limit-exceeded { border-color: var(--pessimistic-red); border-width: 2px; background-color: #fff1f2; }
+        #simWarning { display: none; color: var(--pessimistic-red); font-size: 9px; font-weight: bold; margin-top: 4px; text-transform: uppercase; }
 
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
@@ -148,38 +119,36 @@
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note">Automatically aligns Drift and Volatility to specific market regimes.</p>
+            <p class="input-note">Automatically aligns Drift and Volatility.</p>
         </div>
 
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <p class="input-note">The starting market price for the simulation.</p>
+            <p class="input-note">The starting market price.</p>
             
             <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
             <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
-            <p class="input-note">Annualized growth rate before volatility drag.</p>
             
             <label style="margin-top: 15px;">Annual Volatility (%)</label>
             <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
-            <p class="input-note">Fear factor: S&P (15%), Tech (35%), Crypto (70%+).</p>
             
             <div id="driftContext" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px;">
-                <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
+                <strong>Status:</strong> Neutral Baseline.
             </div>
         </div>
 
         <div>
             <label>Time Horizon (Days)</label>
             <input type="number" id="days" value="30">
-            <p class="input-note">Total trading days to forecast into the future.</p>
+            <p class="input-note">Total trading days for forecast.</p>
             
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <p class="input-note">Desired price to calculate probability of success.</p>
             
             <label style="margin-top: 15px;">Simulations</label>
-            <input type="number" id="sims" value="1000">
+            <input type="number" id="sims" value="1000" min="1" max="100000" oninput="validateSimCount(this)" onblur="enforceSimLimit(this)">
+            <div id="simWarning">⚠ Max limit is 100,000 simulations</div>
             <p class="input-note">Precision cap: 100,000.</p>
         </div>
         
@@ -217,22 +186,35 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
+// Real-time Validation
+function validateSimCount(input) {
+    const warning = document.getElementById('simWarning');
+    if (parseInt(input.value) > 100000) {
+        input.classList.add('limit-exceeded');
+        warning.style.display = 'block';
+    } else {
+        input.classList.remove('limit-exceeded');
+        warning.style.display = 'none';
+    }
+}
+
+// Auto-correction on focus loss
+function enforceSimLimit(input) {
+    if (parseInt(input.value) > 100000) {
+        input.value = 100000;
+        validateSimCount(input);
+    }
+}
+
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
     const volInput = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     if(element) element.classList.add('active');
 
-    if (type === 'pessimistic') {
-        driftInput.value = "-5.0";
-        volInput.value = "45";
-    } else if (type === 'neutral') {
-        driftInput.value = "10.0";
-        volInput.value = "20";
-    } else if (type === 'optimistic') {
-        driftInput.value = "20.0";
-        volInput.value = "15";
-    }
+    if (type === 'pessimistic') { driftInput.value = "-5.0"; volInput.value = "45"; }
+    else if (type === 'neutral') { driftInput.value = "10.0"; volInput.value = "20"; }
+    else if (type === 'optimistic') { driftInput.value = "20.0"; volInput.value = "15"; }
     updateDriftContext();
 }
 
@@ -240,24 +222,22 @@ function updateDriftContext() {
     const drift = parseFloat(document.getElementById('drift').value) || 0;
     const vol = parseFloat(document.getElementById('volatility').value) || 0;
     const contextBox = document.getElementById('driftContext');
-    
     let driftText = drift <= 0 ? "Pessimistic (Bear)" : (drift <= 12 ? "Neutral (Baseline)" : "Optimistic (Bull)");
-    let riskText = "Low";
-    let riskColor = "#166534";
-
-    if (vol > 60) { riskText = "Extreme (Crypto)"; riskColor = "#7f1d1d"; }
-    else if (vol > 35) { riskText = "High (Tech)"; riskColor = "#991b1b"; }
-    else if (vol > 20) { riskText = "Moderate (Equity)"; riskColor = "#b45309"; }
-
-    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span id="riskLevel" style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
+    let riskColor = vol > 35 ? "#991b1b" : (vol > 20 ? "#b45309" : "#166534");
+    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk Vol:</strong> <span style="color:${riskColor}; font-weight:bold;">${vol}%</span>`;
 }
 
 function analyzeAndRun() {
     const manualPrice = parseFloat(document.getElementById('manualPrice').value);
     const symbol = document.getElementById('symbol').value;
+    const simsInput = document.getElementById('sims');
+    
     if (!symbol || isNaN(manualPrice)) return alert("Please enter Asset Name and Price.");
     
-    const sims = Math.max(1, Math.min(parseInt(document.getElementById('sims').value) || 1000, 100000));
+    let sims = Math.min(100000, Math.max(1, parseInt(simsInput.value) || 1000));
+    simsInput.value = sims; // Snap UI to cap
+    validateSimCount(simsInput);
+
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
     
@@ -296,43 +276,19 @@ function updateUI(results, days, sims) {
     for (let t = 0; t <= days; t++) {
         results[t].sort();
         labels.push(`Day ${t}`);
-        const v10 = results[t][i10], v50 = results[t][i50], v90 = results[t][i90];
-        p10.push(v10); p50.push(v50); p90.push(v90);
+        p10.push(results[t][i10]); p50.push(results[t][i50]); p90.push(results[t][i90]);
         if (t % 5 === 0 || t === days) {
-            rows += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
+            rows += `<tr><td>Day ${t}</td><td>$${results[t][i10].toFixed(2)}</td><td>$${results[t][i50].toFixed(2)}</td><td>$${results[t][i90].toFixed(2)}</td></tr>`;
         }
     }
     currentResults = { allPaths: results[days], p10, p50, p90, labels, startPrice: results[0][0] };
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
+    // Insight Logic
     const symbol = (document.getElementById('symbol').value || "Asset").toUpperCase();
-    const startP = results[0][0];
-    const medP = p50[days];
-    const highP = p90[days];
-    const lowP = p10[days];
-    const volVal = parseFloat(document.getElementById('volatility').value) || 0;
-    
-    const changePct = (((medP - startP) / startP) * 100).toFixed(1);
-    const rangePct = (((highP - lowP) / startP) * 100).toFixed(1);
-    
-    let confidenceScore = Math.max(15, 100 - (volVal * 0.8) - (days * 0.15));
-    let outlook = changePct > 0 ? "bullish" : "bearish";
-
-    document.getElementById('insightSummary').innerHTML = `
-        <strong style="color:var(--camac-dark)">EXECUTIVE SUMMARY: ${symbol}</strong><br>
-        Based on a simulation of ${sims.toLocaleString()} outcomes, the asset shows a <strong>${outlook} bias</strong> over the next <strong>${days} days</strong>. 
-        The median price target is projected at <strong>$${medP.toFixed(2)}</strong>, representing a <strong>${changePct}%</strong> move. 
-        The model anticipates a price spread of <strong>${rangePct}%</strong> between the extreme percentiles. 
-        <br><br>
-        <span style="background:var(--camac-dark); color:white; padding: 2px 8px; border-radius:3px; font-size:11px; font-weight:bold;">
-            CONFIDENCE LEVEL: ${confidenceScore.toFixed(0)}%
-        </span>
-        <span class="info-icon">i</span>
-        <span style="font-size:11px; font-style:italic; margin-left:10px;">
-            (Score adjusted for ${volVal}% volatility and ${days}-day duration)
-        </span>
-    `;
+    const changePct = (((p50[days] - results[0][0]) / results[0][0]) * 100).toFixed(1);
+    document.getElementById('insightSummary').innerHTML = `<strong>EXECUTIVE SUMMARY: ${symbol}</strong><br>Forecast completed with <strong>${sims.toLocaleString()}</strong> paths. Median projection shows a <strong>${changePct}%</strong> move over <strong>${days} days</strong>.`;
     
     calculateProbability();
 
@@ -342,30 +298,14 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0, tension: 0.1 },
-                { label: 'Neutral (Median)', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0, tension: 0.1 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0, tension: 0.1 }
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0 },
+                { label: 'Neutral (Median)', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0 }
             ]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false, 
-            interaction: { mode: 'index', intersect: false },
-            plugins: { 
-                legend: { position: 'bottom' },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 25, 53, 0.9)',
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': $' + context.parsed.y.toFixed(2);
-                        }
-                    }
-                }
-            },
-            scales: { 
-                y: { ticks: { callback: v => '$' + v } },
-                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } }
-            }
+            responsive: true, maintainAspectRatio: false,
+            scales: { y: { ticks: { callback: v => '$' + v } } }
         }
     });
 }
@@ -376,31 +316,30 @@ function calculateProbability() {
     const successes = currentResults.allPaths.reduce((acc, p) => p >= target ? acc + 1 : acc, 0);
     const prob = (successes / currentResults.allPaths.length) * 100;
     document.getElementById('probDisplay').innerText = prob.toFixed(1) + "%";
-    document.getElementById('probCard').style.background = prob < 30 ? "#991b1b" : (prob > 70 ? "#166534" : "#41797e");
 }
 
 function resetForm() { location.reload(); }
 
 function downloadCSV() {
     if (!currentResults.labels.length) return alert("Generate forecast first.");
-    const symbol = (document.getElementById('symbol').value || "Asset").toUpperCase();
     let csv = "Day,Pessimistic,Neutral,Optimistic\n";
     currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a'); 
-    a.setAttribute('href', url); 
-    a.setAttribute('download', `${symbol}_Forecast.csv`); 
-    a.click();
+    const a = document.createElement('a'); a.href = url; a.download = `Forecast.csv`; a.click();
 }
 
 function saveChartImage() {
     if (!chart) return alert("Generate forecast first.");
-    const symbol = (document.getElementById('symbol').value || "Asset").toUpperCase();
-    const a = document.createElement('a'); 
-    a.href = chart.toBase64Image(); 
-    a.download = `${symbol}_Chart.png`; 
-    a.click();
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    const sourceCanvas = document.getElementById('mainChart');
+    tempCanvas.width = sourceCanvas.width;
+    tempCanvas.height = sourceCanvas.height;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    ctx.drawImage(sourceCanvas, 0, 0);
+    const a = document.createElement('a'); a.href = tempCanvas.toDataURL('image/png'); a.download = `Chart.png`; a.click();
 }
 
 window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };

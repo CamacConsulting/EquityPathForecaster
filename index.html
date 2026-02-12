@@ -15,7 +15,6 @@
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
             --neutral-slate: #1e293b;
-            --benchmark-gray: #94a3b8; 
         }
 
         body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
@@ -38,8 +37,7 @@
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; }
-        .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
-
+        
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
@@ -93,13 +91,13 @@
     <div id="insightSummary" class="summary-box">
         <h3>Executive Summary</h3>
         <div class="summary-content" id="summaryTarget">
-            <p>Waiting for simulation data... Generate a forecast to view the thorough analysis.</p>
+            <p>Waiting for simulation data...</p>
         </div>
     </div>
 
     <div class="controls">
         <div>
-            <label>Asset Name / Ticker</label>
+            <label>Asset Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. BTC">
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
@@ -140,8 +138,8 @@
     <div class="table-wrapper">
         <div class="table-watermark">CAMAC CONSULTING</div>
         <table id="dataTable">
-            <thead><tr><th>Time Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr></thead>
-            <tbody id="tableBody"><tr><td colspan="4" style="color:#94a3b8; padding:40px;">No data generated yet.</td></tr></tbody>
+            <thead><tr><th>Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="4" style="color:#94a3b8; padding:40px;">No data generated.</td></tr></tbody>
         </table>
     </div>
 </div>
@@ -152,23 +150,18 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], benchmark: [], labels: [] };
 
-// Combined Crosshair & Chart Watermark Plugin
 const customBrandingPlugin = {
     id: 'customBranding',
     afterDraw: (chart) => {
         const ctx = chart.ctx;
-        const width = chart.width;
-        
-        // 1. Draw Watermark (Top Right)
         ctx.save();
         ctx.font = 'bold 11px "Segoe UI", Arial, sans-serif';
         ctx.fillStyle = 'rgba(0, 25, 53, 0.15)';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'top';
-        ctx.fillText('CAMAC CONSULTING', width - 25, 10);
+        ctx.fillText('CAMAC CONSULTING', chart.width - 25, 10);
         ctx.restore();
 
-        // 2. Draw Crosshair (if active)
         if (chart.tooltip?._active?.length) {
             const x = chart.tooltip._active[0].element.x;
             const yAxis = chart.scales.y;
@@ -191,15 +184,21 @@ function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
     const volInput = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-    if(element) element.classList.add('active');
-    if (type === 'pessimistic') { driftInput.value = "-5.0"; volInput.value = "45"; }
-    else if (type === 'neutral') { driftInput.value = "10.0"; volInput.value = "20"; }
-    else if (type === 'optimistic') { driftInput.value = "20.0"; volInput.value = "15"; }
+    element.classList.add('active');
+    
+    if (type === 'pessimistic') { 
+        driftInput.value = "-5.0"; 
+        volInput.value = "35"; // Adjusted from 45%
+    } else if (type === 'neutral') { 
+        driftInput.value = "10.0"; 
+        volInput.value = "20"; 
+    } else if (type === 'optimistic') { 
+        driftInput.value = "20.0"; 
+        volInput.value = "15"; 
+    }
 }
 
-function enforceSimLimit(input) {
-    if (parseInt(input.value) > 100000) input.value = 100000;
-}
+function enforceSimLimit(input) { if (parseInt(input.value) > 100000) input.value = 100000; }
 
 function toggleBenchmarkLine() {
     if (!chart) return;
@@ -218,10 +217,7 @@ function analyzeAndRun() {
     if (isNaN(price)) return alert("Please enter a starting price.");
     document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
 
-    const dt = 1/252;
-    const drift = (parseFloat(document.getElementById('drift').value) || 0) / 100;
-    const vol = (parseFloat(document.getElementById('volatility').value) || 0) / 100;
-
+    const dt = 1/252, drift = (parseFloat(document.getElementById('drift').value) || 0) / 100, vol = (parseFloat(document.getElementById('volatility').value) || 0) / 100;
     let paths = Array.from({length: days + 1}, () => new Float32Array(sims));
     let bPath = [price]; 
 
@@ -259,8 +255,8 @@ function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
     const alpha = (changePct - mktPerf).toFixed(2);
 
     document.getElementById('summaryTarget').innerHTML = `
-        <div class="summary-item"><strong>Directional Bias:</strong> Trajectory for ${ticker} is <strong>${changePct > 0 ? 'Bullish' : 'Bearish'}</strong>, with a median projection of <strong>$${p50[days].toFixed(2)}</strong> (${changePct}%).<br><br><strong>Statistical Range:</strong> 80% probability that price settles between <strong>$${p10[days].toFixed(2)}</strong> and <strong>$${p90[days].toFixed(2)}</strong>.</div>
-        <div class="summary-item"><strong>Benchmark Analysis:</strong> Compared to S&P 500 (${mktPerf}%), asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> market by <strong>${Math.abs(alpha)}%</strong>.<br><br><strong>Risk Profile:</strong> Volatility of ${document.getElementById('volatility').value}% creates a spread of <strong>$${(p90[days] - p10[days]).toFixed(2)}</strong>.</div>
+        <div class="summary-item"><strong>Directional Bias:</strong> Trajectory for ${ticker} is <strong>${changePct > 0 ? 'Bullish' : 'Bearish'}</strong>, with a median projection of <strong>$${p50[days].toFixed(2)}</strong> (${changePct}%).</div>
+        <div class="summary-item"><strong>Benchmark Analysis:</strong> Compared to S&P 500 (${mktPerf}%), asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> market by <strong>${Math.abs(alpha)}%</strong>.</div>
     `;
 
     if (chart) chart.destroy();

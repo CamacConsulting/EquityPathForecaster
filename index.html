@@ -30,7 +30,7 @@
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; }
+        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; line-height: 1.6; color: #475569; }
 
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
 
@@ -70,7 +70,12 @@
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
         .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; }
         
-        @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } .stats-bar { grid-template-columns: 1fr; } .btn-group { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { 
+            .controls { grid-template-columns: 1fr; } 
+            .stats-bar { grid-template-columns: 1fr; } 
+            .btn-group { grid-template-columns: 1fr; } 
+            .summary-box > div { grid-template-columns: 1fr !important; }
+        }
     </style>
 </head>
 <body>
@@ -97,7 +102,7 @@
     </div>
 
     <div id="insightSummary" class="summary-box">
-        <strong>Status:</strong> Analysis pending. Input your asset parameters below.
+        <strong>Status:</strong> Analysis pending. Input your asset parameters below to generate a detailed market outlook.
     </div>
 
     <div class="controls">
@@ -267,9 +272,33 @@ function updateUI(results, days, sims) {
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
+    // Summary Analysis Logic
     const symbol = document.getElementById('symbol').value.toUpperCase();
-    const change = (((p50[days] - results[0][0]) / results[0][0]) * 100).toFixed(1);
-    document.getElementById('insightSummary').innerHTML = `<strong>${symbol} Analysis:</strong> Median projection of <strong>${change}%</strong> over ${days} days.`;
+    const startP = results[0][0];
+    const medP = p50[days];
+    const highP = p90[days];
+    const lowP = p10[days];
+    const volVal = parseFloat(document.getElementById('volatility').value);
+    
+    const changePct = (((medP - startP) / startP) * 100).toFixed(1);
+    const rangeSpread = (((highP - lowP) / startP) * 100).toFixed(1);
+    let volDesc = volVal < 20 ? "Stable/Low" : (volVal < 40 ? "Elevated/Growth" : "Extreme/Speculative");
+    let outlook = changePct > 0 ? "Bullish Bias" : "Bearish Bias";
+
+    document.getElementById('insightSummary').innerHTML = `
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <strong style="color:var(--camac-dark)">EXECUTIVE SUMMARY: ${symbol}</strong><br>
+                Over a <strong>${days}-day</strong> horizon, the median projected price is <strong>$${medP.toFixed(2)}</strong> (a ${changePct}% move). 
+                The model identifies a <strong>${outlook}</strong> based on current drift parameters.
+            </div>
+            <div style="border-left: 1px solid #e2e8f0; padding-left: 20px;">
+                <strong style="color:var(--camac-teal)">RISK PROFILE:</strong><br>
+                Market conditions are categorized as <strong>${volDesc}</strong>. 
+                Expect a <strong>${rangeSpread}%</strong> price variance between the 10th and 90th percentiles, indicating potential for significant "fat-tail" price action.
+            </div>
+        </div>
+    `;
     
     calculateProbability();
 
@@ -279,32 +308,23 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic Path', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0, tension: 0.1 },
-                { label: 'Neutral Path', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0, tension: 0.1 },
-                { label: 'Pessimistic Path', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0, tension: 0.1 }
+                { label: 'Optimistic Path (90th)', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+                { label: 'Neutral Path (Median)', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0, tension: 0.1 },
+                { label: 'Pessimistic Path (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0, tension: 0.1 }
             ]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false, 
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
+            interaction: { mode: 'index', intersect: false },
             plugins: { 
                 legend: { position: 'bottom' },
                 tooltip: {
                     backgroundColor: 'rgba(0, 25, 53, 0.9)',
-                    titleFont: { size: 12, weight: 'bold' },
-                    bodyFont: { size: 12 },
+                    titleFont: { weight: 'bold' },
                     callbacks: {
                         label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) { label += ': '; }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
-                            }
-                            return label;
+                            return context.dataset.label + ': $' + context.parsed.y.toFixed(2);
                         }
                     }
                 }
@@ -335,7 +355,7 @@ function downloadCSV() {
     const a = document.createElement('a'); a.setAttribute('href', url); a.setAttribute('download', 'forecast.csv'); a.click();
 }
 function saveChartImage() {
-    const a = document.createElement('a'); a.href = chart.toBase64Image(); a.download = 'chart.png'; a.click();
+    const a = document.createElement('a'); a.href = chart.toBase64Image(); a.download = 'forecast_chart.png'; a.click();
 }
 window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };
 </script>

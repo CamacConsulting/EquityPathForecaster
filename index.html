@@ -20,25 +20,28 @@
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
         .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
         
+        /* Header */
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
+        /* Stats Bar */
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background 0.3s ease; }
         .stat-card.dark { background: var(--camac-dark); }
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
+        /* Summary Box */
         .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: var(--camac-dark); }
 
+        /* Controls Grid */
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
-        
         .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; margin-bottom: 12px; }
 
+        /* Sentiment Buttons */
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
@@ -46,9 +49,11 @@
         .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
+        /* Advanced Drawer */
         .advanced-toggle { font-size: 10px; color: var(--camac-teal); cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 10px; display: inline-block; }
         #advanced-drawer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; }
 
+        /* Main Buttons */
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
@@ -56,18 +61,20 @@
         #exportBtn { background: var(--camac-teal); color: white; }
         #saveImgBtn { background: var(--camac-accent); color: white; }
 
+        /* Chart */
         .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
         #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Table */
         .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
         .table-wrapper::after { content: "CAMAC CONSULTING"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); font-size: 40px; font-weight: 900; color: rgba(65, 121, 126, 0.05); pointer-events: none; z-index: 1; }
-
         table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
 
+        /* Footer */
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
@@ -152,9 +159,9 @@
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
             <p class="input-note"><i>Used to calculate success probability.</i></p>
             
-            <label style="margin-top: 15px;">Simulations</label>
-            <input type="number" id="sims" value="1000" max="100000">
-            <p class="input-note"><i>Max: 100,000 simulations for high precision.</i></p>
+            <label style="margin-top: 15px;">Simulations (max 100k)</label>
+            <input type="number" id="sims" value="50000" max="100000">
+            <p class="input-note"><i>High precision baseline set to 50,000.</i></p>
         </div>
         
         <div class="btn-group">
@@ -199,6 +206,7 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
+// Toggle Advanced Drawer
 function toggleAdvanced() {
     const drawer = document.getElementById('advanced-drawer');
     const toggle = document.querySelector('.advanced-toggle');
@@ -211,6 +219,7 @@ function toggleAdvanced() {
     }
 }
 
+// Chart Watermark Plugin
 const whiteBackgroundPlugin = {
     id: 'customCanvasBackgroundColor',
     beforeDraw: (chart) => {
@@ -228,6 +237,7 @@ const whiteBackgroundPlugin = {
     }
 };
 
+// Preset Logic
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
     const volInput = document.getElementById('volatility');
@@ -251,42 +261,37 @@ function updateDriftContext() {
     const drift = parseFloat(document.getElementById('drift').value);
     const vol = parseFloat(document.getElementById('volatility').value) || 0;
     const contextBox = document.getElementById('driftContext');
-    
     let driftText = drift <= 0 ? "Pessimistic Outlook." : (drift <= 11 ? "Neutral Baseline." : "Optimistic Growth Case.");
-    
-    let riskText = "Low";
-    let riskColor = "var(--optimistic-green)";
-    if (vol > 60) { riskText = "Extreme (Crypto/Meme)"; riskColor = "#7f1d1d"; }
-    else if (vol > 35) { riskText = "High (Growth/Tech)"; riskColor = "var(--pessimistic-red)"; }
-    else if (vol > 20) { riskText = "Moderate (Equity)"; riskColor = "#b45309"; }
-
-    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
+    let riskColor = (vol > 35) ? "var(--pessimistic-red)" : "var(--optimistic-green)";
+    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Volatility:</strong> <span style="color:${riskColor}; font-weight:bold;">${vol}%</span>`;
 }
 
+// Run Simulation
 function analyzeAndRun() {
     const manualPrice = parseFloat(document.getElementById('manualPrice').value);
     const symbol = document.getElementById('symbol').value;
     const days = parseInt(document.getElementById('days').value);
 
-    if (!symbol) return alert("Please enter an Asset Name / Ticker.");
-    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Please enter a valid Current Price.");
-    if (isNaN(days) || days <= 0) return alert("Please enter a valid Time Horizon.");
-
+    if (!symbol) return alert("Please enter an Asset Name.");
+    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Please enter a valid Price.");
+    
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
-    runMonteCarlo(manualPrice);
+    
+    // Slight delay to allow loader to render before heavy math
+    setTimeout(() => { runMonteCarlo(manualPrice); }, 100);
 }
 
 function runMonteCarlo(startPrice) {
     const days = parseInt(document.getElementById('days').value);
-    // Limit to 100,000 simulations
-    let simsInput = parseInt(document.getElementById('sims').value) || 1000;
-    const sims = Math.min(simsInput, 100000);
+    let simsInput = parseInt(document.getElementById('sims').value) || 50000;
     
-    // Update the UI input if the user went over the limit
+    // Enforcement of the 100k cap
     if (simsInput > 100000) {
+        simsInput = 100000;
         document.getElementById('sims').value = 100000;
     }
+    const sims = simsInput;
 
     const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
     const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
@@ -295,19 +300,17 @@ function runMonteCarlo(startPrice) {
     const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
     const dailyVol = annualVol * Math.sqrt(dt);
 
-    setTimeout(() => {
-        let results = Array.from({length: days + 1}, () => []);
-        for (let s = 0; s < sims; s++) {
-            let p = startPrice;
-            results[0].push(p);
-            for (let t = 1; t <= days; t++) {
-                p *= Math.exp(dailyDrift + (dailyVol * boxMuller()));
-                results[t].push(p);
-            }
+    let results = Array.from({length: days + 1}, () => []);
+    for (let s = 0; s < sims; s++) {
+        let p = startPrice;
+        results[0].push(p);
+        for (let t = 1; t <= days; t++) {
+            p *= Math.exp(dailyDrift + (dailyVol * boxMuller()));
+            results[t].push(p);
         }
-        updateUI(results, days, sims);
-        document.getElementById('loader').style.display = 'none';
-    }, 50);
+    }
+    updateUI(results, days, sims);
+    document.getElementById('loader').style.display = 'none';
 }
 
 function boxMuller() {
@@ -349,9 +352,7 @@ function updateUI(results, days, sims) {
         options: { 
             responsive: true, maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { position: 'bottom', labels: { usePointStyle: true } }
-            },
+            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
             scales: { y: { ticks: { callback: v => '$' + v } } }
         },
         plugins: [whiteBackgroundPlugin]
@@ -362,34 +363,23 @@ function calculateProbability() {
     const target = parseFloat(document.getElementById('priceTarget').value);
     const display = document.getElementById('probDisplay');
     const card = document.getElementById('probCard');
-
     if (isNaN(target) || target === 0) {
         display.innerText = "SET TARGET";
         card.style.background = "var(--camac-teal)";
         return;
     }
-
     const finalPrices = currentResults.allPaths;
-    if (!finalPrices || finalPrices.length === 0) return;
     const successes = finalPrices.filter(p => p >= target).length;
     const prob = ((successes / finalPrices.length) * 100);
-    
     display.innerText = prob.toFixed(1) + "%";
-    if (prob < 30) card.style.background = "var(--pessimistic-red)";
-    else if (prob > 70) card.style.background = "var(--optimistic-green)";
-    else card.style.background = "var(--camac-teal)";
+    card.style.background = (prob < 30) ? "var(--pessimistic-red)" : (prob > 70 ? "var(--optimistic-green)" : "var(--camac-teal)");
 }
 
 function generateSummary() {
     const symbol = (document.getElementById('symbol').value || "ASSET").toUpperCase();
-    const start = currentResults.startPrice;
     const finalN = currentResults.p50[currentResults.p50.length - 1];
-    let changePct = (((finalN - start) / start) * 100).toFixed(1);
-
-    document.getElementById('insightSummary').innerHTML = `
-        <strong>${symbol} Analysis:</strong> Projected median move of <strong>${changePct}%</strong>. 
-        Expected range (10th-90th) is <strong>$${currentResults.p10[currentResults.p10.length-1].toFixed(2)}</strong> to <strong>$${currentResults.p90[currentResults.p90.length-1].toFixed(2)}</strong>.
-    `;
+    let changePct = (((finalN - currentResults.startPrice) / currentResults.startPrice) * 100).toFixed(1);
+    document.getElementById('insightSummary').innerHTML = `<strong>${symbol} Analysis:</strong> Projected median move of <strong>${changePct}%</strong>. Expected range is <strong>$${currentResults.p10[currentResults.p10.length-1].toFixed(2)}</strong> to <strong>$${currentResults.p90[currentResults.p90.length-1].toFixed(2)}</strong>.`;
 }
 
 function resetForm() { location.reload(); }
@@ -397,12 +387,10 @@ function resetForm() { location.reload(); }
 function downloadCSV() {
     if (!currentResults.labels.length) return alert("Generate data first.");
     let csvContent = "data:text/csv;charset=utf-8,Interval,Pessimistic,Neutral,Optimistic\n";
-    currentResults.labels.forEach((l, i) => {
-        csvContent += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`;
-    });
+    currentResults.labels.forEach((l, i) => { csvContent += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", "Equity_Forecast_Data.csv");
+    link.setAttribute("download", "Equity_Forecast.csv");
     link.click();
 }
 

@@ -25,12 +25,12 @@
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background 0.3s ease; }
+        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .stat-card.dark { background: var(--camac-dark); }
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: var(--camac-dark); }
+        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; }
 
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
 
@@ -47,35 +47,30 @@
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
-        button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
+        button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
         #resetBtn { background: #e2e8f0; color: #475569; }
         #exportBtn { background: var(--camac-teal); color: white; }
         #saveImgBtn { background: var(--camac-accent); color: white; }
 
         .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
-        #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
-        .table-wrapper::after { content: "CAMAC CONSULTING"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); font-size: 40px; font-weight: 900; color: rgba(65, 121, 126, 0.05); pointer-events: none; z-index: 1; }
+        .table-wrapper::after { content: "CAMAC CONSULTING"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); font-size: 40px; font-weight: 900; color: rgba(65, 121, 126, 0.05); pointer-events: none; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
 
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
-        .footer-brand span { color: var(--camac-teal); }
-        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; text-transform: uppercase; }
-
-        @media (max-width: 768px) {
-            .controls { grid-template-columns: 1fr; }
-            .stats-bar { grid-template-columns: 1fr; }
-            .btn-group { grid-template-columns: 1fr; }
-        }
+        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; }
+        
+        @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } .stats-bar { grid-template-columns: 1fr; } .btn-group { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -88,7 +83,7 @@
 
     <div class="stats-bar">
         <div class="stat-card dark">
-            <p id="tickerLabel">Entry Price</p>
+            <p>Entry Price</p>
             <h2 id="livePrice">---</h2>
         </div>
         <div class="stat-card" id="probCard">
@@ -96,13 +91,13 @@
             <h2 id="probDisplay">SET TARGET</h2>
         </div>
         <div class="stat-card">
-            <p id="highConfLabel">Optimistic Path (90th)</p>
+            <p>Optimistic Path (90th)</p>
             <h2 id="targetDisplay">---</h2>
         </div>
     </div>
 
     <div id="insightSummary" class="summary-box">
-        <strong>Status:</strong> Analysis pending. Input your asset parameters below, then click <strong>"Generate Forecast"</strong>.
+        <strong>Status:</strong> Analysis pending. Input your asset parameters below.
     </div>
 
     <div class="controls">
@@ -133,14 +128,14 @@
             <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
             <p class="input-note">Fear factor: S&P (15%), Tech (35%), Crypto (70%+).</p>
             
-            <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
+            <div id="driftContext" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px;">
                 <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
             </div>
         </div>
 
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" placeholder="e.g. 30" value="30">
+            <input type="number" id="days" value="30">
             <p class="input-note">Total trading days to forecast into the future.</p>
             
             <label style="margin-top: 15px;">Price Target ($)</label>
@@ -161,22 +156,14 @@
     </div>
 
     <div class="chart-container">
-        <div id="loader">
-            <div class="spinner"></div>
-            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark);">CALCULATING...</p>
-        </div>
+        <div id="loader"><div class="spinner"></div><p style="font-size:10px; margin-top:10px;">CALCULATING...</p></div>
         <canvas id="mainChart"></canvas>
     </div>
 
     <div class="table-wrapper">
         <table id="dataTable">
             <thead>
-                <tr>
-                    <th>Time Interval</th>
-                    <th>Pessimistic (10th)</th>
-                    <th>Neutral (50th)</th>
-                    <th>Optimistic (90th)</th>
-                </tr>
+                <tr><th>Time Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -185,7 +172,7 @@
 
 <div class="footer-nav">
     <div class="footer-content">
-        <div class="footer-brand">Powered by <span>Camac Consulting</span></div>
+        <div class="footer-brand">Powered by CAMAC CONSULTING</div>
         <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">Expand Workspace</a>
     </div>
 </div>
@@ -193,23 +180,6 @@
 <script>
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
-
-const whiteBackgroundPlugin = {
-    id: 'customCanvasBackgroundColor',
-    beforeDraw: (chart) => {
-        const {ctx} = chart;
-        ctx.save();
-        ctx.globalCompositeOperation = 'destination-over';
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.font = 'bold 11px Segoe UI';
-        ctx.fillStyle = 'rgba(65, 121, 126, 0.4)';
-        ctx.textAlign = 'right';
-        ctx.fillText('CAMAC CONSULTING | EQUITY FORECAST', chart.width - 20, 30);
-        ctx.restore();
-    }
-};
 
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
@@ -231,16 +201,17 @@ function setPreset(type, element) {
 }
 
 function updateDriftContext() {
-    const drift = parseFloat(document.getElementById('drift').value);
+    const drift = parseFloat(document.getElementById('drift').value) || 0;
     const vol = parseFloat(document.getElementById('volatility').value) || 0;
     const contextBox = document.getElementById('driftContext');
-    
-    let driftText = drift <= 0 ? "Pessimistic (Bear Market)" : (drift <= 12 ? "Neutral (Baseline Growth)" : "Optimistic (Bull Market)");
-    
+    const riskIndicator = document.getElementById('riskLevel');
+
+    let driftText = drift <= 0 ? "Pessimistic (Bear)" : (drift <= 12 ? "Neutral (Baseline)" : "Optimistic (Bull)");
     let riskText = "Low";
-    let riskColor = "var(--optimistic-green)";
-    if (vol > 60) { riskText = "Extreme (Crypto/Meme)"; riskColor = "#7f1d1d"; }
-    else if (vol > 35) { riskText = "High (Growth/Tech)"; riskColor = "var(--pessimistic-red)"; }
+    let riskColor = "#166534";
+
+    if (vol > 60) { riskText = "Extreme (Crypto)"; riskColor = "#7f1d1d"; }
+    else if (vol > 35) { riskText = "High (Tech)"; riskColor = "#991b1b"; }
     else if (vol > 20) { riskText = "Moderate (Equity)"; riskColor = "#b45309"; }
 
     contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
@@ -249,45 +220,35 @@ function updateDriftContext() {
 function analyzeAndRun() {
     const manualPrice = parseFloat(document.getElementById('manualPrice').value);
     const symbol = document.getElementById('symbol').value;
-    const days = parseInt(document.getElementById('days').value);
-
-    if (!symbol) return alert("Please enter an Asset Name / Ticker.");
-    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Please enter a valid Current Price.");
-    if (isNaN(days) || days <= 0) return alert("Please enter a valid Time Horizon.");
-
+    if (!symbol || isNaN(manualPrice)) return alert("Please enter Asset Name and Price.");
+    
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
-    runMonteCarlo(manualPrice);
-}
-
-function runMonteCarlo(startPrice) {
-    const days = parseInt(document.getElementById('days').value);
-    const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 50000);
-    const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
-    const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
-
-    const dt = 1 / 252;
-    const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
-    const dailyVol = annualVol * Math.sqrt(dt);
-
+    
     setTimeout(() => {
+        const days = parseInt(document.getElementById('days').value) || 30;
+        const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 20000);
+        const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
+        const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
+
+        const dt = 1 / 252;
+        const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
+        const dailyVol = annualVol * Math.sqrt(dt);
+
         let results = Array.from({length: days + 1}, () => []);
         for (let s = 0; s < sims; s++) {
-            let p = startPrice;
+            let p = manualPrice;
             results[0].push(p);
             for (let t = 1; t <= days; t++) {
-                p *= Math.exp(dailyDrift + (dailyVol * boxMuller()));
+                let u = Math.random(), v = Math.random();
+                let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
+                p *= Math.exp(dailyDrift + (dailyVol * z));
                 results[t].push(p);
             }
         }
         updateUI(results, days, sims);
         document.getElementById('loader').style.display = 'none';
-    }, 50);
-}
-
-function boxMuller() {
-    let u = Math.random(), v = Math.random();
-    return Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
+    }, 100);
 }
 
 function updateUI(results, days, sims) {
@@ -307,7 +268,10 @@ function updateUI(results, days, sims) {
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
-    generateSummary();
+    const symbol = document.getElementById('symbol').value.toUpperCase();
+    const change = (((p50[days] - results[0][0]) / results[0][0]) * 100).toFixed(1);
+    document.getElementById('insightSummary').innerHTML = `<strong>${symbol} Analysis:</strong> Median projection of <strong>${change}%</strong> over ${days} days.`;
+    
     calculateProbability();
 
     if (chart) chart.destroy();
@@ -316,34 +280,36 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: 'rgba(22, 101, 52, 0.1)', borderWidth: 2, tension: 0.1, pointRadius: 0 },
-                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', borderWidth: 4, tension: 0.1, pointRadius: 0 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, tension: 0.1, pointRadius: 0 }
+                { label: '90th', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0 },
+                { label: '50th', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+                { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0 }
             ]
         },
-        options: { 
-            responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { position: 'bottom', labels: { usePointStyle: true } }
-            },
-            scales: { y: { ticks: { callback: v => '$' + v } } }
-        },
-        plugins: [whiteBackgroundPlugin]
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }
 
 function calculateProbability() {
     const target = parseFloat(document.getElementById('priceTarget').value);
-    const display = document.getElementById('probDisplay');
-    const card = document.getElementById('probCard');
+    if (isNaN(target) || !currentResults.allPaths.length) return;
+    const successes = currentResults.allPaths.filter(p => p >= target).length;
+    const prob = (successes / currentResults.allPaths.length) * 100;
+    document.getElementById('probDisplay').innerText = prob.toFixed(1) + "%";
+    document.getElementById('probCard').style.background = prob < 30 ? "#991b1b" : (prob > 70 ? "#166534" : "#41797e");
+}
 
-    if (isNaN(target) || target === 0) {
-        display.innerText = "SET TARGET";
-        card.style.background = "var(--camac-teal)";
-        return;
-    }
-
-    const finalPrices = currentResults.allPaths;
-    if (!finalPrices || finalPrices.length === 0) return;
-    const successes = finalPrices.filter(p => p >= target).length;
+function resetForm() { location.reload(); }
+function downloadCSV() {
+    let csv = "Day,Pessimistic,Neutral,Optimistic\n";
+    currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.setAttribute('href', url); a.setAttribute('download', 'forecast.csv'); a.click();
+}
+function saveChartImage() {
+    const a = document.createElement('a'); a.href = chart.toBase64Image(); a.download = 'chart.png'; a.click();
+}
+window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };
+</script>
+</body>
+</html>

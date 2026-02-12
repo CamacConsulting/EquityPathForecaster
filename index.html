@@ -15,7 +15,7 @@
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
             --neutral-slate: #1e293b;
-            --benchmark-gold: #b45309;
+            --benchmark-gray: #94a3b8; /* Professional Neutral Gray */
         }
 
         body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
@@ -52,7 +52,7 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--benchmark-gold); }
+        input:checked + .slider { background-color: var(--benchmark-gray); }
         input:checked + .slider:before { transform: translateX(14px); }
 
         input.limit-exceeded { border-color: var(--pessimistic-red); background-color: #fff1f2; border-width: 2px; }
@@ -63,10 +63,13 @@
 
         .chart-container { height: 450px; margin-bottom: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; position: relative; }
 
+        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: var(--camac-dark); color: white; padding: 12px; text-align: center; text-transform: uppercase; font-size: 10px; }
+        td { border-bottom: 1px solid #eee; padding: 12px; text-align: center; }
+
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
-
-        @media (max-width: 768px) { .controls, .summary-content, .stats-bar { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -99,14 +102,14 @@
     <div id="insightSummary" class="summary-box">
         <h3>Executive Summary</h3>
         <div class="summary-content" id="summaryTarget">
-            <p>Waiting for simulation data... Enter asset parameters below to generate a thorough market outlook.</p>
+            <p>Waiting for simulation data... Generate a forecast to view the thorough analysis.</p>
         </div>
     </div>
 
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
-            <input type="text" id="symbol" placeholder="e.g. NVDA">
+            <input type="text" id="symbol" placeholder="e.g. BTC">
             <p class="input-note">The name of the equity or asset being analyzed.</p>
             
             <label style="margin-top: 15px;">Market Sentiment</label>
@@ -122,9 +125,9 @@
                     <input type="checkbox" id="benchmarkSwitch">
                     <span class="slider"></span>
                 </label>
-                <span style="font-size: 10px; font-weight: bold; color: var(--benchmark-gold);">S&P 500 BENCHMARK MODE</span>
+                <span style="font-size: 10px; font-weight: bold; color: var(--benchmark-gray);">S&P 500 BENCHMARK MODE</span>
             </div>
-            <p class="input-note">Overlay the S&P 500 as a market baseline.</p>
+            <p class="input-note">Overlay the S&P 500 as a neutral baseline.</p>
         </div>
 
         <div>
@@ -167,6 +170,22 @@
     <div class="chart-container">
         <canvas id="mainChart"></canvas>
     </div>
+
+    <div class="table-wrapper">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Time Interval</th>
+                    <th>Pessimistic (10th)</th>
+                    <th>Neutral (50th)</th>
+                    <th>Optimistic (90th)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="4" style="color:#94a3b8; padding:40px;">No data generated yet.</td></tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="footer-nav">
@@ -182,7 +201,6 @@ function setPreset(type, element) {
     const volInput = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     if(element) element.classList.add('active');
-
     if (type === 'pessimistic') { driftInput.value = "-5.0"; volInput.value = "45"; }
     else if (type === 'neutral') { driftInput.value = "10.0"; volInput.value = "20"; }
     else if (type === 'optimistic') { driftInput.value = "20.0"; volInput.value = "15"; }
@@ -206,10 +224,7 @@ function enforceSimLimit(input) {
 function analyzeAndRun() {
     const price = parseFloat(document.getElementById('manualPrice').value);
     const ticker = (document.getElementById('symbol').value || "Asset").toUpperCase();
-    const simsInput = document.getElementById('sims');
-    let sims = Math.min(100000, Math.max(1, parseInt(simsInput.value) || 1000));
-    simsInput.value = sims;
-    
+    const sims = Math.min(100000, parseInt(document.getElementById('sims').value) || 1000);
     const days = parseInt(document.getElementById('days').value) || 30;
     const isBenchmark = document.getElementById('benchmarkSwitch').checked;
 
@@ -234,6 +249,7 @@ function analyzeAndRun() {
         }
     }
 
+    // Neutral S&P Benchmark Median Curve
     for (let t = 1; t <= days; t++) {
         bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5 * 0.15**2) * dt));
     }
@@ -242,25 +258,25 @@ function analyzeAndRun() {
 }
 
 function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
-    let labels = [], p10 = [], p50 = [], p90 = [];
+    let labels = [], p10 = [], p50 = [], p90 = [], tableHtml = "";
     for (let t = 0; t <= days; t++) {
         results[t].sort();
         labels.push(`Day ${t}`);
-        p10.push(results[t][Math.floor(sims * 0.1)]);
-        p50.push(results[t][Math.floor(sims * 0.5)]);
-        p90.push(results[t][Math.floor(sims * 0.9)]);
+        let v10 = results[t][Math.floor(sims * 0.1)];
+        let v50 = results[t][Math.floor(sims * 0.5)];
+        let v90 = results[t][Math.floor(sims * 0.9)];
+        p10.push(v10); p50.push(v50); p90.push(v90);
+        if (t % 5 === 0 || t === days) {
+            tableHtml += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
+        }
     }
 
     currentResults = { allPaths: results[days], p10, p50, p90, benchmark: bPath, labels };
-    
+    document.getElementById('tableBody').innerHTML = tableHtml;
     document.getElementById('medianDisplay').innerText = `$${p50[days].toFixed(2)}`;
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
 
-    const startP = results[0][0];
-    const endP = p50[days];
-    const changePct = (((endP - startP) / startP) * 100).toFixed(2);
-    const rangeLow = p10[days].toFixed(2);
-    const rangeHigh = p90[days].toFixed(2);
+    const startP = results[0][0], endP = p50[days], changePct = (((endP - startP) / startP) * 100).toFixed(2);
     const mktPerf = (((bPath[days] - bPath[0]) / bPath[0]) * 100).toFixed(2);
     const alpha = (changePct - mktPerf).toFixed(2);
 
@@ -268,12 +284,12 @@ function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
         <div class="summary-item">
             <strong>Directional Bias:</strong> Trajectory for ${ticker} is <strong>${changePct > 0 ? 'Bullish' : 'Bearish'}</strong>, with a median projection of <strong>$${endP.toFixed(2)}</strong> (${changePct}%).
             <br><br>
-            <strong>Statistical Range:</strong> Based on ${sims.toLocaleString()} iterations, there is an 80% probability the price settles between <strong>$${rangeLow}</strong> and <strong>$${rangeHigh}</strong>.
+            <strong>Statistical Range:</strong> 80% probability that price settles between <strong>$${p10[days].toFixed(2)}</strong> and <strong>$${p90[days].toFixed(2)}</strong>.
         </div>
         <div class="summary-item">
-            <strong>Benchmark Analysis:</strong> Compared to an S&P 500 baseline (${mktPerf}%), this asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> by <strong>${Math.abs(alpha)}%</strong>.
+            <strong>Benchmark Analysis:</strong> Compared to S&P 500 baseline (${mktPerf}%), asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> market by <strong>${Math.abs(alpha)}%</strong>.
             <br><br>
-            <strong>Risk Profile:</strong> Volatility of ${document.getElementById('volatility').value}% results in a price spread of <strong>$${(rangeHigh - rangeLow).toFixed(2)}</strong>.
+            <strong>Risk Profile:</strong> Volatility of ${document.getElementById('volatility').value}% creates a price spread of <strong>$${(p90[days] - p10[days]).toFixed(2)}</strong>.
         </div>
     `;
 
@@ -283,17 +299,13 @@ function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
         data: {
             labels,
             datasets: [
-                { label: 'Median Projection', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
-                { label: 'S&P 500 Benchmark', data: isBenchmark ? bPath : [], borderColor: '#b45309', borderDash: [5, 5], borderWidth: 2, pointRadius: 0 },
-                { label: '90th Percentile', data: p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
-                { label: '10th Percentile', data: p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
+                { label: 'Neutral Median', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+                { label: 'S&P 500 (Baseline)', data: isBenchmark ? bPath : [], borderColor: '#94a3b8', borderDash: [6, 4], borderWidth: 2, pointRadius: 0 },
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
+                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
             ]
         },
-        options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom' } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
     calculateProbability();
 }
@@ -310,10 +322,7 @@ function downloadCSV() {
     let csv = "Day,Pessimistic,Neutral,Optimistic\n";
     currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
     const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `Forecaster_Export.csv`;
-    a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Forecaster_Data.csv`; a.click();
 }
 
 function saveChartImage() {
@@ -321,15 +330,10 @@ function saveChartImage() {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
     const sourceCanvas = document.getElementById('mainChart');
-    tempCanvas.width = sourceCanvas.width;
-    tempCanvas.height = sourceCanvas.height;
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCanvas.width = sourceCanvas.width; tempCanvas.height = sourceCanvas.height;
+    ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     ctx.drawImage(sourceCanvas, 0, 0);
-    const a = document.createElement('a');
-    a.href = tempCanvas.toDataURL('image/png');
-    a.download = `Market_Forecast_Chart.png`;
-    a.click();
+    const a = document.createElement('a'); a.href = tempCanvas.toDataURL('image/png'); a.download = `Market_Forecast.png`; a.click();
 }
 </script>
 </body>

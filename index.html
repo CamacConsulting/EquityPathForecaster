@@ -46,7 +46,6 @@
         .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
-        /* Advanced Drawer Styling */
         .advanced-toggle { font-size: 10px; color: var(--camac-teal); cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 10px; display: inline-block; }
         #advanced-drawer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; }
 
@@ -154,8 +153,8 @@
             <p class="input-note"><i>Used to calculate success probability.</i></p>
             
             <label style="margin-top: 15px;">Simulations</label>
-            <input type="number" id="sims" value="1000">
-            <p class="input-note"><i>Higher = more statistical accuracy.</i></p>
+            <input type="number" id="sims" value="1000" max="100000">
+            <p class="input-note"><i>Max: 100,000 simulations for high precision.</i></p>
         </div>
         
         <div class="btn-group">
@@ -280,7 +279,15 @@ function analyzeAndRun() {
 
 function runMonteCarlo(startPrice) {
     const days = parseInt(document.getElementById('days').value);
-    const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 50000);
+    // Limit to 100,000 simulations
+    let simsInput = parseInt(document.getElementById('sims').value) || 1000;
+    const sims = Math.min(simsInput, 100000);
+    
+    // Update the UI input if the user went over the limit
+    if (simsInput > 100000) {
+        document.getElementById('sims').value = 100000;
+    }
+
     const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
     const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
 

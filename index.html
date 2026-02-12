@@ -32,6 +32,40 @@
 
         .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; line-height: 1.6; color: #475569; }
 
+        /* Tooltip Style */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            background: var(--camac-accent);
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 5px;
+            position: relative;
+            vertical-align: middle;
+        }
+        .info-icon:hover::after {
+            content: "Confidence is calculated as a function of volatility and time. Higher market turbulence or longer durations decrease forecast certainty.";
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--camac-dark);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 10px;
+            font-weight: normal;
+            line-height: 1.4;
+            z-index: 10;
+        }
+
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
 
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
@@ -74,7 +108,6 @@
             .controls { grid-template-columns: 1fr; } 
             .stats-bar { grid-template-columns: 1fr; } 
             .btn-group { grid-template-columns: 1fr; } 
-            .summary-box > div { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
@@ -96,7 +129,7 @@
             <h2 id="probDisplay">SET TARGET</h2>
         </div>
         <div class="stat-card">
-            <p>Optimistic Path (90th)</p>
+            <p>Optimistic (90th)</p>
             <h2 id="targetDisplay">---</h2>
         </div>
     </div>
@@ -272,7 +305,7 @@ function updateUI(results, days, sims) {
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
-    // Summary Analysis Logic
+    // Executive Summary with Confidence Level & Hover Icon
     const symbol = document.getElementById('symbol').value.toUpperCase();
     const startP = results[0][0];
     const medP = p50[days];
@@ -281,23 +314,24 @@ function updateUI(results, days, sims) {
     const volVal = parseFloat(document.getElementById('volatility').value);
     
     const changePct = (((medP - startP) / startP) * 100).toFixed(1);
-    const rangeSpread = (((highP - lowP) / startP) * 100).toFixed(1);
-    let volDesc = volVal < 20 ? "Stable/Low" : (volVal < 40 ? "Elevated/Growth" : "Extreme/Speculative");
-    let outlook = changePct > 0 ? "Bullish Bias" : "Bearish Bias";
+    const rangePct = (((highP - lowP) / startP) * 100).toFixed(1);
+    
+    let confidenceScore = Math.max(15, 100 - (volVal * 0.8) - (days * 0.15));
+    let outlook = changePct > 0 ? "bullish" : "bearish";
 
     document.getElementById('insightSummary').innerHTML = `
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <strong style="color:var(--camac-dark)">EXECUTIVE SUMMARY: ${symbol}</strong><br>
-                Over a <strong>${days}-day</strong> horizon, the median projected price is <strong>$${medP.toFixed(2)}</strong> (a ${changePct}% move). 
-                The model identifies a <strong>${outlook}</strong> based on current drift parameters.
-            </div>
-            <div style="border-left: 1px solid #e2e8f0; padding-left: 20px;">
-                <strong style="color:var(--camac-teal)">RISK PROFILE:</strong><br>
-                Market conditions are categorized as <strong>${volDesc}</strong>. 
-                Expect a <strong>${rangeSpread}%</strong> price variance between the 10th and 90th percentiles, indicating potential for significant "fat-tail" price action.
-            </div>
-        </div>
+        <strong style="color:var(--camac-dark)">EXECUTIVE SUMMARY: ${symbol}</strong><br>
+        Based on a simulation of ${sims.toLocaleString()} outcomes, the asset shows a <strong>${outlook} bias</strong> over the next <strong>${days} days</strong>. 
+        The median price target is projected at <strong>$${medP.toFixed(2)}</strong>, representing a <strong>${changePct}%</strong> move. 
+        The model anticipates a price spread of <strong>${rangePct}%</strong> between the extreme percentiles. 
+        <br><br>
+        <span style="background:var(--camac-dark); color:white; padding: 2px 8px; border-radius:3px; font-size:11px; font-weight:bold;">
+            CONFIDENCE LEVEL: ${confidenceScore.toFixed(0)}%
+        </span>
+        <span class="info-icon">i</span>
+        <span style="font-size:11px; font-style:italic; margin-left:10px;">
+            (Score adjusted for ${volVal}% volatility and ${days}-day duration)
+        </span>
     `;
     
     calculateProbability();
@@ -321,7 +355,6 @@ function updateUI(results, days, sims) {
                 legend: { position: 'bottom' },
                 tooltip: {
                     backgroundColor: 'rgba(0, 25, 53, 0.9)',
-                    titleFont: { weight: 'bold' },
                     callbacks: {
                         label: function(context) {
                             return context.dataset.label + ': $' + context.parsed.y.toFixed(2);

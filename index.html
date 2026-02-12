@@ -61,7 +61,6 @@
 
         .methodology-note { font-size: 10px; color: #64748b; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 10px; line-height: 1.4; }
 
-        /* Table Watermark Styling */
         .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
         .table-watermark {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -195,18 +194,19 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
-// Plugin to draw watermark on live chart and PNG
+// Branding Plugin: Renders Watermark in TOP RIGHT
 const brandingPlugin = {
     id: 'branding',
     afterDraw: (chart) => {
         const ctx = chart.ctx;
         const width = chart.width;
-        const height = chart.height;
         ctx.save();
-        ctx.font = 'bold 16px Arial';
-        ctx.fillStyle = 'rgba(0, 25, 53, 0.15)'; // Camac Dark with transparency
+        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = 'rgba(0, 25, 53, 0.15)'; 
         ctx.textAlign = 'right';
-        ctx.fillText('CAMAC CONSULTING', width - 20, height - 20);
+        ctx.textBaseline = 'top';
+        // Positioned top right with a small padding
+        ctx.fillText('CAMAC CONSULTING', width - 15, 15);
         ctx.restore();
     }
 };
@@ -343,18 +343,19 @@ function saveChartImage() {
     tempCanvas.height = canvas.height;
     const tempCtx = tempCanvas.getContext('2d');
     
-    // Solid background
+    // Background
     tempCtx.fillStyle = '#ffffff';
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     
-    // Draw chart content
+    // Chart
     tempCtx.drawImage(canvas, 0, 0);
     
-    // Ensure watermark is rendered on the final PNG
+    // Export-Specific Watermark (Top Right)
     tempCtx.font = 'bold 16px Arial';
     tempCtx.fillStyle = 'rgba(0, 25, 53, 0.4)'; 
     tempCtx.textAlign = 'right';
-    tempCtx.fillText('CAMAC CONSULTING', tempCanvas.width - 20, tempCanvas.height - 20);
+    tempCtx.textBaseline = 'top';
+    tempCtx.fillText('CAMAC CONSULTING', tempCanvas.width - 20, 20);
 
     const link = document.createElement('a');
     link.href = tempCanvas.toDataURL('image/png');

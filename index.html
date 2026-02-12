@@ -180,7 +180,7 @@
             
             <label style="margin-top: 15px;">Simulations</label>
             <input type="number" id="sims" value="1000">
-            <p class="input-note">High precision cap: 1,000,000.</p>
+            <p class="input-note">Precision cap: 100,000.</p>
         </div>
         
         <div class="btn-group">
@@ -257,12 +257,10 @@ function analyzeAndRun() {
     const symbol = document.getElementById('symbol').value;
     if (!symbol || isNaN(manualPrice)) return alert("Please enter Asset Name and Price.");
     
-    const sims = Math.max(1, Math.min(parseInt(document.getElementById('sims').value) || 1000, 1000000));
+    const sims = Math.max(1, Math.min(parseInt(document.getElementById('sims').value) || 1000, 100000));
     document.getElementById('loader').style.display = 'block';
-    document.getElementById('loaderText').innerText = sims > 50000 ? "CALCULATING (Large Simulation)..." : "CALCULATING...";
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
     
-    // Using requestAnimationFrame to allow UI to update before heavy calculation starts
     requestAnimationFrame(() => {
         setTimeout(() => {
             const days = Math.max(1, parseInt(document.getElementById('days').value) || 30);
@@ -273,7 +271,6 @@ function analyzeAndRun() {
             const muDaily = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
             const sigmaDaily = annualVol * Math.sqrt(dt);
 
-            // Memory efficient approach for high simulation counts
             let results = Array.from({length: days + 1}, () => new Float32Array(sims));
             
             for (let s = 0; s < sims; s++) {

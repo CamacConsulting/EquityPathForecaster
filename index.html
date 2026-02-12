@@ -112,7 +112,7 @@
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note">Adjusts drift and volatility presets automatically.</p>
+            <p class="input-note">Automatically aligns Drift and Volatility to specific market regimes.</p>
         </div>
 
         <div>
@@ -230,7 +230,6 @@ function analyzeAndRun() {
         const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
         const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
 
-        // Daily Math
         const dt = 1 / 252;
         const muDaily = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
         const sigmaDaily = annualVol * Math.sqrt(dt);
@@ -240,7 +239,6 @@ function analyzeAndRun() {
             let p = manualPrice;
             results[0].push(p);
             for (let t = 1; t <= days; t++) {
-                // Geometric Brownian Motion Logic
                 let u = Math.random(), v = Math.random();
                 let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
                 p *= Math.exp(muDaily + (sigmaDaily * z));

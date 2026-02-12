@@ -71,12 +71,6 @@
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
         .footer-brand span { color: var(--camac-teal); }
         .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; text-transform: uppercase; }
-        
-        @media (max-width: 768px) {
-            .controls { grid-template-columns: 1fr; }
-            .stats-bar { grid-template-columns: 1fr; }
-            .btn-group { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
@@ -99,7 +93,7 @@
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. AAPL">
-            <p class="input-note">Used for chart labeling and file naming.</p>
+            <p class="input-note">Identifies the specific equity or index being simulated.</p>
             
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
@@ -131,7 +125,7 @@
 
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" value="30">
+            <input type="number" id="days" placeholder="Days...">
             <p class="input-note">Duration of the forecast period.</p>
 
             <label style="margin-top: 15px;">Price Target ($)</label>
@@ -223,8 +217,12 @@ function updateDriftContext() {
 }
 
 function analyzeAndRun() {
-    const price = parseFloat(document.getElementById('manualPrice').value), sym = document.getElementById('symbol').value;
-    if (!sym || !price) return alert("Enter Asset and Price.");
+    const price = parseFloat(document.getElementById('manualPrice').value);
+    const sym = document.getElementById('symbol').value;
+    const days = parseInt(document.getElementById('days').value);
+    
+    if (!sym || !price || !days) return alert("Please fill in Ticker, Price, and Time Horizon.");
+    
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
     setTimeout(() => { runMonteCarlo(price); }, 100);
@@ -298,7 +296,7 @@ function updateUI(res, days, sims) {
 function calculateProbability() {
     const tgt = parseFloat(document.getElementById('priceTarget').value);
     const d = document.getElementById('probDisplay'), c = document.getElementById('probCard');
-    if (!tgt) return;
+    if (!tgt || !currentResults.allPaths.length) return;
     const p = (currentResults.allPaths.filter(x => x >= tgt).length / currentResults.allPaths.length) * 100;
     d.innerText = p.toFixed(1) + "%";
     c.style.background = p < 30 ? "var(--pessimistic-red)" : (p > 70 ? "var(--optimistic-green)" : "var(--camac-teal)");

@@ -55,18 +55,21 @@
         input:checked + .slider { background-color: var(--camac-dark); }
         input:checked + .slider:before { transform: translateX(14px); }
 
-        input.limit-exceeded { border-color: var(--pessimistic-red); background-color: #fff1f2; border-width: 2px; }
-        #simWarning { display: none; color: var(--pessimistic-red); font-size: 9px; font-weight: bold; margin-top: 4px; text-transform: uppercase; }
-
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; }
 
         .chart-container { height: 450px; margin-bottom: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; position: relative; }
 
-        .table-wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .table-wrapper { position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; }
+        .table-watermark {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 60px; font-weight: 900; color: rgba(0, 25, 53, 0.04);
+            white-space: nowrap; pointer-events: none; text-transform: uppercase; letter-spacing: 10px; z-index: 0;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 12px; position: relative; z-index: 1; background: transparent; }
         th { background: var(--camac-dark); color: white; padding: 12px; text-align: center; text-transform: uppercase; font-size: 10px; }
-        td { border-bottom: 1px solid #eee; padding: 12px; text-align: center; }
+        td { border-bottom: 1px solid #eee; padding: 12px; text-align: center; background: transparent; }
 
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
@@ -81,22 +84,10 @@
     </div>
 
     <div class="stats-bar">
-        <div class="stat-card dark">
-            <p>Entry Price</p>
-            <h2 id="livePrice">$0.00</h2>
-        </div>
-        <div class="stat-card" id="probCard">
-            <p>Prob. of Target</p>
-            <h2 id="probDisplay">-%</h2>
-        </div>
-        <div class="stat-card">
-            <p>Median Forecast</p>
-            <h2 id="medianDisplay">$0.00</h2>
-        </div>
-        <div class="stat-card">
-            <p>90th Percentile</p>
-            <h2 id="targetDisplay">$0.00</h2>
-        </div>
+        <div class="stat-card dark"><p>Entry Price</p><h2 id="livePrice">$0.00</h2></div>
+        <div class="stat-card" id="probCard"><p>Prob. of Target</p><h2 id="probDisplay">-%</h2></div>
+        <div class="stat-card"><p>Median Forecast</p><h2 id="medianDisplay">$0.00</h2></div>
+        <div class="stat-card"><p>90th Percentile</p><h2 id="targetDisplay">$0.00</h2></div>
     </div>
 
     <div id="insightSummary" class="summary-box">
@@ -110,15 +101,12 @@
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. BTC">
-            <p class="input-note">The name of the equity or asset being analyzed.</p>
-            
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
                 <button id="btn-pess" class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
                 <button id="btn-neut" class="btn-preset btn-neut active" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-
             <div class="benchmark-toggle">
                 <label class="switch">
                     <input type="checkbox" id="benchmarkSwitch" onchange="toggleBenchmarkLine()">
@@ -126,38 +114,17 @@
                 </label>
                 <span style="font-size: 10px; font-weight: bold; color: var(--camac-dark);">S&P 500 BENCHMARK</span>
             </div>
-            <p class="input-note">Overlay the S&P 500 as a neutral baseline.</p>
         </div>
-
         <div>
-            <label>Current Price ($)</label>
-            <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <p class="input-note">The starting market price for the simulation.</p>
-            
-            <label style="margin-top: 15px;">Annual Drift (%)</label>
-            <input type="number" id="drift" value="10.0">
-            <p class="input-note">Annualized growth rate before volatility drag.</p>
-            
-            <label style="margin-top: 15px;">Annual Volatility (%)</label>
-            <input type="number" id="volatility" value="20">
-            <p class="input-note">Fear factor: S&P (15%), Tech (35%), Crypto (70%+).</p>
+            <label>Current Price ($)</label><input type="number" id="manualPrice" placeholder="0.00" step="0.01">
+            <label style="margin-top: 15px;">Annual Drift (%)</label><input type="number" id="drift" value="10.0">
+            <label style="margin-top: 15px;">Annual Volatility (%)</label><input type="number" id="volatility" value="20">
         </div>
-
         <div>
-            <label>Time Horizon (Days)</label>
-            <input type="number" id="days" value="30">
-            <p class="input-note">Total trading days for forecast.</p>
-            
-            <label style="margin-top: 15px;">Price Target ($)</label>
-            <input type="number" id="priceTarget" placeholder="Enter target..." oninput="calculateProbability()">
-            <p class="input-note">Desired price to calculate probability of success.</p>
-            
-            <label style="margin-top: 15px;">Simulations (Max 100k)</label>
-            <input type="number" id="sims" value="1000" min="1" max="100000" oninput="validateSimCount(this)" onblur="enforceSimLimit(this)">
-            <div id="simWarning">⚠ MAX LIMIT IS 100,000</div>
-            <p class="input-note">Precision cap: 100,000.</p>
+            <label>Time Horizon (Days)</label><input type="number" id="days" value="30">
+            <label style="margin-top: 15px;">Price Target ($)</label><input type="number" id="priceTarget" placeholder="Enter target..." oninput="calculateProbability()">
+            <label style="margin-top: 15px;">Simulations (Max 100k)</label><input type="number" id="sims" value="1000" min="1" max="100000" onblur="enforceSimLimit(this)">
         </div>
-        
         <div class="btn-group">
             <button id="runBtn" class="main-btn" style="background:var(--camac-dark); color:white;" onclick="analyzeAndRun()">Generate Forecast</button>
             <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="downloadCSV()">Export CSV</button>
@@ -171,38 +138,40 @@
     </div>
 
     <div class="table-wrapper">
+        <div class="table-watermark">CAMAC CONSULTING</div>
         <table id="dataTable">
-            <thead>
-                <tr>
-                    <th>Time Interval</th>
-                    <th>Pessimistic (10th)</th>
-                    <th>Neutral (50th)</th>
-                    <th>Optimistic (90th)</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="4" style="color:#94a3b8; padding:40px;">No data generated yet.</td></tr>
-            </tbody>
+            <thead><tr><th>Time Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr></thead>
+            <tbody id="tableBody"><tr><td colspan="4" style="color:#94a3b8; padding:40px;">No data generated yet.</td></tr></tbody>
         </table>
     </div>
 </div>
 
-<div class="footer-nav">
-    <div class="footer-brand">Powered by CAMAC CONSULTING</div>
-</div>
+<div class="footer-nav"><div class="footer-brand">Powered by CAMAC CONSULTING</div></div>
 
 <script>
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], benchmark: [], labels: [] };
 
-// Permanent Crosshair Plugin
-const crosshairPlugin = {
-    id: 'crosshair',
+// Combined Crosshair & Chart Watermark Plugin
+const customBrandingPlugin = {
+    id: 'customBranding',
     afterDraw: (chart) => {
+        const ctx = chart.ctx;
+        const width = chart.width;
+        
+        // 1. Draw Watermark (Top Right)
+        ctx.save();
+        ctx.font = 'bold 11px "Segoe UI", Arial, sans-serif';
+        ctx.fillStyle = 'rgba(0, 25, 53, 0.15)';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('CAMAC CONSULTING', width - 25, 10);
+        ctx.restore();
+
+        // 2. Draw Crosshair (if active)
         if (chart.tooltip?._active?.length) {
             const x = chart.tooltip._active[0].element.x;
             const yAxis = chart.scales.y;
-            const ctx = chart.ctx;
             ctx.save();
             ctx.beginPath();
             ctx.moveTo(x, yAxis.top);
@@ -216,7 +185,7 @@ const crosshairPlugin = {
     }
 };
 
-Chart.register(crosshairPlugin);
+Chart.register(customBrandingPlugin);
 
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
@@ -228,19 +197,8 @@ function setPreset(type, element) {
     else if (type === 'optimistic') { driftInput.value = "20.0"; volInput.value = "15"; }
 }
 
-function validateSimCount(input) {
-    const warning = document.getElementById('simWarning');
-    if (parseInt(input.value) > 100000) {
-        input.classList.add('limit-exceeded');
-        warning.style.display = 'block';
-    } else {
-        input.classList.remove('limit-exceeded');
-        warning.style.display = 'none';
-    }
-}
-
 function enforceSimLimit(input) {
-    if (parseInt(input.value) > 100000) { input.value = 100000; validateSimCount(input); }
+    if (parseInt(input.value) > 100000) input.value = 100000;
 }
 
 function toggleBenchmarkLine() {
@@ -268,8 +226,7 @@ function analyzeAndRun() {
     let bPath = [price]; 
 
     for (let s = 0; s < sims; s++) {
-        let p = price;
-        paths[0][s] = p;
+        let p = price; paths[0][s] = p;
         for (let t = 1; t <= days; t++) {
             let u = Math.random(), v = Math.random();
             let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
@@ -277,10 +234,7 @@ function analyzeAndRun() {
             paths[t][s] = p;
         }
     }
-
-    for (let t = 1; t <= days; t++) {
-        bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5 * 0.15**2) * dt));
-    }
+    for (let t = 1; t <= days; t++) bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5 * 0.15**2) * dt));
 
     updateUI(paths, bPath, ticker, days, sims, isBenchmark);
 }
@@ -290,13 +244,9 @@ function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
     for (let t = 0; t <= days; t++) {
         results[t].sort();
         labels.push(`Day ${t}`);
-        let v10 = results[t][Math.floor(sims * 0.1)];
-        let v50 = results[t][Math.floor(sims * 0.5)];
-        let v90 = results[t][Math.floor(sims * 0.9)];
+        let v10 = results[t][Math.floor(sims * 0.1)], v50 = results[t][Math.floor(sims * 0.5)], v90 = results[t][Math.floor(sims * 0.9)];
         p10.push(v10); p50.push(v50); p90.push(v90);
-        if (t % 5 === 0 || t === days) {
-            tableHtml += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
-        }
+        if (t % 5 === 0 || t === days) tableHtml += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
     }
 
     currentResults = { allPaths: results[days], p10, p50, p90, benchmark: bPath, labels };
@@ -304,21 +254,13 @@ function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
     document.getElementById('medianDisplay').innerText = `$${p50[days].toFixed(2)}`;
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
 
-    const startP = results[0][0], endP = p50[days], changePct = (((endP - startP) / startP) * 100).toFixed(2);
+    const changePct = (((p50[days] - p50[0]) / p50[0]) * 100).toFixed(2);
     const mktPerf = (((bPath[days] - bPath[0]) / bPath[0]) * 100).toFixed(2);
     const alpha = (changePct - mktPerf).toFixed(2);
 
     document.getElementById('summaryTarget').innerHTML = `
-        <div class="summary-item">
-            <strong>Directional Bias:</strong> Trajectory for ${ticker} is <strong>${changePct > 0 ? 'Bullish' : 'Bearish'}</strong>, with a median projection of <strong>$${endP.toFixed(2)}</strong> (${changePct}%).
-            <br><br>
-            <strong>Statistical Range:</strong> 80% probability that price settles between <strong>$${p10[days].toFixed(2)}</strong> and <strong>$${p90[days].toFixed(2)}</strong>.
-        </div>
-        <div class="summary-item">
-            <strong>Benchmark Analysis:</strong> Compared to S&P 500 baseline (${mktPerf}%), asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> market by <strong>${Math.abs(alpha)}%</strong>.
-            <br><br>
-            <strong>Risk Profile:</strong> Volatility of ${document.getElementById('volatility').value}% creates a price spread of <strong>$${(p90[days] - p10[days]).toFixed(2)}</strong>.
-        </div>
+        <div class="summary-item"><strong>Directional Bias:</strong> Trajectory for ${ticker} is <strong>${changePct > 0 ? 'Bullish' : 'Bearish'}</strong>, with a median projection of <strong>$${p50[days].toFixed(2)}</strong> (${changePct}%).<br><br><strong>Statistical Range:</strong> 80% probability that price settles between <strong>$${p10[days].toFixed(2)}</strong> and <strong>$${p90[days].toFixed(2)}</strong>.</div>
+        <div class="summary-item"><strong>Benchmark Analysis:</strong> Compared to S&P 500 (${mktPerf}%), asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> market by <strong>${Math.abs(alpha)}%</strong>.<br><br><strong>Risk Profile:</strong> Volatility of ${document.getElementById('volatility').value}% creates a spread of <strong>$${(p90[days] - p10[days]).toFixed(2)}</strong>.</div>
     `;
 
     if (chart) chart.destroy();
@@ -334,10 +276,9 @@ function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
             ]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false, 
+            responsive: true, maintainAspectRatio: false, 
             interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { position: 'bottom' }, tooltip: { enabled: true } } 
+            plugins: { legend: { position: 'bottom' } } 
         }
     });
     calculateProbability();
@@ -353,19 +294,11 @@ function calculateProbability() {
 function downloadCSV() {
     if (!currentResults.labels.length) return alert("Generate forecast first.");
     const isBenchActive = document.getElementById('benchmarkSwitch').checked;
-    
-    let csv = "Day,Pessimistic(10th),Neutral(50th),Optimistic(90th)";
-    if (isBenchActive) csv += ",S&P500_Benchmark";
-    csv += "\n";
-
+    let csv = "Day,Pessimistic(10th),Neutral(50th),Optimistic(90th)" + (isBenchActive ? ",S&P500_Benchmark" : "") + "\n";
     currentResults.labels.forEach((l, i) => { 
-        csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}`;
-        if (isBenchActive) csv += `,${currentResults.benchmark[i]}`;
-        csv += "\n";
+        csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}` + (isBenchActive ? `,${currentResults.benchmark[i]}` : "") + "\n";
     });
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Forecaster_Export.csv`; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = `Forecaster_Export.csv`; a.click();
 }
 
 function saveChartImage() {

@@ -18,7 +18,7 @@
         }
 
         body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
-        .container { max-width: 1100px; margin: auto; padding-bottom: 160px; } 
+        .container { max-width: 1100px; margin: auto; padding-bottom: 180px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; }
@@ -58,18 +58,26 @@
 
         .chart-container { height: 450px; margin-bottom: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; position: relative; }
 
-        .table-wrapper { position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; }
+        /* Table & Watermark */
+        .table-wrapper { position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; transition: max-height 0.3s ease-out; max-height: 400px; }
+        .table-wrapper.expanded { max-height: 2000px; }
+        
         .table-watermark {
-            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
             font-size: 60px; font-weight: 900; color: rgba(0, 25, 53, 0.04);
             white-space: nowrap; pointer-events: none; text-transform: uppercase; letter-spacing: 10px; z-index: 0;
         }
 
         table { width: 100%; border-collapse: collapse; font-size: 12px; position: relative; z-index: 1; background: transparent; }
-        th { background: var(--camac-dark); color: white; padding: 12px; text-align: center; text-transform: uppercase; font-size: 10px; }
+        th { background: var(--camac-dark); color: white; padding: 12px; text-align: center; text-transform: uppercase; font-size: 10px; position: sticky; top: 0; }
         td { border-bottom: 1px solid #eee; padding: 12px; text-align: center; background: transparent; }
 
-        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; }
+        /* Expand Button */
+        .expand-bar { background: #f8fafc; text-align: center; padding: 10px; border-top: 1px solid #eee; cursor: pointer; transition: 0.2s; position: relative; z-index: 2; }
+        .expand-bar:hover { background: #f1f5f9; }
+        .expand-bar span { font-size: 10px; font-weight: 800; color: var(--camac-dark); text-transform: uppercase; letter-spacing: 1px; }
+
+        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 100; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
     </style>
 </head>
@@ -135,12 +143,15 @@
         <canvas id="mainChart"></canvas>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-wrapper" id="tableWrapper">
         <div class="table-watermark">CAMAC CONSULTING</div>
         <table id="dataTable">
             <thead><tr><th>Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr></thead>
             <tbody id="tableBody"><tr><td colspan="4" style="color:#94a3b8; padding:40px;">No data generated.</td></tr></tbody>
         </table>
+    </div>
+    <div class="expand-bar" onclick="toggleExpand()">
+        <span id="expandText">Expand Data View ↓</span>
     </div>
 </div>
 
@@ -180,22 +191,21 @@ const customBrandingPlugin = {
 
 Chart.register(customBrandingPlugin);
 
+function toggleExpand() {
+    const wrapper = document.getElementById('tableWrapper');
+    const text = document.getElementById('expandText');
+    wrapper.classList.toggle('expanded');
+    text.innerText = wrapper.classList.contains('expanded') ? "Collapse Data View ↑" : "Expand Data View ↓";
+}
+
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
     const volInput = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     element.classList.add('active');
-    
-    if (type === 'pessimistic') { 
-        driftInput.value = "-5.0"; 
-        volInput.value = "35"; // Adjusted from 45%
-    } else if (type === 'neutral') { 
-        driftInput.value = "10.0"; 
-        volInput.value = "20"; 
-    } else if (type === 'optimistic') { 
-        driftInput.value = "20.0"; 
-        volInput.value = "15"; 
-    }
+    if (type === 'pessimistic') { driftInput.value = "-5.0"; volInput.value = "35"; }
+    else if (type === 'neutral') { driftInput.value = "10.0"; volInput.value = "20"; }
+    else if (type === 'optimistic') { driftInput.value = "20.0"; volInput.value = "15"; }
 }
 
 function enforceSimLimit(input) { if (parseInt(input.value) > 100000) input.value = 100000; }

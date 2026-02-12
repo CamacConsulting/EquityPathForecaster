@@ -15,29 +15,23 @@
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
             --neutral-slate: #1e293b;
-            --stress-orange: #ea580c;
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
         .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
         
-        /* Header */
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
-        /* KPI Bar */
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: 0.3s; }
+        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .stat-card.dark { background: var(--camac-dark); }
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        /* Summary Box */
         .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; line-height: 1.6; color: var(--camac-dark); }
-        .stress-alert { color: var(--pessimistic-red); font-weight: bold; border-bottom: 1px solid #fee2e2; margin-bottom: 10px; padding-bottom: 5px; display: block; text-transform: uppercase; font-size: 11px; }
 
-        /* Controls */
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
@@ -53,28 +47,25 @@
         .advanced-toggle { font-size: 10px; color: var(--camac-teal); cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 10px; display: inline-block; }
         #advanced-drawer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; }
 
-        /* Buttons */
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 10px; }
         #runBtn { background: var(--camac-dark); color: white; }
-        #stressBtn { background: var(--stress-orange); color: white; }
         #resetBtn { background: #e2e8f0; color: #475569; }
         #exportBtn { background: var(--camac-teal); color: white; }
         #saveImgBtn { background: var(--camac-accent); color: white; }
 
-        /* Chart Area */
         .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
         #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Table */
         .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
+        .return-pos { color: var(--optimistic-green); font-weight: bold; }
+        .return-neg { color: var(--pessimistic-red); font-weight: bold; }
 
-        /* Sticky Footer */
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
@@ -99,7 +90,7 @@
     <div class="stats-bar">
         <div class="stat-card dark"><p>Entry Price</p><h2 id="livePrice">---</h2></div>
         <div class="stat-card" id="probCard"><p>Prob. of Success</p><h2 id="probDisplay">SET TARGET</h2></div>
-        <div class="stat-card"><p>Optimistic Path (90th)</p><h2 id="targetDisplay">---</h2></div>
+        <div class="stat-card"><p>Optimistic Path</p><h2 id="targetDisplay">---</h2></div>
     </div>
 
     <div id="insightSummary" class="summary-box"><strong>Status:</strong> Analysis pending.</div>
@@ -108,37 +99,52 @@
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. AAPL">
+            <p class="input-note">Used for chart labeling and file naming.</p>
+            
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
                 <button id="btn-pess" class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
+            <p class="input-note">Quick-select risk profiles.</p>
         </div>
+
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
+            <p class="input-note">The starting market value for simulations.</p>
+
             <span class="advanced-toggle" onclick="toggleAdvanced()">+ SHOW ADVANCED SETTINGS</span>
             <div id="advanced-drawer">
                 <label>Expected Drift (Annual %)</label>
                 <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
+                <p class="input-note">Annualized growth rate.</p>
+                
                 <label style="margin-top: 15px;">Annual Volatility (%)</label>
                 <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
+                <p class="input-note">Statistical standard deviation of returns.</p>
+                
                 <div id="driftContext" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px;">Neutral Baseline.</div>
             </div>
         </div>
+
         <div>
             <label>Time Horizon (Days)</label>
             <input type="number" id="days" value="30">
+            <p class="input-note">Duration of the forecast period.</p>
+
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Goal Price..." oninput="calculateProbability()">
+            <p class="input-note">Target for success probability calculation.</p>
+
             <label style="margin-top: 15px;">Simulations (max 100k)</label>
             <input type="number" id="sims" value="50000" max="100000">
+            <p class="input-note">Number of paths generated.</p>
         </div>
         
         <div class="btn-group">
-            <button id="runBtn" class="main-btn" onclick="analyzeAndRun(false)">Generate Forecast</button>
-            <button id="stressBtn" class="main-btn" onclick="triggerStressTest()">Stress Test</button>
+            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
             <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
             <button id="exportBtn" class="main-btn" onclick="downloadCSV()">CSV</button>
             <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">PNG</button>
@@ -148,14 +154,22 @@
     <div class="chart-container">
         <div id="loader">
             <div class="spinner"></div>
-            <p id="loaderText" style="font-size:10px; margin-top:15px; font-weight:bold;">CALCULATING...</p>
+            <p style="font-size:10px; margin-top:15px; font-weight:bold;">CALCULATING SIMULATIONS...</p>
         </div>
         <canvas id="mainChart"></canvas>
     </div>
 
     <div class="table-wrapper">
         <table id="dataTable">
-            <thead><tr><th>Interval</th><th>Pessimistic</th><th>Neutral</th><th>Optimistic</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Interval</th>
+                    <th>Pessimistic</th>
+                    <th>Median</th>
+                    <th>Optimistic</th>
+                    <th>Proj. Return %</th>
+                </tr>
+            </thead>
             <tbody></tbody>
         </table>
     </div>
@@ -170,31 +184,17 @@
 
 <script>
 let chart;
-let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0, isStress: false };
+let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
-// Crosshair Plugin
 const crosshairPlugin = {
     id: 'crosshair',
     afterDraw: (chart) => {
         if (chart.tooltip?._active?.length) {
-            const x = chart.tooltip._active[0].element.x;
-            const y = chart.tooltip._active[0].element.y;
-            const yAxis = chart.scales.y;
-            const xAxis = chart.scales.x;
-            const ctx = chart.ctx;
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(x, yAxis.top);
-            ctx.lineTo(x, yAxis.bottom);
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(0, 25, 53, 0.4)';
-            ctx.setLineDash([3, 3]);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(xAxis.left, y);
-            ctx.lineTo(xAxis.right, y);
-            ctx.stroke();
-            ctx.restore();
+            const x = chart.tooltip._active[0].element.x, y = chart.tooltip._active[0].element.y;
+            const yAxis = chart.scales.y, xAxis = chart.scales.x, ctx = chart.ctx;
+            ctx.save(); ctx.beginPath(); ctx.moveTo(x, yAxis.top); ctx.lineTo(x, yAxis.bottom);
+            ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(0, 25, 53, 0.4)'; ctx.setLineDash([3, 3]); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(xAxis.left, y); ctx.lineTo(xAxis.right, y); ctx.stroke(); ctx.restore();
         }
     }
 };
@@ -222,23 +222,15 @@ function updateDriftContext() {
     ctx.innerHTML = `<strong>Status:</strong> ${dr <= 0 ? 'Pessimistic' : 'Growth'} | <strong>Vol:</strong> ${vo}%`;
 }
 
-function triggerStressTest() {
-    const v = document.getElementById('volatility'), d = document.getElementById('drift');
-    v.value = Math.round(parseFloat(v.value) * 2.5); d.value = "-20.0";
-    updateDriftContext();
-    document.getElementById('loaderText').innerText = "BLACK SWAN SIMULATION ACTIVE...";
-    analyzeAndRun(true);
-}
-
-function analyzeAndRun(isStress) {
+function analyzeAndRun() {
     const price = parseFloat(document.getElementById('manualPrice').value), sym = document.getElementById('symbol').value;
     if (!sym || !price) return alert("Enter Asset and Price.");
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
-    setTimeout(() => { runMonteCarlo(price, isStress); }, 100);
+    setTimeout(() => { runMonteCarlo(price); }, 100);
 }
 
-function runMonteCarlo(startPrice, isStress) {
+function runMonteCarlo(startPrice) {
     const days = parseInt(document.getElementById('days').value);
     let sIn = parseInt(document.getElementById('sims').value) || 50000;
     if (sIn > 100000) sIn = 100000;
@@ -252,7 +244,6 @@ function runMonteCarlo(startPrice, isStress) {
             res[t].push(p);
         }
     }
-    currentResults.isStress = isStress;
     updateUI(res, days, sims);
     document.getElementById('loader').style.display = 'none';
 }
@@ -260,33 +251,43 @@ function runMonteCarlo(startPrice, isStress) {
 function updateUI(res, days, sims) {
     let lbls = [], p10 = [], p50 = [], p90 = [], rows = "";
     const i10 = Math.floor(sims * 0.1), i50 = Math.floor(sims * 0.5), i90 = Math.floor(sims * 0.9);
+    const startPrice = res[0][0];
+
     for (let t = 0; t <= days; t++) {
         res[t].sort((a,b) => a-b); lbls.push(`D${t}`);
-        p10.push(res[t][i10]); p50.push(res[t][i50]); p90.push(res[t][i90]);
-        if (t % 5 === 0 || t === days) rows += `<tr><td>Day ${t}</td><td>$${res[t][i10].toFixed(2)}</td><td>$${res[t][i50].toFixed(2)}</td><td>$${res[t][i90].toFixed(2)}</td></tr>`;
+        const p10v = res[t][i10], p50v = res[t][i50], p90v = res[t][i90];
+        p10.push(p10v); p50.push(p50v); p90.push(p90v);
+
+        if (t % 5 === 0 || t === days) {
+            const ret = ((p50v - startPrice) / startPrice * 100).toFixed(2);
+            const retClass = ret >= 0 ? "return-pos" : "return-neg";
+            rows += `<tr>
+                <td>Day ${t}</td>
+                <td>$${p10v.toFixed(2)}</td>
+                <td>$${p50v.toFixed(2)}</td>
+                <td>$${p90v.toFixed(2)}</td>
+                <td class="${retClass}">${ret}%</td>
+            </tr>`;
+        }
     }
-    currentResults = { ...currentResults, allPaths: res[days], p10, p50, p90, labels: lbls, startPrice: res[0][0] };
+    currentResults = { allPaths: res[days], p10, p50, p90, labels: lbls, startPrice: startPrice };
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
     const sym = document.getElementById('symbol').value.toUpperCase();
-    const maxDD = (((p10[days] - res[0][0]) / res[0][0]) * 100).toFixed(2);
-    document.getElementById('insightSummary').innerHTML = currentResults.isStress ? 
-        `<span class="stress-alert">⚠ Stress Test Active</span><strong>${sym}:</strong> 90% VaR is <strong>${maxDD}%</strong>. Worst-case target: $${p10[days].toFixed(2)}.` :
-        `<strong>${sym}:</strong> Median target $${p50[days].toFixed(2)}. Range: $${p10[days].toFixed(2)} - $${p90[days].toFixed(2)}.`;
+    document.getElementById('insightSummary').innerHTML = `<strong>${sym} Analysis:</strong> Median target $${p50[days].toFixed(2)}. Projected Range (80% confidence): $${p10[days].toFixed(2)} - $${p90[days].toFixed(2)}.`;
     
     calculateProbability();
     if (chart) chart.destroy();
     chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
         type: 'line',
         data: { labels: lbls, datasets: [
-            { label: '90th', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0 },
-            { label: '50th', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
-            { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0 }
+            { label: 'Optimistic Path', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0 },
+            { label: 'Median Path', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+            { label: 'Pessimistic Path', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0 }
         ]},
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: { tooltip: { enabled: true } }
         },
@@ -307,8 +308,11 @@ function resetForm() { location.reload(); }
 
 function downloadCSV() {
     const name = document.getElementById('symbol').value || "Forecast";
-    let csv = "data:text/csv;charset=utf-8,Day,P10,P50,P90\n";
-    currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
+    let csv = "data:text/csv;charset=utf-8,Day,Pessimistic,Median,Optimistic,Proj_Return_Pct\n";
+    currentResults.labels.forEach((l, i) => { 
+        const ret = ((currentResults.p50[i] - currentResults.startPrice) / currentResults.startPrice * 100).toFixed(2);
+        csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]},${ret}\n`; 
+    });
     const link = document.createElement("a"); link.href = encodeURI(csv); link.download = `${name}_Data.csv`; link.click();
 }
 

@@ -20,7 +20,7 @@
         body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
         .container { max-width: 1100px; margin: auto; padding-bottom: 180px; } 
         
-        /* Branding & Header */
+        /* Header */
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; }
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
@@ -32,16 +32,12 @@
         .stat-card h2 { margin: 5px 0 0 0; font-size: 24px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-        /* Summary */
-        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid var(--camac-dark); padding: 25px; margin-bottom: 20px; border-radius: 4px; }
-        .summary-box h3 { margin-top: 0; font-size: 14px; text-transform: uppercase; color: var(--camac-dark); border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        .summary-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 13px; line-height: 1.6; color: #334155; }
-
-        /* Input Controls */
+        /* Controls & Italic Notes */
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; box-sizing: border-box; }
-        
+        .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
+
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
@@ -60,9 +56,10 @@
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; }
 
+        /* Chart */
         .chart-container { height: 450px; margin-bottom: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; position: relative; }
 
-        /* Main Table Style */
+        /* Table */
         .table-wrapper { position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; height: 300px; overflow-y: auto; }
         .table-watermark {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
@@ -74,29 +71,24 @@
         th { background: var(--camac-dark); color: white; padding: 12px; text-align: center; text-transform: uppercase; font-size: 10px; position: sticky; top: 0; z-index: 10; }
         td { border-bottom: 1px solid #eee; padding: 12px; text-align: center; background: transparent; }
 
-        /* Expand Button */
+        /* Expand/Full Page Link */
         .expand-bar { background: var(--camac-dark); text-align: center; padding: 15px; border-radius: 0 0 8px 8px; cursor: pointer; transition: 0.2s; margin-top: -1px; }
         .expand-bar:hover { background: var(--camac-teal); }
         .expand-bar span { font-size: 11px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* FULL PAGE OVERLAY (The "New Page") */
+        /* Full Page Overlay */
         #fullPageOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 1000; overflow-y: auto; padding: 40px; box-sizing: border-box;
         }
         .overlay-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--camac-dark); padding-bottom: 20px; margin-bottom: 30px; }
         .overlay-title h2 { margin: 0; color: var(--camac-dark); text-transform: uppercase; letter-spacing: 2px; }
-        .overlay-actions { display: flex; gap: 15px; }
         .close-btn { background: #eee; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
-        .print-btn { background: var(--camac-teal); color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
 
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 100; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
 
-        @media print {
-            .no-print { display: none !important; }
-            #fullPageOverlay { position: absolute; padding: 0; }
-        }
+        @media print { .no-print { display: none !important; } #fullPageOverlay { position: absolute; padding: 0; } }
     </style>
 </head>
 <body>
@@ -116,27 +108,48 @@
 
     <div class="controls">
         <div>
-            <label>Asset Ticker</label><input type="text" id="symbol" placeholder="e.g. BTC">
+            <label>Asset Ticker</label>
+            <input type="text" id="symbol" placeholder="e.g. BTC">
+            <p class="input-note">Identifier for charting and reporting.</p>
+            
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
                 <button class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
                 <button class="btn-preset btn-neut active" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
+            <p class="input-note">Auto-fills Drift and Volatility expectations.</p>
+
             <div class="benchmark-toggle">
                 <label class="switch"><input type="checkbox" id="benchmarkSwitch" onchange="toggleBenchmarkLine()"><span class="slider"></span></label>
                 <span style="font-size: 10px; font-weight: bold;">S&P 500 BENCHMARK</span>
             </div>
         </div>
         <div>
-            <label>Current Price ($)</label><input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <label style="margin-top: 15px;">Annual Drift (%)</label><input type="number" id="drift" value="10.0">
-            <label style="margin-top: 15px;">Annual Volatility (%)</label><input type="number" id="volatility" value="20">
+            <label>Current Price ($)</label>
+            <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
+            <p class="input-note">The starting valuation for the simulation.</p>
+            
+            <label style="margin-top: 15px;">Annual Drift (%)</label>
+            <input type="number" id="drift" value="10.0">
+            <p class="input-note">Expected annual rate of return (µ).</p>
+            
+            <label style="margin-top: 15px;">Annual Volatility (%)</label>
+            <input type="number" id="volatility" value="20">
+            <p class="input-note">Expected price variance / risk (σ).</p>
         </div>
         <div>
-            <label>Time Horizon (Days)</label><input type="number" id="days" value="30">
-            <label style="margin-top: 15px;">Price Target ($)</label><input type="number" id="priceTarget" oninput="calculateProbability()">
-            <label style="margin-top: 15px;">Simulations</label><input type="number" id="sims" value="1000">
+            <label>Time Horizon (Days)</label>
+            <input type="number" id="days" value="30">
+            <p class="input-note">Duration of the simulated path.</p>
+            
+            <label style="margin-top: 15px;">Price Target ($)</label>
+            <input type="number" id="priceTarget" oninput="calculateProbability()">
+            <p class="input-note">Calculates the probability of touching this price.</p>
+            
+            <label style="margin-top: 15px;">Simulations</label>
+            <input type="number" id="sims" value="1000">
+            <p class="input-note">Higher numbers (up to 100k) increase accuracy.</p>
         </div>
         <div class="btn-group">
             <button class="main-btn" style="background:var(--camac-dark); color:white;" onclick="analyzeAndRun()">Generate Forecast</button>
@@ -152,11 +165,11 @@
         <div class="table-watermark">CAMAC CONSULTING</div>
         <table id="mainDataTable">
             <thead><tr><th>Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr></thead>
-            <tbody id="tableBody"><tr><td colspan="4">No data generated.</td></tr></tbody>
+            <tbody id="tableBody"><tr><td colspan="4" style="padding:40px; color:#94a3b8;">No data generated.</td></tr></tbody>
         </table>
     </div>
     <div class="expand-bar" onclick="openAuditPage()">
-        <span>Audit Detailed Data & Full Audit Log →</span>
+        <span>Launch Full Audit View →</span>
     </div>
 </div>
 
@@ -164,22 +177,17 @@
     <div class="overlay-header">
         <div class="overlay-title">
             <p style="color:var(--camac-teal); font-weight:bold; margin:0; font-size:12px;">CAMAC CONSULTING</p>
-            <h2>Simulation Audit Log</h2>
+            <h2>Comprehensive Audit Log</h2>
         </div>
-        <div class="overlay-actions no-print">
-            <button class="print-btn" onclick="window.print()">Print to PDF</button>
-            <button class="close-btn" onclick="closeAuditPage()">Back to Forecaster</button>
+        <div class="no-print">
+            <button class="close-btn" onclick="closeAuditPage()">Close Audit</button>
         </div>
     </div>
-    
     <div id="auditContent">
-        <div class="table-wrapper" style="height: auto; overflow: visible;">
-            <div class="table-watermark">AUDIT LOG</div>
-            <table id="auditTable" style="background: white;">
-                <thead><tr><th>Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th><th>S&P 500 Benchmark</th></tr></thead>
-                <tbody id="auditTableBody"></tbody>
-            </table>
-        </div>
+        <table id="auditTable" style="width:100%; border-collapse:collapse;">
+            <thead><tr><th>Day</th><th>Pessimistic</th><th>Neutral</th><th>Optimistic</th><th>Benchmark</th></tr></thead>
+            <tbody id="auditTableBody"></tbody>
+        </table>
     </div>
 </div>
 
@@ -189,45 +197,20 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], benchmark: [], labels: [] };
 
-// Branding Plugin
-const brandingPlugin = {
-    id: 'branding',
+// Watermark for Chart
+const chartBranding = {
+    id: 'chartBranding',
     afterDraw: (chart) => {
         const ctx = chart.ctx;
         ctx.save();
         ctx.font = 'bold 11px Arial';
         ctx.fillStyle = 'rgba(0, 25, 53, 0.15)';
         ctx.textAlign = 'right';
-        ctx.fillText('CAMAC CONSULTING', chart.width - 20, 20);
+        ctx.fillText('CAMAC CONSULTING', chart.width - 25, 20);
         ctx.restore();
     }
 };
-Chart.register(brandingPlugin);
-
-function openAuditPage() {
-    if(!currentResults.labels.length) return alert("Please generate a forecast first.");
-    const body = document.getElementById('auditTableBody');
-    let html = "";
-    
-    // Detailed every-day audit for the "new page"
-    for (let t = 0; t < currentResults.labels.length; t++) {
-        html += `<tr>
-            <td>Day ${t}</td>
-            <td>$${currentResults.p10[t].toFixed(2)}</td>
-            <td>$${currentResults.p50[t].toFixed(2)}</td>
-            <td>$${currentResults.p90[t].toFixed(2)}</td>
-            <td>$${currentResults.benchmark[t].toFixed(2)}</td>
-        </tr>`;
-    }
-    body.innerHTML = html;
-    document.getElementById('fullPageOverlay').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeAuditPage() {
-    document.getElementById('fullPageOverlay').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
+Chart.register(chartBranding);
 
 function setPreset(type, element) {
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
@@ -238,35 +221,46 @@ function setPreset(type, element) {
     else if (type === 'optimistic') { d.value = "20.0"; v.value = "15"; }
 }
 
+function openAuditPage() {
+    if(!currentResults.labels.length) return alert("Generate data first.");
+    let html = "";
+    for(let i=0; i<currentResults.labels.length; i++) {
+        html += `<tr><td>Day ${i}</td><td>$${currentResults.p10[i].toFixed(2)}</td><td>$${currentResults.p50[i].toFixed(2)}</td><td>$${currentResults.p90[i].toFixed(2)}</td><td>$${currentResults.benchmark[i].toFixed(2)}</td></tr>`;
+    }
+    document.getElementById('auditTableBody').innerHTML = html;
+    document.getElementById('fullPageOverlay').style.display = 'block';
+}
+
+function closeAuditPage() { document.getElementById('fullPageOverlay').style.display = 'none'; }
+
 function toggleBenchmarkLine() { if(chart) { chart.data.datasets[1].data = document.getElementById('benchmarkSwitch').checked ? currentResults.benchmark : []; chart.update(); } }
 
 function analyzeAndRun() {
     const price = parseFloat(document.getElementById('manualPrice').value);
     const sims = Math.min(100000, parseInt(document.getElementById('sims').value) || 1000);
     const days = parseInt(document.getElementById('days').value) || 30;
-    if (isNaN(price)) return alert("Set starting price.");
+    if(isNaN(price)) return alert("Input price.");
 
     const dt = 1/252, drift = (parseFloat(document.getElementById('drift').value)||0)/100, vol = (parseFloat(document.getElementById('volatility').value)||0)/100;
     let paths = Array.from({length: days + 1}, () => new Float32Array(sims));
-    let bPath = [price]; 
+    let bPath = [price];
 
-    for (let s = 0; s < sims; s++) {
+    for(let s=0; s<sims; s++) {
         let p = price; paths[0][s] = p;
-        for (let t = 1; t <= days; t++) {
-            let u = Math.random(), v = Math.random();
-            let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
-            p *= Math.exp((drift - 0.5 * vol**2) * dt + vol * Math.sqrt(dt) * z);
+        for(let t=1; t<=days; t++) {
+            let z = Math.sqrt(-2.0 * Math.log(Math.random()||0.001)) * Math.cos(2.0 * Math.PI * Math.random());
+            p *= Math.exp((drift - 0.5 * vol**2)*dt + vol*Math.sqrt(dt)*z);
             paths[t][s] = p;
         }
     }
-    for (let t = 1; t <= days; t++) bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5 * 0.15**2) * dt));
+    for(let t=1; t<=days; t++) bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5*0.15**2)*dt));
 
-    let labels = [], p10 = [], p50 = [], p90 = [], tableHtml = "";
-    for (let t = 0; t <= days; t++) {
-        results = paths[t].sort();
+    let labels=[], p10=[], p50=[], p90=[], tableHtml="";
+    for(let t=0; t<=days; t++) {
+        let sorted = paths[t].sort();
         labels.push(`Day ${t}`);
-        p10.push(results[Math.floor(sims*0.1)]); p50.push(results[Math.floor(sims*0.5)]); p90.push(results[Math.floor(sims*0.9)]);
-        if (t % 5 === 0 || t === days) tableHtml += `<tr><td>Day ${t}</td><td>$${p10[t].toFixed(2)}</td><td>$${p50[t].toFixed(2)}</td><td>$${p90[t].toFixed(2)}</td></tr>`;
+        p10.push(sorted[Math.floor(sims*0.1)]); p50.push(sorted[Math.floor(sims*0.5)]); p90.push(sorted[Math.floor(sims*0.9)]);
+        if(t%5===0 || t===days) tableHtml += `<tr><td>Day ${t}</td><td>$${p10[t].toFixed(2)}</td><td>$${p50[t].toFixed(2)}</td><td>$${p90[t].toFixed(2)}</td></tr>`;
     }
 
     currentResults = { allPaths: paths[days], p10, p50, p90, benchmark: bPath, labels };
@@ -275,26 +269,26 @@ function analyzeAndRun() {
     document.getElementById('medianDisplay').innerText = `$${p50[days].toFixed(2)}`;
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
 
-    if (chart) chart.destroy();
+    if(chart) chart.destroy();
     chart = new Chart(document.getElementById('mainChart'), {
         type: 'line',
         data: {
             labels,
             datasets: [
                 { label: 'Median', data: p50, borderColor: '#1e293b', borderWidth: 3, pointRadius: 0 },
-                { label: 'S&P 500', data: document.getElementById('benchmarkSwitch').checked ? bPath : [], borderColor: '#94a3b8', borderDash: [5,5], borderWidth: 2, pointRadius: 0 },
+                { label: 'S&P 500', data: document.getElementById('benchmarkSwitch').checked ? bPath : [], borderColor: '#94a3b8', borderDash:[5,5], borderWidth: 2, pointRadius: 0 },
                 { label: '90th', data: p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
                 { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        options: { responsive:true, maintainAspectRatio:false, plugins: { legend: { position: 'bottom' } } }
     });
     calculateProbability();
 }
 
 function calculateProbability() {
     const target = parseFloat(document.getElementById('priceTarget').value);
-    if (isNaN(target) || !currentResults.allPaths.length) return;
+    if(isNaN(target) || !currentResults.allPaths.length) return;
     const prob = (currentResults.allPaths.reduce((acc, p) => p >= target ? acc + 1 : acc, 0) / currentResults.allPaths.length) * 100;
     document.getElementById('probDisplay').innerText = prob.toFixed(1) + "%";
 }

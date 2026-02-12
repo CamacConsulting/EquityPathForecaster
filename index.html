@@ -61,8 +61,14 @@
 
         .methodology-note { font-size: 10px; color: #64748b; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 10px; line-height: 1.4; }
 
+        /* Table Watermark Styling */
         .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
+        .table-watermark {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; opacity: 0.04; z-index: 1;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='100'%3E%3Ctext x='0' y='50' font-family='Arial' font-size='14' fill='%23001935' transform='rotate(-20)'%3ECAMAC CONSULTING%3C/text%3E%3C/svg%3E");
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; background: transparent; }
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
         .return-pos { color: var(--optimistic-green); font-weight: bold; }
@@ -162,6 +168,7 @@
     </div>
 
     <div class="table-wrapper">
+        <div class="table-watermark"></div>
         <table id="dataTable">
             <thead>
                 <tr>
@@ -187,6 +194,22 @@
 <script>
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
+
+// Plugin to draw watermark on live chart and PNG
+const brandingPlugin = {
+    id: 'branding',
+    afterDraw: (chart) => {
+        const ctx = chart.ctx;
+        const width = chart.width;
+        const height = chart.height;
+        ctx.save();
+        ctx.font = 'bold 16px Arial';
+        ctx.fillStyle = 'rgba(0, 25, 53, 0.15)'; // Camac Dark with transparency
+        ctx.textAlign = 'right';
+        ctx.fillText('CAMAC CONSULTING', width - 20, height - 20);
+        ctx.restore();
+    }
+};
 
 const crosshairPlugin = {
     id: 'crosshair',
@@ -287,7 +310,7 @@ function updateUI(res, days, sims) {
             interaction: { mode: 'index', intersect: false },
             plugins: { tooltip: { enabled: true } }
         },
-        plugins: [crosshairPlugin]
+        plugins: [crosshairPlugin, brandingPlugin]
     });
 }
 
@@ -319,9 +342,20 @@ function saveChartImage() {
     tempCanvas.width = canvas.width;
     tempCanvas.height = canvas.height;
     const tempCtx = tempCanvas.getContext('2d');
+    
+    // Solid background
     tempCtx.fillStyle = '#ffffff';
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    
+    // Draw chart content
     tempCtx.drawImage(canvas, 0, 0);
+    
+    // Ensure watermark is rendered on the final PNG
+    tempCtx.font = 'bold 16px Arial';
+    tempCtx.fillStyle = 'rgba(0, 25, 53, 0.4)'; 
+    tempCtx.textAlign = 'right';
+    tempCtx.fillText('CAMAC CONSULTING', tempCanvas.width - 20, tempCanvas.height - 20);
+
     const link = document.createElement('a');
     link.href = tempCanvas.toDataURL('image/png');
     link.download = `${name}_Forecast_Chart.png`;

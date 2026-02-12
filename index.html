@@ -46,6 +46,10 @@
         .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
+        /* Advanced Drawer Styling */
+        .advanced-toggle { font-size: 10px; color: var(--camac-teal); cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 10px; display: inline-block; }
+        #advanced-drawer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; }
+
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
         #runBtn { background: var(--camac-dark); color: white; }
@@ -109,7 +113,7 @@
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. AAPL">
-            <p class="input-note">Enter the asset name for chart labeling.</p>
+            <p class="input-note"><i>The identifier used for chart labeling.</i></p>
             
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
@@ -117,39 +121,41 @@
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note">Sets Drift and Volatility based on outlook.</p>
+            <p class="input-note"><i>Presets for underlying drift and volatility.</i></p>
         </div>
 
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <p class="input-note">The starting price of the simulation.</p>
-            
-            <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
-            <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
-            <p class="input-note">Average annual growth rate (return).</p>
-            
-            <label style="margin-top: 15px;">Annual Volatility (%)</label>
-            <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
-            <p class="input-note">Statistical measure of price dispersion.</p>
-            
-            <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
-                <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
+            <p class="input-note"><i>The starting market value of the asset.</i></p>
+
+            <span class="advanced-toggle" onclick="toggleAdvanced()">+ SHOW ADVANCED MODEL SETTINGS</span>
+
+            <div id="advanced-drawer">
+                <label>Expected Drift (Annual %)</label>
+                <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
+                
+                <label style="margin-top: 15px;">Annual Volatility (%)</label>
+                <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
+                
+                <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
+                    <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
+                </div>
             </div>
         </div>
 
         <div>
             <label>Time Horizon (Days)</label>
             <input type="number" id="days" placeholder="e.g. 30" value="30">
-            <p class="input-note">Length of the forecast period.</p>
+            <p class="input-note"><i>The number of trading days to project.</i></p>
             
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <p class="input-note">Goal price for probability calculation.</p>
+            <p class="input-note"><i>Used to calculate success probability.</i></p>
             
             <label style="margin-top: 15px;">Simulations</label>
             <input type="number" id="sims" value="1000">
-            <p class="input-note">Number of random paths (1k-10k).</p>
+            <p class="input-note"><i>Higher = more statistical accuracy.</i></p>
         </div>
         
         <div class="btn-group">
@@ -193,6 +199,18 @@
 <script>
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
+
+function toggleAdvanced() {
+    const drawer = document.getElementById('advanced-drawer');
+    const toggle = document.querySelector('.advanced-toggle');
+    if (drawer.style.display === 'block') {
+        drawer.style.display = 'none';
+        toggle.innerText = '+ SHOW ADVANCED MODEL SETTINGS';
+    } else {
+        drawer.style.display = 'block';
+        toggle.innerText = '- HIDE ADVANCED MODEL SETTINGS';
+    }
+}
 
 const whiteBackgroundPlugin = {
     id: 'customCanvasBackgroundColor',

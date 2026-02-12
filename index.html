@@ -47,6 +47,14 @@
         .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
         .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
 
+        .benchmark-toggle { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--camac-dark); }
+        input:checked + .slider:before { transform: translateX(14px); }
+
         input.limit-exceeded { border-color: var(--pessimistic-red); background-color: #fff1f2; border-width: 2px; }
         #simWarning { display: none; color: var(--pessimistic-red); font-size: 9px; font-weight: bold; margin-top: 4px; text-transform: uppercase; }
 
@@ -110,7 +118,15 @@
                 <button id="btn-neut" class="btn-preset btn-neut active" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note">Automatically aligns Drift and Volatility.</p>
+
+            <div class="benchmark-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="benchmarkSwitch" onchange="toggleBenchmarkLine()">
+                    <span class="slider"></span>
+                </label>
+                <span style="font-size: 10px; font-weight: bold; color: var(--camac-dark);">S&P 500 BENCHMARK</span>
+            </div>
+            <p class="input-note">Overlay the S&P 500 as a neutral baseline.</p>
         </div>
 
         <div>
@@ -139,7 +155,7 @@
             <label style="margin-top: 15px;">Simulations (Max 100k)</label>
             <input type="number" id="sims" value="1000" min="1" max="100000" oninput="validateSimCount(this)" onblur="enforceSimLimit(this)">
             <div id="simWarning">⚠ MAX LIMIT IS 100,000</div>
-            <p class="input-note">Precision cap: 100,000 simulations.</p>
+            <p class="input-note">Precision cap: 100,000.</p>
         </div>
         
         <div class="btn-group">
@@ -227,11 +243,19 @@ function enforceSimLimit(input) {
     if (parseInt(input.value) > 100000) { input.value = 100000; validateSimCount(input); }
 }
 
+function toggleBenchmarkLine() {
+    if (!chart) return;
+    const isChecked = document.getElementById('benchmarkSwitch').checked;
+    chart.data.datasets[1].data = isChecked ? currentResults.benchmark : [];
+    chart.update();
+}
+
 function analyzeAndRun() {
     const price = parseFloat(document.getElementById('manualPrice').value);
     const ticker = (document.getElementById('symbol').value || "Asset").toUpperCase();
     const sims = Math.min(100000, parseInt(document.getElementById('sims').value) || 1000);
     const days = parseInt(document.getElementById('days').value) || 30;
+    const isBenchmark = document.getElementById('benchmarkSwitch').checked;
 
     if (isNaN(price)) return alert("Please enter a starting price.");
     document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
@@ -254,15 +278,14 @@ function analyzeAndRun() {
         }
     }
 
-    // Fixed S&P Benchmark Calculation
     for (let t = 1; t <= days; t++) {
         bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5 * 0.15**2) * dt));
     }
 
-    updateUI(paths, bPath, ticker, days, sims);
+    updateUI(paths, bPath, ticker, days, sims, isBenchmark);
 }
 
-function updateUI(results, bPath, ticker, days, sims) {
+function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
     let labels = [], p10 = [], p50 = [], p90 = [], tableHtml = "";
     for (let t = 0; t <= days; t++) {
         results[t].sort();
@@ -304,8 +327,8 @@ function updateUI(results, bPath, ticker, days, sims) {
         data: {
             labels,
             datasets: [
-                { label: 'Asset Median', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
-                { label: 'S&P 500 Benchmark', data: bPath, borderColor: '#94a3b8', borderDash: [6, 4], borderWidth: 2, pointRadius: 0 },
+                { label: 'Neutral Median', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+                { label: 'S&P 500 (Benchmark)', data: isBenchmark ? bPath : [], borderColor: '#94a3b8', borderDash: [6, 4], borderWidth: 2, pointRadius: 0 },
                 { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
                 { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
             ]
@@ -329,10 +352,20 @@ function calculateProbability() {
 
 function downloadCSV() {
     if (!currentResults.labels.length) return alert("Generate forecast first.");
-    let csv = "Day,Pessimistic,Neutral,Optimistic\n";
-    currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
+    const isBenchActive = document.getElementById('benchmarkSwitch').checked;
+    
+    let csv = "Day,Pessimistic(10th),Neutral(50th),Optimistic(90th)";
+    if (isBenchActive) csv += ",S&P500_Benchmark";
+    csv += "\n";
+
+    currentResults.labels.forEach((l, i) => { 
+        csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}`;
+        if (isBenchActive) csv += `,${currentResults.benchmark[i]}`;
+        csv += "\n";
+    });
+
     const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Forecaster_Data.csv`; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Forecaster_Export.csv`; a.click();
 }
 
 function saveChartImage() {

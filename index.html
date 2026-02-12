@@ -15,33 +15,32 @@
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
             --neutral-slate: #1e293b;
+            --stress-orange: #ea580c;
         }
 
         body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
         .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
         
-        /* Header Section */
+        /* Header */
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; }
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
         /* KPI Bar */
         .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: background 0.3s ease; }
+        .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: 0.3s; }
         .stat-card.dark { background: var(--camac-dark); }
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        /* Dynamic Summary */
         .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: var(--camac-dark); }
 
-        /* Control Panel */
+        /* Controls */
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
         .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; margin-bottom: 12px; }
 
-        /* Buttons & Interactions */
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
         .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
         .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
@@ -52,14 +51,16 @@
         .advanced-toggle { font-size: 10px; color: var(--camac-teal); cursor: pointer; text-decoration: underline; font-weight: bold; margin-top: 10px; display: inline-block; }
         #advanced-drawer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; }
 
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
-        button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 11px; }
+        /* Action Buttons */
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+        button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; font-size: 10px; }
         #runBtn { background: var(--camac-dark); color: white; }
+        #stressBtn { background: var(--stress-orange); color: white; }
         #resetBtn { background: #e2e8f0; color: #475569; }
         #exportBtn { background: var(--camac-teal); color: white; }
         #saveImgBtn { background: var(--camac-accent); color: white; }
 
-        /* Output Visuals */
+        /* Output */
         .chart-container { height: 450px; margin-bottom: 30px; position: relative; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
         #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
@@ -71,12 +72,11 @@
         th { background: var(--camac-dark); color: white; padding: 12px 5px; text-align: center; text-transform: uppercase; font-size: 10px; }
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
 
-        /* Sticky Footer */
+        /* Footer */
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
         .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
         .footer-brand span { color: var(--camac-teal); }
-        .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; text-transform: uppercase; }
         
         @media (max-width: 768px) {
             .controls { grid-template-columns: 1fr; }
@@ -95,28 +95,28 @@
 
     <div class="stats-bar">
         <div class="stat-card dark">
-            <p id="tickerLabel">Entry Price</p>
+            <p>Entry Price</p>
             <h2 id="livePrice">---</h2>
         </div>
         <div class="stat-card" id="probCard">
-            <p id="probLabel">Prob. of Success</p>
+            <p>Prob. of Success</p>
             <h2 id="probDisplay">SET TARGET</h2>
         </div>
         <div class="stat-card">
-            <p id="highConfLabel">Optimistic Path (90th)</p>
+            <p>Optimistic Path (90th)</p>
             <h2 id="targetDisplay">---</h2>
         </div>
     </div>
 
     <div id="insightSummary" class="summary-box">
-        <strong>Status:</strong> Analysis pending. Input your asset parameters below.
+        <strong>Status:</strong> Analysis pending.
     </div>
 
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. AAPL">
-            <p class="input-note"><i>The identifier used for chart labeling and file names.</i></p>
+            <p class="input-note"><i>Labeling for charts and files.</i></p>
             
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
@@ -124,55 +124,47 @@
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note"><i>Presets for underlying drift and volatility.</i></p>
         </div>
 
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <p class="input-note"><i>The starting market value of the asset.</i></p>
+            <p class="input-note"><i>Starting market value.</i></p>
 
-            <span class="advanced-toggle" onclick="toggleAdvanced()">+ SHOW ADVANCED MODEL SETTINGS</span>
-
+            <span class="advanced-toggle" onclick="toggleAdvanced()">+ SHOW ADVANCED SETTINGS</span>
             <div id="advanced-drawer">
                 <label>Expected Drift (Annual %)</label>
                 <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
-                
                 <label style="margin-top: 15px;">Annual Volatility (%)</label>
                 <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
-                
-                <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
-                    <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
+                <div id="driftContext" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px;">
+                    <strong>Status:</strong> Neutral Baseline.
                 </div>
             </div>
         </div>
 
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" placeholder="e.g. 30" value="30">
-            <p class="input-note"><i>The number of trading days to project.</i></p>
-            
+            <input type="number" id="days" value="30">
             <label style="margin-top: 15px;">Price Target ($)</label>
-            <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <p class="input-note"><i>Used to calculate success probability.</i></p>
-            
+            <input type="number" id="priceTarget" placeholder="Goal Price..." oninput="calculateProbability()">
             <label style="margin-top: 15px;">Simulations (max 100k)</label>
             <input type="number" id="sims" value="50000" max="100000">
-            <p class="input-note"><i>High precision baseline set to 50,000.</i></p>
         </div>
         
         <div class="btn-group">
             <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
+            <button id="stressBtn" class="main-btn" onclick="triggerStressTest()">Stress Test</button>
             <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
-            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export CSV</button>
-            <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">Save PNG</button>
+            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">CSV</button>
+            <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">PNG</button>
         </div>
     </div>
 
     <div class="chart-container">
         <div id="loader">
             <div class="spinner"></div>
-            <p style="font-size:10px; margin-top:15px; font-weight:bold; color: var(--camac-dark);">CALCULATING...</p>
+            <p style="font-size:10px; margin-top:15px; font-weight:bold;">STRESS TESTING MODEL...</p>
         </div>
         <canvas id="mainChart"></canvas>
     </div>
@@ -180,12 +172,7 @@
     <div class="table-wrapper">
         <table id="dataTable">
             <thead>
-                <tr>
-                    <th>Interval</th>
-                    <th>Pessimistic (10th)</th>
-                    <th>Neutral (50th)</th>
-                    <th>Optimistic (90th)</th>
-                </tr>
+                <tr><th>Interval</th><th>Pessimistic</th><th>Neutral</th><th>Optimistic</th></tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -195,7 +182,6 @@
 <div class="footer-nav">
     <div class="footer-content">
         <div class="footer-brand">Powered by <span>Camac Consulting</span></div>
-        <a href="javascript:void(0);" onclick="window.open(window.location.href, '_blank');">Expand Workspace</a>
     </div>
 </div>
 
@@ -204,200 +190,133 @@ let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
 function toggleAdvanced() {
-    const drawer = document.getElementById('advanced-drawer');
-    const toggle = document.querySelector('.advanced-toggle');
-    if (drawer.style.display === 'block') {
-        drawer.style.display = 'none';
-        toggle.innerText = '+ SHOW ADVANCED MODEL SETTINGS';
-    } else {
-        drawer.style.display = 'block';
-        toggle.innerText = '- HIDE ADVANCED MODEL SETTINGS';
-    }
+    const d = document.getElementById('advanced-drawer');
+    const t = document.querySelector('.advanced-toggle');
+    const isOpen = d.style.display === 'block';
+    d.style.display = isOpen ? 'none' : 'block';
+    t.innerText = isOpen ? '+ SHOW ADVANCED SETTINGS' : '- HIDE ADVANCED SETTINGS';
 }
 
-const whiteBackgroundPlugin = {
-    id: 'customCanvasBackgroundColor',
-    beforeDraw: (chart) => {
-        const {ctx} = chart;
-        ctx.save();
-        ctx.globalCompositeOperation = 'destination-over';
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.font = 'bold 11px Segoe UI';
-        ctx.fillStyle = 'rgba(65, 121, 126, 0.4)';
-        ctx.textAlign = 'right';
-        ctx.fillText('CAMAC CONSULTING | EQUITY FORECAST', chart.width - 20, 30);
-        ctx.restore();
-    }
-};
-
 function setPreset(type, element) {
-    const driftInput = document.getElementById('drift');
-    const volInput = document.getElementById('volatility');
+    const d = document.getElementById('drift'), v = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     if(element) element.classList.add('active');
 
-    if (type === 'pessimistic') {
-        driftInput.value = "-5.0";
-        volInput.value = "45";
-    } else if (type === 'neutral') {
-        driftInput.value = "10.0";
-        volInput.value = "20";
-    } else if (type === 'optimistic') {
-        driftInput.value = "20.0";
-        volInput.value = "15";
-    }
+    if (type === 'pessimistic') { d.value = "-5.0"; v.value = "45"; }
+    else if (type === 'neutral') { d.value = "10.0"; v.value = "20"; }
+    else if (type === 'optimistic') { d.value = "20.0"; v.value = "15"; }
     updateDriftContext();
 }
 
 function updateDriftContext() {
-    const drift = parseFloat(document.getElementById('drift').value);
-    const vol = parseFloat(document.getElementById('volatility').value) || 0;
-    const contextBox = document.getElementById('driftContext');
-    let driftText = drift <= 0 ? "Pessimistic Outlook." : (drift <= 11 ? "Neutral Baseline." : "Optimistic Growth Case.");
-    let riskColor = (vol > 35) ? "var(--pessimistic-red)" : "var(--optimistic-green)";
-    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Volatility:</strong> <span style="color:${riskColor}; font-weight:bold;">${vol}%</span>`;
+    const dr = parseFloat(document.getElementById('drift').value);
+    const vo = parseFloat(document.getElementById('volatility').value) || 0;
+    const ctx = document.getElementById('driftContext');
+    let msg = dr <= 0 ? "Pessimistic Outlook." : (dr <= 11 ? "Neutral Baseline." : "Growth Case.");
+    let color = (vo > 50) ? "var(--pessimistic-red)" : "var(--optimistic-green)";
+    ctx.innerHTML = `<strong>Status:</strong> ${msg} | <strong>Vol:</strong> <span style="color:${color}; font-weight:bold;">${vo}%</span>`;
+}
+
+function triggerStressTest() {
+    const vInput = document.getElementById('volatility');
+    const dInput = document.getElementById('drift');
+    // Logic: Double volatility, set drift to negative
+    vInput.value = Math.round(parseFloat(vInput.value) * 2.2);
+    dInput.value = "-15.0";
+    updateDriftContext();
+    document.getElementById('loader').querySelector('p').innerText = "CALCULATING BLACK SWAN SCENARIO...";
+    analyzeAndRun();
 }
 
 function analyzeAndRun() {
-    const manualPrice = parseFloat(document.getElementById('manualPrice').value);
+    const price = parseFloat(document.getElementById('manualPrice').value);
     const symbol = document.getElementById('symbol').value;
-    const days = parseInt(document.getElementById('days').value);
-
-    if (!symbol) return alert("Please enter an Asset Name.");
-    if (isNaN(manualPrice) || manualPrice <= 0) return alert("Please enter a valid Price.");
+    if (!symbol || !price) return alert("Enter Asset and Price.");
     
     document.getElementById('loader').style.display = 'block';
-    document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
-    
-    setTimeout(() => { runMonteCarlo(manualPrice); }, 100);
+    document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
+    setTimeout(() => { runMonteCarlo(price); }, 100);
 }
 
 function runMonteCarlo(startPrice) {
     const days = parseInt(document.getElementById('days').value);
-    let simsInput = parseInt(document.getElementById('sims').value) || 50000;
+    let sIn = parseInt(document.getElementById('sims').value) || 50000;
+    if (sIn > 100000) { sIn = 100000; document.getElementById('sims').value = 100000; }
     
-    // Enforcement of 100k cap logic
-    if (simsInput > 100000) {
-        simsInput = 100000;
-        document.getElementById('sims').value = 100000;
-    }
-    const sims = simsInput;
+    const sims = sIn, dr = parseFloat(document.getElementById('drift').value)/100, vo = parseFloat(document.getElementById('volatility').value)/100;
+    const dt = 1/252, dDrift = (dr - 0.5 * vo**2) * dt, dVol = vo * Math.sqrt(dt);
 
-    const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
-    const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
-
-    const dt = 1 / 252;
-    const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
-    const dailyVol = annualVol * Math.sqrt(dt);
-
-    let results = Array.from({length: days + 1}, () => []);
+    let res = Array.from({length: days + 1}, () => []);
     for (let s = 0; s < sims; s++) {
-        let p = startPrice;
-        results[0].push(p);
+        let p = startPrice; res[0].push(p);
         for (let t = 1; t <= days; t++) {
-            p *= Math.exp(dailyDrift + (dailyVol * boxMuller()));
-            results[t].push(p);
+            p *= Math.exp(dDrift + (dVol * (Math.sqrt(-2.0 * Math.log(Math.random() || 0.0001)) * Math.cos(2.0 * Math.PI * Math.random()))));
+            res[t].push(p);
         }
     }
-    updateUI(results, days, sims);
+    updateUI(res, days, sims);
     document.getElementById('loader').style.display = 'none';
 }
 
-function boxMuller() {
-    let u = Math.random(), v = Math.random();
-    return Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
-}
-
-function updateUI(results, days, sims) {
-    let labels = [], p10 = [], p50 = [], p90 = [], rows = "";
+function updateUI(res, days, sims) {
+    let lbls = [], p10 = [], p50 = [], p90 = [], rows = "";
     const i10 = Math.floor(sims * 0.1), i50 = Math.floor(sims * 0.5), i90 = Math.floor(sims * 0.9);
 
     for (let t = 0; t <= days; t++) {
-        results[t].sort((a,b) => a-b);
-        labels.push(`Day ${t}`);
-        const v10 = results[t][i10], v50 = results[t][i50], v90 = results[t][i90];
-        p10.push(v10); p50.push(v50); p90.push(v90);
+        res[t].sort((a,b) => a-b);
+        lbls.push(`D${t}`);
+        p10.push(res[t][i10]); p50.push(res[t][i50]); p90.push(res[t][i90]);
         if (t % 5 === 0 || t === days) {
-            rows += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
+            rows += `<tr><td>Day ${t}</td><td>$${res[t][i10].toFixed(2)}</td><td>$${res[t][i50].toFixed(2)}</td><td>$${res[t][i90].toFixed(2)}</td></tr>`;
         }
     }
-    currentResults = { allPaths: results[days], p10, p50, p90, labels, startPrice: results[0][0] };
+    currentResults = { allPaths: res[days], p10, p50, p90, labels: lbls, startPrice: res[0][0] };
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
-    generateSummary();
+    const sym = (document.getElementById('symbol').value || "Asset").toUpperCase();
+    const chg = (((p50[days] - res[0][0]) / res[0][0]) * 100).toFixed(1);
+    document.getElementById('insightSummary').innerHTML = `<strong>${sym} Forecast:</strong> Median return of <strong>${chg}%</strong>. Stress tested range: <strong>$${p10[days].toFixed(2)}</strong> to <strong>$${p90[days].toFixed(2)}</strong>.`;
+    
     calculateProbability();
 
     if (chart) chart.destroy();
     chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
         type: 'line',
         data: {
-            labels: labels,
+            labels: lbls,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: 'rgba(22, 101, 52, 0.1)', borderWidth: 2, fill: false, pointRadius: 0 },
-                { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', borderWidth: 4, fill: false, pointRadius: 0 },
-                { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, fill: false, pointRadius: 0 }
+                { label: 'Upper (90th)', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0 },
+                { label: 'Median (50th)', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+                { label: 'Lower (10th)', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0 }
             ]
         },
-        options: { 
-            responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
-            scales: { y: { ticks: { callback: v => '$' + v } } }
-        },
-        plugins: [whiteBackgroundPlugin]
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }
 
 function calculateProbability() {
-    const target = parseFloat(document.getElementById('priceTarget').value);
-    const display = document.getElementById('probDisplay');
-    const card = document.getElementById('probCard');
-    if (isNaN(target) || target === 0) {
-        display.innerText = "SET TARGET";
-        card.style.background = "var(--camac-teal)";
-        return;
-    }
-    const finalPrices = currentResults.allPaths;
-    const successes = finalPrices.filter(p => p >= target).length;
-    const prob = ((successes / finalPrices.length) * 100);
-    display.innerText = prob.toFixed(1) + "%";
-    card.style.background = (prob < 30) ? "var(--pessimistic-red)" : (prob > 70 ? "var(--optimistic-green)" : "var(--camac-teal)");
-}
-
-function generateSummary() {
-    const symbol = (document.getElementById('symbol').value || "ASSET").toUpperCase();
-    const finalN = currentResults.p50[currentResults.p50.length - 1];
-    let changePct = (((finalN - currentResults.startPrice) / currentResults.startPrice) * 100).toFixed(1);
-    document.getElementById('insightSummary').innerHTML = `<strong>${symbol} Analysis:</strong> Projected median move of <strong>${changePct}%</strong>. Expected range is <strong>$${currentResults.p10[currentResults.p10.length-1].toFixed(2)}</strong> to <strong>$${currentResults.p90[currentResults.p90.length-1].toFixed(2)}</strong>.`;
+    const tgt = parseFloat(document.getElementById('priceTarget').value);
+    const d = document.getElementById('probDisplay'), c = document.getElementById('probCard');
+    if (!tgt) { d.innerText = "SET TARGET"; c.style.background = "var(--camac-teal)"; return; }
+    const p = (currentResults.allPaths.filter(x => x >= tgt).length / currentResults.allPaths.length) * 100;
+    d.innerText = p.toFixed(1) + "%";
+    c.style.background = p < 30 ? "var(--pessimistic-red)" : (p > 70 ? "var(--optimistic-green)" : "var(--camac-teal)");
 }
 
 function resetForm() { location.reload(); }
 
 function downloadCSV() {
-    if (!currentResults.labels.length) return alert("Generate data first.");
-    const assetName = document.getElementById('symbol').value.trim() || "Equity_Forecast";
-    const fileName = `${assetName}_Forecast_Data.csv`;
-    
-    let csvContent = "data:text/csv;charset=utf-8,Interval,Pessimistic,Neutral,Optimistic\n";
-    currentResults.labels.forEach((l, i) => { csvContent += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
-    const link = document.createElement("a");
-    link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", fileName);
-    link.click();
+    const name = document.getElementById('symbol').value.trim() || "Forecast";
+    let csv = "data:text/csv;charset=utf-8,Day,P10,P50,P90\n";
+    currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
+    const link = document.createElement("a"); link.href = encodeURI(csv); link.download = `${name}_Data.csv`; link.click();
 }
 
 function saveChartImage() {
-    if (!chart) return alert("Generate forecast first.");
-    const assetName = document.getElementById('symbol').value.trim() || "Equity_Forecast";
-    const fileName = `${assetName}_Chart.png`;
-    
-    const link = document.createElement('a');
-    link.href = chart.toBase64Image();
-    link.download = fileName;
-    link.click();
+    if (!chart) return;
+    const name = document.getElementById('symbol').value.trim() || "Forecast";
+    const link = document.createElement('a'); link.href = chart.toBase64Image(); link.download = `${name}_Chart.png`; link.click();
 }
 
 window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };

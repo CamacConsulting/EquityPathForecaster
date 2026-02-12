@@ -204,8 +204,7 @@ function updateDriftContext() {
     const drift = parseFloat(document.getElementById('drift').value) || 0;
     const vol = parseFloat(document.getElementById('volatility').value) || 0;
     const contextBox = document.getElementById('driftContext');
-    const riskIndicator = document.getElementById('riskLevel');
-
+    
     let driftText = drift <= 0 ? "Pessimistic (Bear)" : (drift <= 12 ? "Neutral (Baseline)" : "Optimistic (Bull)");
     let riskText = "Low";
     let riskColor = "#166534";
@@ -214,7 +213,7 @@ function updateDriftContext() {
     else if (vol > 35) { riskText = "High (Tech)"; riskColor = "#991b1b"; }
     else if (vol > 20) { riskText = "Moderate (Equity)"; riskColor = "#b45309"; }
 
-    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
+    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span id="riskLevel" style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
 }
 
 function analyzeAndRun() {
@@ -231,18 +230,20 @@ function analyzeAndRun() {
         const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
         const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
 
+        // Daily Math
         const dt = 1 / 252;
-        const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
-        const dailyVol = annualVol * Math.sqrt(dt);
+        const muDaily = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
+        const sigmaDaily = annualVol * Math.sqrt(dt);
 
         let results = Array.from({length: days + 1}, () => []);
         for (let s = 0; s < sims; s++) {
             let p = manualPrice;
             results[0].push(p);
             for (let t = 1; t <= days; t++) {
+                // Geometric Brownian Motion Logic
                 let u = Math.random(), v = Math.random();
                 let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
-                p *= Math.exp(dailyDrift + (dailyVol * z));
+                p *= Math.exp(muDaily + (sigmaDaily * z));
                 results[t].push(p);
             }
         }
@@ -280,12 +281,17 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: '90th', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0 },
-                { label: '50th', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
-                { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0 }
+                { label: '90th', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+                { label: '50th', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0, tension: 0.1 },
+                { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0, tension: 0.1 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { legend: { position: 'bottom' } },
+            scales: { y: { ticks: { callback: v => '$' + v } } }
+        }
     });
 }
 

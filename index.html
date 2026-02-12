@@ -271,7 +271,7 @@ function updateUI(res, days, sims) {
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     const sym = document.getElementById('symbol').value.toUpperCase();
-    document.getElementById('insightSummary').innerHTML = `<strong>${sym} Analysis:</strong> Median target $${p50[days].toFixed(2)}. Projected Range (80% confidence): $${p10[days].toFixed(2)} - $${p90[days].toFixed(2)}.`;
+    document.getElementById('insightSummary').innerHTML = `<strong>${sym} Analysis:</strong> Median forecast $${p50[days].toFixed(2)}. Projected Range (80% confidence): $${p10[days].toFixed(2)} - $${p90[days].toFixed(2)}.`;
     
     calculateProbability();
     if (chart) chart.destroy();
@@ -301,6 +301,7 @@ function calculateProbability() {
 }
 
 function resetForm() { location.reload(); }
+
 function downloadCSV() {
     const name = document.getElementById('symbol').value || "Forecast";
     let csv = "data:text/csv;charset=utf-8,Day,Pessimistic,Median,Optimistic,Proj_Return_Pct\n";
@@ -310,10 +311,23 @@ function downloadCSV() {
     });
     const link = document.createElement("a"); link.href = encodeURI(csv); link.download = `${name}_Data.csv`; link.click();
 }
+
 function saveChartImage() {
     const name = document.getElementById('symbol').value || "Forecast";
-    const link = document.createElement('a'); link.href = chart.toBase64Image(); link.download = `${name}_Chart.png`; link.click();
+    const canvas = document.getElementById('mainChart');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCtx.fillStyle = '#ffffff';
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(canvas, 0, 0);
+    const link = document.createElement('a');
+    link.href = tempCanvas.toDataURL('image/png');
+    link.download = `${name}_Forecast_Chart.png`;
+    link.click();
 }
+
 window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };
 </script>
 </body>

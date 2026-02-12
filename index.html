@@ -10,100 +10,89 @@
             --camac-dark: #001935;
             --camac-teal: #41797e;
             --camac-light: #f4f7f9;
-            --camac-accent: #64748b;
             --white: #ffffff;
             --pessimistic-red: #991b1b;
             --optimistic-green: #166534;
-            --neutral-slate: #1e293b;
         }
 
-        body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
-        .container { max-width: 1100px; margin: auto; padding-bottom: 180px; } 
+        body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); color: #333; margin: 0; }
         
-        /* Header */
+        /* Dashboard View */
+        #dashboardView { max-width: 1100px; margin: auto; padding: 20px 20px 180px 20px; }
+        
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; }
-        .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
+        .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; letter-spacing: 3px; }
 
-        /* Stats */
         .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; }
         .stat-card.dark { background: var(--camac-dark); }
         .stat-card h2 { margin: 5px 0 0 0; font-size: 24px; font-weight: 300; }
-        .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; }
 
-        /* Controls & Italic Notes */
-        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        /* Full Page Simulation View (The "New Page") */
+        #fullScaleView { display: none; background: #fff; min-height: 100vh; padding: 40px; box-sizing: border-box; }
+        .full-view-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--camac-dark); padding-bottom: 15px; margin-bottom: 30px; }
+        
+        /* Inputs & Controls */
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; background: var(--camac-light); padding: 30px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 30px; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
-        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; box-sizing: border-box; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; box-sizing: border-box; }
         .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
 
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
-        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
-        .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
-        .btn-neut { background: #f1f5f9; color: var(--neutral-slate); }
-        .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
-        .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
+        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; }
+        .btn-preset.active { border: 2px solid var(--camac-dark); background: #e2e8f0; }
 
-        .benchmark-toggle { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; }
-        .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--camac-dark); }
-        input:checked + .slider:before { transform: translateX(14px); }
+        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; }
 
-        .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
-        button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; }
+        /* Graphics */
+        .chart-container { height: 550px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 25px; position: relative; }
 
-        /* Chart */
-        .chart-container { height: 450px; margin-bottom: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; position: relative; }
+        /* Enter/Exit View Buttons */
+        .view-toggle-bar { background: var(--camac-dark); text-align: center; padding: 20px; border-radius: 8px; cursor: pointer; margin-top: 30px; transition: 0.3s; }
+        .view-toggle-bar:hover { background: var(--camac-teal); }
+        .view-toggle-bar span { color: white; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
 
-        /* Table */
-        .table-wrapper { position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #eee; background: #ffffff; margin-top: 20px; height: 300px; overflow-y: auto; }
-        .table-watermark {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
-            font-size: 60px; font-weight: 900; color: rgba(0, 25, 53, 0.04);
-            white-space: nowrap; pointer-events: none; text-transform: uppercase; letter-spacing: 10px; z-index: 0;
-        }
-
-        table { width: 100%; border-collapse: collapse; font-size: 12px; position: relative; z-index: 1; background: transparent; }
-        th { background: var(--camac-dark); color: white; padding: 12px; text-align: center; text-transform: uppercase; font-size: 10px; position: sticky; top: 0; z-index: 10; }
-        td { border-bottom: 1px solid #eee; padding: 12px; text-align: center; background: transparent; }
-
-        /* Expand/Full Page Link */
-        .expand-bar { background: var(--camac-dark); text-align: center; padding: 15px; border-radius: 0 0 8px 8px; cursor: pointer; transition: 0.2s; margin-top: -1px; }
-        .expand-bar:hover { background: var(--camac-teal); }
-        .expand-bar span { font-size: 11px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Full Page Overlay */
-        #fullPageOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 1000; overflow-y: auto; padding: 40px; box-sizing: border-box;
-        }
-        .overlay-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--camac-dark); padding-bottom: 20px; margin-bottom: 30px; }
-        .overlay-title h2 { margin: 0; color: var(--camac-dark); text-transform: uppercase; letter-spacing: 2px; }
-        .close-btn { background: #eee; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
+        .exit-btn { background: #eee; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 800; font-size: 11px; text-transform: uppercase; }
 
         .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 100; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
-
-        @media print { .no-print { display: none !important; } #fullPageOverlay { position: absolute; padding: 0; } }
     </style>
 </head>
 <body>
 
-<div class="container no-print">
+<div id="dashboardView">
     <div class="header-area">
         <p class="brand-sub">Camac Consulting</p>
-        <h1>Equity Path Forecaster</h1>
+        <h1>Executive Dashboard</h1>
     </div>
 
     <div class="stats-bar">
-        <div class="stat-card dark"><p>Entry Price</p><h2 id="livePrice">$0.00</h2></div>
-        <div class="stat-card"><p>Prob. of Target</p><h2 id="probDisplay">-%</h2></div>
-        <div class="stat-card"><p>Median Forecast</p><h2 id="medianDisplay">$0.00</h2></div>
-        <div class="stat-card"><p>90th Percentile</p><h2 id="targetDisplay">$0.00</h2></div>
+        <div class="stat-card dark"><p>Entry Price</p><h2 id="dashPrice">$0.00</h2></div>
+        <div class="stat-card"><p>Target Probability</p><h2 id="dashProb">-%</h2></div>
+        <div class="stat-card"><p>Median Forecast</p><h2 id="dashMedian">$0.00</h2></div>
+        <div class="stat-card"><p>90th Percentile</p><h2 id="dashUpper">$0.00</h2></div>
+    </div>
+
+    <div style="background: var(--camac-light); padding: 40px; border-radius: 8px; text-align: center; border: 1px dashed var(--camac-teal);">
+        <h3 style="color: var(--camac-dark); margin-top: 0;">Market Trajectory Analysis</h3>
+        <p style="color: #64748b; font-size: 14px; max-width: 600px; margin: 10px auto 25px auto;">Use the full-scale simulation engine to calculate complex price paths using Geometric Brownian Motion. Adjust volatility, drift, and time horizons to see institutional-grade forecasting.</p>
+        
+        <div class="view-toggle-bar" onclick="showFullScale()">
+            <span>Enter Full-Scale Forecaster →</span>
+        </div>
+    </div>
+</div>
+
+<div id="fullScaleView">
+    <div class="full-view-header">
+        <div>
+            <p class="brand-sub" style="margin:0;">Camac Consulting</p>
+            <h2 style="margin:0; text-transform: uppercase; letter-spacing: 1px; color: var(--camac-dark);">Simulation Engine</h2>
+        </div>
+        <button class="exit-btn" onclick="showDashboard()">← Exit to Dashboard</button>
     </div>
 
     <div class="controls">
@@ -114,16 +103,11 @@
             
             <label style="margin-top: 15px;">Market Sentiment</label>
             <div class="preset-group">
-                <button class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
-                <button class="btn-preset btn-neut active" onclick="setPreset('neutral', this)">NEUTRAL</button>
-                <button class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
+                <button class="btn-preset" id="pessBtn" onclick="setPreset('pessimistic')">PESSIMISTIC</button>
+                <button class="btn-preset active" id="neutBtn" onclick="setPreset('neutral')">NEUTRAL</button>
+                <button class="btn-preset" id="optiBtn" onclick="setPreset('optimistic')">OPTIMISTIC</button>
             </div>
             <p class="input-note">Auto-fills Drift and Volatility expectations.</p>
-
-            <div class="benchmark-toggle">
-                <label class="switch"><input type="checkbox" id="benchmarkSwitch" onchange="toggleBenchmarkLine()"><span class="slider"></span></label>
-                <span style="font-size: 10px; font-weight: bold;">S&P 500 BENCHMARK</span>
-            </div>
         </div>
         <div>
             <label>Current Price ($)</label>
@@ -144,7 +128,7 @@
             <p class="input-note">Duration of the simulated path.</p>
             
             <label style="margin-top: 15px;">Price Target ($)</label>
-            <input type="number" id="priceTarget" oninput="calculateProbability()">
+            <input type="number" id="priceTarget">
             <p class="input-note">Calculates the probability of touching this price.</p>
             
             <label style="margin-top: 15px;">Simulations</label>
@@ -152,98 +136,68 @@
             <p class="input-note">Higher numbers (up to 100k) increase accuracy.</p>
         </div>
         <div class="btn-group">
-            <button class="main-btn" style="background:var(--camac-dark); color:white;" onclick="analyzeAndRun()">Generate Forecast</button>
-            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="downloadCSV()">Export CSV</button>
-            <button class="main-btn" style="background:var(--camac-accent); color:white;" onclick="saveChartImage()">Save PNG</button>
-            <button class="main-btn" style="background:#e2e8f0; color:#475569;" onclick="location.reload()">Reset</button>
+            <button class="main-btn" style="background:var(--camac-dark); color:white;" onclick="runSimulation()">Run Engine</button>
+            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="downloadCSV()">Export Data</button>
+            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="saveChart()">Save Image</button>
+            <button class="main-btn" style="background:#ddd;" onclick="location.reload()">Reset</button>
         </div>
     </div>
 
-    <div class="chart-container"><canvas id="mainChart"></canvas></div>
-
-    <div class="table-wrapper">
-        <div class="table-watermark">CAMAC CONSULTING</div>
-        <table id="mainDataTable">
-            <thead><tr><th>Interval</th><th>Pessimistic (10th)</th><th>Neutral (50th)</th><th>Optimistic (90th)</th></tr></thead>
-            <tbody id="tableBody"><tr><td colspan="4" style="padding:40px; color:#94a3b8;">No data generated.</td></tr></tbody>
-        </table>
-    </div>
-    <div class="expand-bar" onclick="openAuditPage()">
-        <span>Launch Full Audit View →</span>
+    <div class="chart-container">
+        <canvas id="fullChart"></canvas>
     </div>
 </div>
 
-<div id="fullPageOverlay">
-    <div class="overlay-header">
-        <div class="overlay-title">
-            <p style="color:var(--camac-teal); font-weight:bold; margin:0; font-size:12px;">CAMAC CONSULTING</p>
-            <h2>Comprehensive Audit Log</h2>
-        </div>
-        <div class="no-print">
-            <button class="close-btn" onclick="closeAuditPage()">Close Audit</button>
-        </div>
-    </div>
-    <div id="auditContent">
-        <table id="auditTable" style="width:100%; border-collapse:collapse;">
-            <thead><tr><th>Day</th><th>Pessimistic</th><th>Neutral</th><th>Optimistic</th><th>Benchmark</th></tr></thead>
-            <tbody id="auditTableBody"></tbody>
-        </table>
-    </div>
-</div>
-
-<div class="footer-nav no-print"><div class="footer-brand">Powered by CAMAC CONSULTING</div></div>
+<div class="footer-nav"><div class="footer-brand">Powered by CAMAC CONSULTING</div></div>
 
 <script>
 let chart;
-let currentResults = { allPaths: [], p10: [], p50: [], p90: [], benchmark: [], labels: [] };
+let results = { p10:[], p50:[], p90:[], lastPrices:[], labels:[] };
 
-// Watermark for Chart
-const chartBranding = {
-    id: 'chartBranding',
+const brandingPlugin = {
+    id: 'branding',
     afterDraw: (chart) => {
         const ctx = chart.ctx;
         ctx.save();
-        ctx.font = 'bold 11px Arial';
-        ctx.fillStyle = 'rgba(0, 25, 53, 0.15)';
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = 'rgba(0, 25, 53, 0.2)';
         ctx.textAlign = 'right';
-        ctx.fillText('CAMAC CONSULTING', chart.width - 25, 20);
+        ctx.fillText('CAMAC CONSULTING', chart.width - 20, 25);
         ctx.restore();
     }
 };
-Chart.register(chartBranding);
+Chart.register(brandingPlugin);
 
-function setPreset(type, element) {
-    document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-    element.classList.add('active');
+function showFullScale() {
+    document.getElementById('dashboardView').style.display = 'none';
+    document.getElementById('fullScaleView').style.display = 'block';
+}
+
+function showDashboard() {
+    document.getElementById('fullScaleView').style.display = 'none';
+    document.getElementById('dashboardView').style.display = 'block';
+}
+
+function setPreset(type) {
     const d = document.getElementById('drift'), v = document.getElementById('volatility');
-    if (type === 'pessimistic') { d.value = "-5.0"; v.value = "35"; }
-    else if (type === 'neutral') { d.value = "10.0"; v.value = "20"; }
-    else if (type === 'optimistic') { d.value = "20.0"; v.value = "15"; }
+    document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+    if (type === 'pessimistic') { d.value = "-5.0"; v.value = "35"; document.getElementById('pessBtn').classList.add('active'); }
+    else if (type === 'neutral') { d.value = "10.0"; v.value = "20"; document.getElementById('neutBtn').classList.add('active'); }
+    else if (type === 'optimistic') { d.value = "20.0"; v.value = "15"; document.getElementById('optiBtn').classList.add('active'); }
 }
 
-function openAuditPage() {
-    if(!currentResults.labels.length) return alert("Generate data first.");
-    let html = "";
-    for(let i=0; i<currentResults.labels.length; i++) {
-        html += `<tr><td>Day ${i}</td><td>$${currentResults.p10[i].toFixed(2)}</td><td>$${currentResults.p50[i].toFixed(2)}</td><td>$${currentResults.p90[i].toFixed(2)}</td><td>$${currentResults.benchmark[i].toFixed(2)}</td></tr>`;
-    }
-    document.getElementById('auditTableBody').innerHTML = html;
-    document.getElementById('fullPageOverlay').style.display = 'block';
-}
-
-function closeAuditPage() { document.getElementById('fullPageOverlay').style.display = 'none'; }
-
-function toggleBenchmarkLine() { if(chart) { chart.data.datasets[1].data = document.getElementById('benchmarkSwitch').checked ? currentResults.benchmark : []; chart.update(); } }
-
-function analyzeAndRun() {
+function runSimulation() {
     const price = parseFloat(document.getElementById('manualPrice').value);
-    const sims = Math.min(100000, parseInt(document.getElementById('sims').value) || 1000);
+    const sims = parseInt(document.getElementById('sims').value) || 1000;
     const days = parseInt(document.getElementById('days').value) || 30;
-    if(isNaN(price)) return alert("Input price.");
+    const drift = parseFloat(document.getElementById('drift').value)/100;
+    const vol = parseFloat(document.getElementById('volatility').value)/100;
+    const target = parseFloat(document.getElementById('priceTarget').value);
 
-    const dt = 1/252, drift = (parseFloat(document.getElementById('drift').value)||0)/100, vol = (parseFloat(document.getElementById('volatility').value)||0)/100;
+    if(!price) return alert("Enter starting price.");
+
     let paths = Array.from({length: days + 1}, () => new Float32Array(sims));
-    let bPath = [price];
+    const dt = 1/252;
 
     for(let s=0; s<sims; s++) {
         let p = price; paths[0][s] = p;
@@ -253,54 +207,50 @@ function analyzeAndRun() {
             paths[t][s] = p;
         }
     }
-    for(let t=1; t<=days; t++) bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5*0.15**2)*dt));
 
-    let labels=[], p10=[], p50=[], p90=[], tableHtml="";
+    results.labels = []; results.p10 = []; results.p50 = []; results.p90 = [];
     for(let t=0; t<=days; t++) {
         let sorted = paths[t].sort();
-        labels.push(`Day ${t}`);
-        p10.push(sorted[Math.floor(sims*0.1)]); p50.push(sorted[Math.floor(sims*0.5)]); p90.push(sorted[Math.floor(sims*0.9)]);
-        if(t%5===0 || t===days) tableHtml += `<tr><td>Day ${t}</td><td>$${p10[t].toFixed(2)}</td><td>$${p50[t].toFixed(2)}</td><td>$${p90[t].toFixed(2)}</td></tr>`;
+        results.labels.push(`Day ${t}`);
+        results.p10.push(sorted[Math.floor(sims*0.1)]);
+        results.p50.push(sorted[Math.floor(sims*0.5)]);
+        results.p90.push(sorted[Math.floor(sims*0.9)]);
     }
+    results.lastPrices = paths[days];
 
-    currentResults = { allPaths: paths[days], p10, p50, p90, benchmark: bPath, labels };
-    document.getElementById('tableBody').innerHTML = tableHtml;
-    document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
-    document.getElementById('medianDisplay').innerText = `$${p50[days].toFixed(2)}`;
-    document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
+    // Update Dashboard & Full View Stats
+    const finalMedian = results.p50[days];
+    const finalUpper = results.p90[days];
+    const prob = target ? (results.lastPrices.reduce((a,v)=>v>=target?a+1:a,0)/sims*100).toFixed(1) : "-";
+
+    document.getElementById('dashPrice').innerText = `$${price.toFixed(2)}`;
+    document.getElementById('dashMedian').innerText = `$${finalMedian.toFixed(2)}`;
+    document.getElementById('dashUpper').innerText = `$${finalUpper.toFixed(2)}`;
+    document.getElementById('dashProb').innerText = prob + (target ? "%" : "");
 
     if(chart) chart.destroy();
-    chart = new Chart(document.getElementById('mainChart'), {
+    chart = new Chart(document.getElementById('fullChart'), {
         type: 'line',
         data: {
-            labels,
+            labels: results.labels,
             datasets: [
-                { label: 'Median', data: p50, borderColor: '#1e293b', borderWidth: 3, pointRadius: 0 },
-                { label: 'S&P 500', data: document.getElementById('benchmarkSwitch').checked ? bPath : [], borderColor: '#94a3b8', borderDash:[5,5], borderWidth: 2, pointRadius: 0 },
-                { label: '90th', data: p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
-                { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
+                { label: 'Median', data: results.p50, borderColor: '#001935', borderWidth: 3, pointRadius: 0 },
+                { label: '90th Percentile', data: results.p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
+                { label: '10th Percentile', data: results.p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
             ]
         },
-        options: { responsive:true, maintainAspectRatio:false, plugins: { legend: { position: 'bottom' } } }
+        options: { responsive: true, maintainAspectRatio: false }
     });
-    calculateProbability();
-}
-
-function calculateProbability() {
-    const target = parseFloat(document.getElementById('priceTarget').value);
-    if(isNaN(target) || !currentResults.allPaths.length) return;
-    const prob = (currentResults.allPaths.reduce((acc, p) => p >= target ? acc + 1 : acc, 0) / currentResults.allPaths.length) * 100;
-    document.getElementById('probDisplay').innerText = prob.toFixed(1) + "%";
 }
 
 function downloadCSV() {
     let csv = "Day,P10,P50,P90\n";
-    currentResults.labels.forEach((l, i) => csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`);
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'forecast.csv'; a.click();
+    results.labels.forEach((l, i) => csv += `${l},${results.p10[i]},${results.p50[i]},${results.p90[i]}\n`);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = 'sim_data.csv'; a.click();
 }
 
-function saveChartImage() {
-    const a = document.createElement('a'); a.href = document.getElementById('mainChart').toDataURL(); a.download = 'chart.png'; a.click();
+function saveChart() {
+    const a = document.createElement('a'); a.href = document.getElementById('fullChart').toDataURL(); a.download = 'forecast.png'; a.click();
 }
 </script>
 </body>

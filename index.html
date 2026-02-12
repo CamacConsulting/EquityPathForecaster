@@ -17,7 +17,10 @@
             --neutral-slate: #1e293b;
         }
 
-        body { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
+        body {
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--white); padding: 15px; color: #333; margin: 0; 
+        }
         .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
@@ -30,27 +33,15 @@
         .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; letter-spacing: 1px; }
 
-        .summary-box { 
-            background: #fff; 
-            border: 1px solid #e2e8f0; 
-            border-left: 5px solid var(--camac-teal); 
-            padding: 15px 20px; 
-            margin-bottom: 20px; 
-            border-radius: 4px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--camac-dark);
+        .summary-box {
+            background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); 
+            padding: 15px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: var(--camac-dark);
         }
 
         .controls { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; 
-            background: var(--camac-light); 
-            padding: 25px; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            border: 1px solid #e2e8f0; 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+            background: var(--camac-light); padding: 25px; border-radius: 8px; 
+            margin-bottom: 20px; border: 1px solid #e2e8f0; 
         }
 
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
@@ -77,24 +68,11 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--camac-light); border-top: 4px solid var(--camac-teal); border-radius: 50%; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .table-wrapper { 
-            position: relative; 
-            overflow-x: auto; 
-            border-radius: 8px; 
-            border: 1px solid #eee; 
-            background: #ffffff;
-        }
+        .table-wrapper { position: relative; overflow-x: auto; border-radius: 8px; border: 1px solid #eee; background: #ffffff; }
         .table-wrapper::after {
-            content: "CAMAC CONSULTING";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            font-size: 40px;
-            font-weight: 900;
-            color: rgba(65, 121, 126, 0.05);
-            pointer-events: none;
-            z-index: 1;
+            content: "CAMAC CONSULTING"; position: absolute; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%) rotate(-15deg); font-size: 40px; font-weight: 900; 
+            color: rgba(65, 121, 126, 0.05); pointer-events: none; z-index: 1;
         }
 
         table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; position: relative; z-index: 2; }
@@ -102,20 +80,19 @@
         td { border-bottom: 1px solid #eee; padding: 12px 5px; text-align: center; }
 
         .footer-nav { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: var(--camac-dark); 
-            padding: 20px 0; 
-            border-top: 4px solid var(--camac-teal); 
-            text-align: center; 
-            z-index: 1000; 
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); 
+            padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; 
         }
         .footer-content { display: flex; justify-content: center; align-items: center; gap: 40px; max-width: 1000px; margin: auto; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
         .footer-brand span { color: var(--camac-teal); }
         .footer-nav a { color: #ffffff; background-color: var(--camac-teal); font-weight: bold; text-decoration: none; font-size: 11px; padding: 8px 20px; border-radius: 4px; text-transform: uppercase; }
+
+        @media (max-width: 768px) {
+            .controls { grid-template-columns: 1fr; }
+            .stats-bar { grid-template-columns: 1fr; }
+            .btn-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -142,13 +119,13 @@
     </div>
 
     <div id="insightSummary" class="summary-box">
-        <strong>Status:</strong> Analysis pending. Input your asset parameters and price target below, then click <strong>"Generate Forecast"</strong> to run the Monte Carlo simulation.
+        <strong>Status:</strong> Analysis pending. Input your asset parameters below, then click <strong>"Generate Forecast"</strong>.
     </div>
 
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
-            <input type="text" id="symbol" placeholder="e.g. AAPL or Bitcoin">
+            <input type="text" id="symbol" placeholder="e.g. AAPL">
             <p class="input-note">The name of the equity or asset being analyzed.</p>
             
             <label style="margin-top: 15px;">Market Sentiment</label>
@@ -157,40 +134,41 @@
                 <button id="btn-neut" class="btn-preset btn-neut" onclick="setPreset('neutral', this)">NEUTRAL</button>
                 <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
             </div>
-            <p class="input-note">Select a sentiment to automatically update the Expected Drift (Annual %).</p>
-            
-            <label style="margin-top: 15px;">Simulations</label>
-            <input type="number" id="sims" value="1000">
-            <p class="input-note">Higher counts increase statistical accuracy but require more processing time.</p>
+            <p class="input-note">Adjusts drift and volatility presets automatically.</p>
         </div>
 
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
-            <p class="input-note">The starting market price for the simulation.</p>
-
+            
             <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
             <input type="number" id="drift" value="10.0" step="0.1" oninput="updateDriftContext()">
+            
+            <label style="margin-top: 15px;">Annual Volatility (%)</label>
+            <input type="number" id="volatility" value="20" step="1" oninput="updateDriftContext()">
+            
             <div id="driftContext" class="input-hint" style="margin-top: 8px; padding: 8px; background: #fff; border-left: 3px solid var(--camac-teal); font-size: 9px; color: #333;">
-                Neutral Baseline.
+                <strong>Status:</strong> Neutral Baseline. | <strong>Risk:</strong> <span id="riskLevel">Low</span>
             </div>
         </div>
 
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" placeholder="e.g. 30">
-            <p class="input-note">The duration of the forecast in calendar days.</p>
-
+            <input type="number" id="days" placeholder="e.g. 30" value="30">
+            
             <label style="margin-top: 15px;">Price Target ($)</label>
             <input type="number" id="priceTarget" placeholder="Enter Goal Price..." oninput="calculateProbability()">
-            <p class="input-note">Used to calculate the mathematical probability of success.</p>
+            
+            <label style="margin-top: 15px;">Simulations</label>
+            <input type="number" id="sims" value="1000">
+            <p class="input-note">Higher counts increase statistical accuracy.</p>
         </div>
         
         <div class="btn-group">
             <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
             <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
-            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export Data</button>
-            <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">Save Image</button>
+            <button id="exportBtn" class="main-btn" onclick="downloadCSV()">Export CSV</button>
+            <button id="saveImgBtn" class="main-btn" onclick="saveChartImage()">Save PNG</button>
         </div>
     </div>
 
@@ -207,9 +185,9 @@
             <thead>
                 <tr>
                     <th>Time Interval</th>
-                    <th>Pessimistic</th>
-                    <th>Neutral</th>
-                    <th>Optimistic</th>
+                    <th>Pessimistic (10th)</th>
+                    <th>Neutral (50th)</th>
+                    <th>Optimistic (90th)</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -228,6 +206,7 @@
 let chart;
 let currentResults = { allPaths: [], p10: [], p50: [], p90: [], labels: [], startPrice: 0 };
 
+// Plugin to ensure PNG exports have a white background and branding
 const whiteBackgroundPlugin = {
     id: 'customCanvasBackgroundColor',
     beforeDraw: (chart) => {
@@ -247,19 +226,37 @@ const whiteBackgroundPlugin = {
 
 function setPreset(type, element) {
     const driftInput = document.getElementById('drift');
+    const volInput = document.getElementById('volatility');
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
     if(element) element.classList.add('active');
-    if (type === 'pessimistic') driftInput.value = "-5.0";
-    else if (type === 'neutral') driftInput.value = "10.0"; 
-    else if (type === 'optimistic') driftInput.value = "20.0";
+
+    if (type === 'pessimistic') {
+        driftInput.value = "-5.0";
+        volInput.value = "45";
+    } else if (type === 'neutral') {
+        driftInput.value = "10.0";
+        volInput.value = "20";
+    } else if (type === 'optimistic') {
+        driftInput.value = "20.0";
+        volInput.value = "15";
+    }
     updateDriftContext();
 }
 
 function updateDriftContext() {
     const drift = parseFloat(document.getElementById('drift').value);
+    const vol = parseFloat(document.getElementById('volatility').value) || 0;
     const contextBox = document.getElementById('driftContext');
-    let text = drift <= 0 ? "Pessimistic Outlook." : (drift <= 11 ? "Neutral Baseline." : "Optimistic Growth Case.");
-    contextBox.innerHTML = `<strong>Status:</strong> ${text}`;
+    
+    let driftText = drift <= 0 ? "Pessimistic Outlook." : (drift <= 11 ? "Neutral Baseline." : "Optimistic Growth Case.");
+    
+    let riskText = "Low";
+    let riskColor = "var(--optimistic-green)";
+    if (vol > 60) { riskText = "Extreme (Crypto/Meme)"; riskColor = "#7f1d1d"; }
+    else if (vol > 35) { riskText = "High (Growth/Tech)"; riskColor = "var(--pessimistic-red)"; }
+    else if (vol > 20) { riskText = "Moderate (Equity)"; riskColor = "#b45309"; }
+
+    contextBox.innerHTML = `<strong>Status:</strong> ${driftText} | <strong>Risk:</strong> <span id="riskLevel" style="color:${riskColor}; font-weight:bold;">${riskText}</span>`;
 }
 
 function analyzeAndRun() {
@@ -273,13 +270,19 @@ function analyzeAndRun() {
 
     document.getElementById('loader').style.display = 'block';
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
-    runMonteCarlo(manualPrice, 0.02);
+    runMonteCarlo(manualPrice);
 }
 
-function runMonteCarlo(startPrice, vol) {
+function runMonteCarlo(startPrice) {
     const days = parseInt(document.getElementById('days').value);
     const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 50000);
-    const drift = (parseFloat(document.getElementById('drift').value) / 100) / 252;
+    const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
+    const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
+
+    // Convert annual inputs to daily drift and volatility (GBM Math)
+    const dt = 1 / 252;
+    const dailyDrift = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
+    const dailyVol = annualVol * Math.sqrt(dt);
 
     setTimeout(() => {
         let results = Array.from({length: days + 1}, () => []);
@@ -287,7 +290,7 @@ function runMonteCarlo(startPrice, vol) {
             let p = startPrice;
             results[0].push(p);
             for (let t = 1; t <= days; t++) {
-                p *= Math.exp(drift + (vol * boxMuller()));
+                p *= Math.exp(dailyDrift + (dailyVol * boxMuller()));
                 results[t].push(p);
             }
         }
@@ -314,6 +317,7 @@ function updateUI(results, days, sims) {
             rows += `<tr><td>Day ${t}</td><td>$${v10.toFixed(2)}</td><td>$${v50.toFixed(2)}</td><td>$${v90.toFixed(2)}</td></tr>`;
         }
     }
+    
     currentResults = { allPaths: results[days], p10, p50, p90, labels, startPrice: results[0][0] };
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
@@ -327,7 +331,7 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: '#166534', borderWidth: 2, tension: 0.1, pointRadius: 0, pointHoverRadius: 6 },
+                { label: 'Optimistic (90th)', data: p90, borderColor: '#166534', backgroundColor: 'rgba(22, 101, 52, 0.1)', borderWidth: 2, tension: 0.1, pointRadius: 0, pointHoverRadius: 6 },
                 { label: 'Neutral (50th)', data: p50, borderColor: '#1e293b', backgroundColor: '#1e293b', borderWidth: 4, tension: 0.1, pointRadius: 0, pointHoverRadius: 8 },
                 { label: 'Pessimistic (10th)', data: p10, borderColor: '#991b1b', backgroundColor: '#991b1b', borderWidth: 2, tension: 0.1, pointRadius: 0, pointHoverRadius: 6 }
             ]
@@ -335,7 +339,7 @@ function updateUI(results, days, sims) {
         options: { 
             responsive: true, maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
-            plugins: { 
+            plugins: {
                 legend: { position: 'bottom', labels: { usePointStyle: true } },
                 tooltip: { backgroundColor: 'rgba(0, 25, 53, 0.9)', padding: 10 }
             },
@@ -384,7 +388,8 @@ function generateSummary() {
 
     document.getElementById('insightSummary').innerHTML = `
         <strong>${symbol} Analysis:</strong> Projected to move <strong>${changePct}%</strong> over the next ${days} days. 
-        The expected confidence range (10th-90th percentile) is between <strong>$${finalP.toFixed(2)}</strong> and <strong>$${finalO.toFixed(2)}</strong>.
+        The expected confidence range (10th-90th percentile) is between 
+        <strong>$${finalP.toFixed(2)}</strong> and <strong>$${finalO.toFixed(2)}</strong>.
     `;
 }
 

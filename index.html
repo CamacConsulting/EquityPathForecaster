@@ -19,26 +19,34 @@
         }
 
         body { font-family: "Segoe UI", Roboto, Arial, sans-serif; background: var(--white); padding: 15px; color: #333; margin: 0; }
-        .container { max-width: 1000px; margin: auto; padding-bottom: 160px; } 
+        .container { max-width: 1100px; margin: auto; padding-bottom: 160px; } 
         
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--camac-dark); padding-bottom: 20px; }
         .header-area h1 { font-size: 28px; color: var(--camac-dark); margin: 0; font-weight: 800; text-transform: uppercase; }
         .header-area .brand-sub { font-size: 12px; color: var(--camac-teal); font-weight: bold; text-transform: uppercase; margin-top: 5px; letter-spacing: 3px; }
 
-        .stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .stat-card { background: var(--camac-teal); color: white; padding: 18px; border-radius: 4px; text-align: center; }
         .stat-card.dark { background: var(--camac-dark); }
-        .stat-card h2 { margin: 5px 0 0 0; font-size: 26px; font-weight: 300; }
+        .stat-card h2 { margin: 5px 0 0 0; font-size: 24px; font-weight: 300; }
         .stat-card p { margin: 0; font-size: 10px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; line-height: 1.6; color: #475569; }
+        .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 6px solid var(--camac-dark); padding: 25px; margin-bottom: 20px; border-radius: 4px; }
+        .summary-box h3 { margin-top: 0; font-size: 14px; text-transform: uppercase; color: var(--camac-dark); border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .summary-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 13px; line-height: 1.6; color: #334155; }
 
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
-        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; transition: border-color 0.2s; }
-        .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; }
+        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; background: white; }
+        .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
 
-        /* Benchmark Toggle */
+        .preset-group { display: flex; gap: 5px; margin-top: 5px; }
+        .btn-preset { padding: 8px 4px; flex: 1; border: 1px solid #cbd5e1; border-radius: 3px; cursor: pointer; font-size: 9px; font-weight: bold; transition: 0.2s; }
+        .btn-pess { background: #fee2e2; color: var(--pessimistic-red); }
+        .btn-neut { background: #f1f5f9; color: var(--neutral-slate); }
+        .btn-opti { background: #dcfce7; color: var(--optimistic-green); }
+        .btn-preset.active { border: 2px solid var(--camac-dark); transform: scale(1.02); }
+
         .benchmark-toggle { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding: 10px; background: #fff; border: 1px solid #cbd5e1; border-radius: 4px; }
         .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -47,20 +55,18 @@
         input:checked + .slider { background-color: var(--benchmark-gold); }
         input:checked + .slider:before { transform: translateX(14px); }
 
-        /* Warning UI */
-        input.limit-exceeded { border-color: var(--pessimistic-red); border-width: 2px; background-color: #fff1f2; }
-        #simWarning { display: none; color: var(--pessimistic-red); font-size: 9px; font-weight: bold; margin-top: 4px; }
+        input.limit-exceeded { border-color: var(--pessimistic-red); background-color: #fff1f2; border-width: 2px; }
+        #simWarning { display: none; color: var(--pessimistic-red); font-size: 9px; font-weight: bold; margin-top: 4px; text-transform: uppercase; }
 
         .btn-group { grid-column: 1 / -1; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
         button.main-btn { padding: 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; }
-        #runBtn { background: var(--camac-dark); color: white; }
-        #resetBtn { background: #e2e8f0; color: #475569; }
 
         .chart-container { height: 450px; margin-bottom: 30px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; position: relative; }
-        #loader { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
 
-        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; z-index: 1000; }
+        .footer-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--camac-dark); padding: 20px 0; border-top: 4px solid var(--camac-teal); text-align: center; }
         .footer-brand { color: white; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+
+        @media (max-width: 768px) { .controls, .summary-content, .stats-bar { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -74,27 +80,43 @@
     <div class="stats-bar">
         <div class="stat-card dark">
             <p>Entry Price</p>
-            <h2 id="livePrice">---</h2>
+            <h2 id="livePrice">$0.00</h2>
         </div>
         <div class="stat-card" id="probCard">
-            <p id="probLabel">Prob. of Success</p>
-            <h2 id="probDisplay">SET TARGET</h2>
+            <p>Prob. of Target</p>
+            <h2 id="probDisplay">-%</h2>
+        </div>
+        <div class="stat-card">
+            <p>Median Forecast</p>
+            <h2 id="medianDisplay">$0.00</h2>
         </div>
         <div class="stat-card">
             <p>90th Percentile</p>
-            <h2 id="targetDisplay">---</h2>
+            <h2 id="targetDisplay">$0.00</h2>
         </div>
     </div>
 
     <div id="insightSummary" class="summary-box">
-        <strong>Status:</strong> Ready for input. Compare your asset against the S&P 500 benchmark.
+        <h3>Executive Summary</h3>
+        <div class="summary-content" id="summaryTarget">
+            <p>Waiting for simulation data... Enter asset parameters below to generate a thorough market outlook.</p>
+        </div>
     </div>
 
     <div class="controls">
         <div>
             <label>Asset Name / Ticker</label>
             <input type="text" id="symbol" placeholder="e.g. NVDA">
+            <p class="input-note">The name of the equity or asset being analyzed.</p>
             
+            <label style="margin-top: 15px;">Market Sentiment</label>
+            <div class="preset-group">
+                <button id="btn-pess" class="btn-preset btn-pess" onclick="setPreset('pessimistic', this)">PESSIMISTIC</button>
+                <button id="btn-neut" class="btn-preset btn-neut active" onclick="setPreset('neutral', this)">NEUTRAL</button>
+                <button id="btn-opti" class="btn-preset btn-opti" onclick="setPreset('optimistic', this)">OPTIMISTIC</button>
+            </div>
+            <p class="input-note">Automatically aligns Drift and Volatility.</p>
+
             <div class="benchmark-toggle">
                 <label class="switch">
                     <input type="checkbox" id="benchmarkSwitch">
@@ -102,42 +124,47 @@
                 </label>
                 <span style="font-size: 10px; font-weight: bold; color: var(--benchmark-gold);">S&P 500 BENCHMARK MODE</span>
             </div>
-            <p class="input-note">Overlay the S&P 500 (12% Growth / 15% Vol) as a market baseline.</p>
+            <p class="input-note">Overlay the S&P 500 as a market baseline.</p>
         </div>
 
         <div>
             <label>Current Price ($)</label>
             <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
+            <p class="input-note">The starting market price for the simulation.</p>
             
-            <label style="margin-top: 15px;">Expected Drift (Annual %)</label>
-            <input type="number" id="drift" value="10.0" step="0.1">
+            <label style="margin-top: 15px;">Annual Drift (%)</label>
+            <input type="number" id="drift" value="10.0">
+            <p class="input-note">Annualized growth rate before volatility drag.</p>
             
             <label style="margin-top: 15px;">Annual Volatility (%)</label>
-            <input type="number" id="volatility" value="20" step="1">
+            <input type="number" id="volatility" value="20">
+            <p class="input-note">Fear factor: S&P (15%), Tech (35%), Crypto (70%+).</p>
         </div>
 
         <div>
             <label>Time Horizon (Days)</label>
             <input type="number" id="days" value="30">
+            <p class="input-note">Total trading days for forecast.</p>
             
             <label style="margin-top: 15px;">Price Target ($)</label>
-            <input type="number" id="priceTarget" placeholder="Target price..." oninput="calculateProbability()">
+            <input type="number" id="priceTarget" placeholder="Enter target..." oninput="calculateProbability()">
+            <p class="input-note">Desired price to calculate probability of success.</p>
             
             <label style="margin-top: 15px;">Simulations (Max 100k)</label>
             <input type="number" id="sims" value="1000" min="1" max="100000" oninput="validateSimCount(this)" onblur="enforceSimLimit(this)">
             <div id="simWarning">⚠ MAX LIMIT IS 100,000</div>
+            <p class="input-note">Precision cap: 100,000.</p>
         </div>
         
         <div class="btn-group">
-            <button id="runBtn" class="main-btn" onclick="analyzeAndRun()">Generate Forecast</button>
-            <button id="resetBtn" class="main-btn" onclick="resetForm()">Reset</button>
-            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="downloadCSV()">CSV</button>
-            <button class="main-btn" style="background:var(--camac-accent); color:white;" onclick="saveChartImage()">PNG</button>
+            <button id="runBtn" class="main-btn" style="background:var(--camac-dark); color:white;" onclick="analyzeAndRun()">Generate Forecast</button>
+            <button class="main-btn" style="background:var(--camac-teal); color:white;" onclick="downloadCSV()">Export CSV</button>
+            <button class="main-btn" style="background:var(--camac-accent); color:white;" onclick="saveChartImage()">Save PNG</button>
+            <button class="main-btn" style="background:#e2e8f0; color:#475569;" onclick="location.reload()">Reset</button>
         </div>
     </div>
 
     <div class="chart-container">
-        <div id="loader"><p>PROCESSING...</p></div>
         <canvas id="mainChart"></canvas>
     </div>
 </div>
@@ -148,7 +175,18 @@
 
 <script>
 let chart;
-let currentResults = { allPaths: [], p10: [], p50: [], p90: [], benchmark: [], labels: [], startPrice: 0 };
+let currentResults = { allPaths: [], p10: [], p50: [], p90: [], benchmark: [], labels: [] };
+
+function setPreset(type, element) {
+    const driftInput = document.getElementById('drift');
+    const volInput = document.getElementById('volatility');
+    document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+    if(element) element.classList.add('active');
+
+    if (type === 'pessimistic') { driftInput.value = "-5.0"; volInput.value = "45"; }
+    else if (type === 'neutral') { driftInput.value = "10.0"; volInput.value = "20"; }
+    else if (type === 'optimistic') { driftInput.value = "20.0"; volInput.value = "15"; }
+}
 
 function validateSimCount(input) {
     const warning = document.getElementById('simWarning');
@@ -167,44 +205,43 @@ function enforceSimLimit(input) {
 
 function analyzeAndRun() {
     const price = parseFloat(document.getElementById('manualPrice').value);
-    const sims = Math.min(100000, parseInt(document.getElementById('sims').value) || 1000);
+    const ticker = (document.getElementById('symbol').value || "Asset").toUpperCase();
+    const simsInput = document.getElementById('sims');
+    let sims = Math.min(100000, Math.max(1, parseInt(simsInput.value) || 1000));
+    simsInput.value = sims;
+    
     const days = parseInt(document.getElementById('days').value) || 30;
     const isBenchmark = document.getElementById('benchmarkSwitch').checked;
 
-    if (isNaN(price)) return alert("Enter price.");
+    if (isNaN(price)) return alert("Please enter a starting price.");
     document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
 
-    // Calc Logic
     const dt = 1/252;
     const drift = (parseFloat(document.getElementById('drift').value) || 0) / 100;
     const vol = (parseFloat(document.getElementById('volatility').value) || 0) / 100;
-    
-    // Benchmark Baseline (S&P 500 2026 Estimate)
-    const bDrift = 0.12; 
-    const bVol = 0.15;
 
     let paths = Array.from({length: days + 1}, () => new Float32Array(sims));
-    let bPath = [price]; // Simplified median benchmark path
+    let bPath = [price]; 
 
     for (let s = 0; s < sims; s++) {
         let p = price;
         paths[0][s] = p;
         for (let t = 1; t <= days; t++) {
-            let z = Math.sqrt(-2 * Math.log(Math.random() || 0.001)) * Math.cos(2 * Math.PI * Math.random());
+            let u = Math.random(), v = Math.random();
+            let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
             p *= Math.exp((drift - 0.5 * vol**2) * dt + vol * Math.sqrt(dt) * z);
             paths[t][s] = p;
         }
     }
 
-    // Generate Benchmark Median Curve
     for (let t = 1; t <= days; t++) {
-        bPath.push(bPath[t-1] * Math.exp((bDrift - 0.5 * bVol**2) * dt));
+        bPath.push(bPath[t-1] * Math.exp((0.12 - 0.5 * 0.15**2) * dt));
     }
 
-    updateUI(paths, bPath, days, sims, isBenchmark);
+    updateUI(paths, bPath, ticker, days, sims, isBenchmark);
 }
 
-function updateUI(results, bPath, days, sims, isBenchmark) {
+function updateUI(results, bPath, ticker, days, sims, isBenchmark) {
     let labels = [], p10 = [], p50 = [], p90 = [];
     for (let t = 0; t <= days; t++) {
         results[t].sort();
@@ -215,15 +252,29 @@ function updateUI(results, bPath, days, sims, isBenchmark) {
     }
 
     currentResults = { allPaths: results[days], p10, p50, p90, benchmark: bPath, labels };
-    document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     
-    const assetPerf = (((p50[days] - p50[0]) / p50[0]) * 100).toFixed(1);
-    const mktPerf = (((bPath[days] - bPath[0]) / bPath[0]) * 100).toFixed(1);
-    const alpha = (assetPerf - mktPerf).toFixed(1);
+    document.getElementById('medianDisplay').innerText = `$${p50[days].toFixed(2)}`;
+    document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
 
-    document.getElementById('insightSummary').innerHTML = `
-        <strong>ANALYSIS:</strong> Asset projected to move <strong>${assetPerf}%</strong>. 
-        ${isBenchmark ? `<br><strong>ALPHA:</strong> This ${alpha > 0 ? 'outperforms' : 'underperforms'} the S&P 500 benchmark (${mktPerf}%) by <strong>${Math.abs(alpha)}%</strong>.` : ''}
+    const startP = results[0][0];
+    const endP = p50[days];
+    const changePct = (((endP - startP) / startP) * 100).toFixed(2);
+    const rangeLow = p10[days].toFixed(2);
+    const rangeHigh = p90[days].toFixed(2);
+    const mktPerf = (((bPath[days] - bPath[0]) / bPath[0]) * 100).toFixed(2);
+    const alpha = (changePct - mktPerf).toFixed(2);
+
+    document.getElementById('summaryTarget').innerHTML = `
+        <div class="summary-item">
+            <strong>Directional Bias:</strong> Trajectory for ${ticker} is <strong>${changePct > 0 ? 'Bullish' : 'Bearish'}</strong>, with a median projection of <strong>$${endP.toFixed(2)}</strong> (${changePct}%).
+            <br><br>
+            <strong>Statistical Range:</strong> Based on ${sims.toLocaleString()} iterations, there is an 80% probability the price settles between <strong>$${rangeLow}</strong> and <strong>$${rangeHigh}</strong>.
+        </div>
+        <div class="summary-item">
+            <strong>Benchmark Analysis:</strong> Compared to an S&P 500 baseline (${mktPerf}%), this asset is projected to <strong>${alpha > 0 ? 'outperform' : 'underperform'}</strong> by <strong>${Math.abs(alpha)}%</strong>.
+            <br><br>
+            <strong>Risk Profile:</strong> Volatility of ${document.getElementById('volatility').value}% results in a price spread of <strong>$${(rangeHigh - rangeLow).toFixed(2)}</strong>.
+        </div>
     `;
 
     if (chart) chart.destroy();
@@ -232,13 +283,17 @@ function updateUI(results, bPath, days, sims, isBenchmark) {
         data: {
             labels,
             datasets: [
-                { label: 'Neutral (Median)', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
-                { label: 'Market Benchmark (S&P)', data: isBenchmark ? bPath : [], borderColor: '#b45309', borderDash: [5, 5], borderWidth: 2, pointRadius: 0 },
+                { label: 'Median Projection', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0 },
+                { label: 'S&P 500 Benchmark', data: isBenchmark ? bPath : [], borderColor: '#b45309', borderDash: [5, 5], borderWidth: 2, pointRadius: 0 },
                 { label: '90th Percentile', data: p90, borderColor: '#166534', borderWidth: 1, pointRadius: 0 },
                 { label: '10th Percentile', data: p10, borderColor: '#991b1b', borderWidth: 1, pointRadius: 0 }
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
     });
     calculateProbability();
 }
@@ -250,9 +305,32 @@ function calculateProbability() {
     document.getElementById('probDisplay').innerText = prob.toFixed(1) + "%";
 }
 
-function resetForm() { location.reload(); }
-function downloadCSV() { /* same as previous */ }
-function saveChartImage() { /* same as previous */ }
+function downloadCSV() {
+    if (!currentResults.labels.length) return alert("Generate forecast first.");
+    let csv = "Day,Pessimistic,Neutral,Optimistic\n";
+    currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Forecaster_Export.csv`;
+    a.click();
+}
+
+function saveChartImage() {
+    if (!chart) return alert("Generate forecast first.");
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    const sourceCanvas = document.getElementById('mainChart');
+    tempCanvas.width = sourceCanvas.width;
+    tempCanvas.height = sourceCanvas.height;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    ctx.drawImage(sourceCanvas, 0, 0);
+    const a = document.createElement('a');
+    a.href = tempCanvas.toDataURL('image/png');
+    a.download = `Market_Forecast_Chart.png`;
+    a.click();
+}
 </script>
 </body>
 </html>

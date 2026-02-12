@@ -180,7 +180,7 @@
             
             <label style="margin-top: 15px;">Simulations</label>
             <input type="number" id="sims" value="1000">
-            <p class="input-note">Higher counts increase statistical accuracy.</p>
+            <p class="input-note">High precision cap: 1,000,000.</p>
         </div>
         
         <div class="btn-group">
@@ -192,7 +192,7 @@
     </div>
 
     <div class="chart-container">
-        <div id="loader"><div class="spinner"></div><p style="font-size:10px; margin-top:10px;">CALCULATING...</p></div>
+        <div id="loader"><div class="spinner"></div><p id="loaderText" style="font-size:10px; margin-top:10px;">CALCULATING...</p></div>
         <canvas id="mainChart"></canvas>
     </div>
 
@@ -257,33 +257,39 @@ function analyzeAndRun() {
     const symbol = document.getElementById('symbol').value;
     if (!symbol || isNaN(manualPrice)) return alert("Please enter Asset Name and Price.");
     
+    const sims = Math.max(1, Math.min(parseInt(document.getElementById('sims').value) || 1000, 1000000));
     document.getElementById('loader').style.display = 'block';
+    document.getElementById('loaderText').innerText = sims > 50000 ? "CALCULATING (Large Simulation)..." : "CALCULATING...";
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
     
-    setTimeout(() => {
-        const days = Math.max(1, parseInt(document.getElementById('days').value) || 30);
-        const sims = Math.max(1, Math.min(parseInt(document.getElementById('sims').value) || 1000, 20000));
-        const annualDrift = (parseFloat(document.getElementById('drift').value) || 0) / 100;
-        const annualVol = (parseFloat(document.getElementById('volatility').value) || 0) / 100;
+    // Using requestAnimationFrame to allow UI to update before heavy calculation starts
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const days = Math.max(1, parseInt(document.getElementById('days').value) || 30);
+            const annualDrift = (parseFloat(document.getElementById('drift').value) || 0) / 100;
+            const annualVol = (parseFloat(document.getElementById('volatility').value) || 0) / 100;
 
-        const dt = 1 / 252;
-        const muDaily = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
-        const sigmaDaily = annualVol * Math.sqrt(dt);
+            const dt = 1 / 252;
+            const muDaily = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
+            const sigmaDaily = annualVol * Math.sqrt(dt);
 
-        let results = Array.from({length: days + 1}, () => []);
-        for (let s = 0; s < sims; s++) {
-            let p = manualPrice;
-            results[0].push(p);
-            for (let t = 1; t <= days; t++) {
-                let u = Math.random(), v = Math.random();
-                let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
-                p *= Math.exp(muDaily + (sigmaDaily * z));
-                results[t].push(p);
+            // Memory efficient approach for high simulation counts
+            let results = Array.from({length: days + 1}, () => new Float32Array(sims));
+            
+            for (let s = 0; s < sims; s++) {
+                let p = manualPrice;
+                results[0][s] = p;
+                for (let t = 1; t <= days; t++) {
+                    let u = Math.random(), v = Math.random();
+                    let z = Math.sqrt(-2.0 * Math.log(u || 0.0001)) * Math.cos(2.0 * Math.PI * v);
+                    p *= Math.exp(muDaily + (sigmaDaily * z));
+                    results[t][s] = p;
+                }
             }
-        }
-        updateUI(results, days, sims);
-        document.getElementById('loader').style.display = 'none';
-    }, 100);
+            updateUI(results, days, sims);
+            document.getElementById('loader').style.display = 'none';
+        }, 50);
+    });
 }
 
 function updateUI(results, days, sims) {
@@ -291,7 +297,7 @@ function updateUI(results, days, sims) {
     const i10 = Math.floor(sims * 0.1), i50 = Math.floor(sims * 0.5), i90 = Math.floor(sims * 0.9);
 
     for (let t = 0; t <= days; t++) {
-        results[t].sort((a,b) => a-b);
+        results[t].sort();
         labels.push(`Day ${t}`);
         const v10 = results[t][i10], v50 = results[t][i50], v90 = results[t][i90];
         p10.push(v10); p50.push(v50); p90.push(v90);
@@ -370,7 +376,7 @@ function updateUI(results, days, sims) {
 function calculateProbability() {
     const target = parseFloat(document.getElementById('priceTarget').value);
     if (isNaN(target) || !currentResults.allPaths.length) return;
-    const successes = currentResults.allPaths.filter(p => p >= target).length;
+    const successes = currentResults.allPaths.reduce((acc, p) => p >= target ? acc + 1 : acc, 0);
     const prob = (successes / currentResults.allPaths.length) * 100;
     document.getElementById('probDisplay').innerText = prob.toFixed(1) + "%";
     document.getElementById('probCard').style.background = prob < 30 ? "#991b1b" : (prob > 70 ? "#166534" : "#41797e");

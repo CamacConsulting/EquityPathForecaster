@@ -32,7 +32,6 @@
 
         .summary-box { background: #fff; border: 1px solid #e2e8f0; border-left: 5px solid var(--camac-teal); padding: 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; line-height: 1.6; color: #475569; }
 
-        /* Tooltip Style */
         .info-icon {
             display: inline-flex;
             align-items: center;
@@ -52,25 +51,24 @@
         .info-icon:hover::after {
             content: "Confidence is calculated as a function of volatility and time. Higher market turbulence or longer durations decrease forecast certainty.";
             position: absolute;
-            bottom: 20px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--camac-dark);
             color: white;
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
-            width: 200px;
-            font-size: 10px;
+            width: 220px;
+            font-size: 11px;
             font-weight: normal;
             line-height: 1.4;
-            z-index: 10;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
         .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; background: var(--camac-light); padding: 25px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-
         label { font-weight: bold; font-size: 10px; color: var(--camac-dark); text-transform: uppercase; display: block; margin-bottom: 6px; }
         input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; font-size: 14px; background: white; }
-        
         .input-note { font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px; line-height: 1.3; }
 
         .preset-group { display: flex; gap: 5px; margin-top: 5px; }
@@ -263,10 +261,10 @@ function analyzeAndRun() {
     document.getElementById('livePrice').innerText = `$${manualPrice.toFixed(2)}`;
     
     setTimeout(() => {
-        const days = parseInt(document.getElementById('days').value) || 30;
-        const sims = Math.min(parseInt(document.getElementById('sims').value) || 1000, 20000);
-        const annualDrift = parseFloat(document.getElementById('drift').value) / 100;
-        const annualVol = parseFloat(document.getElementById('volatility').value) / 100;
+        const days = Math.max(1, parseInt(document.getElementById('days').value) || 30);
+        const sims = Math.max(1, Math.min(parseInt(document.getElementById('sims').value) || 1000, 20000));
+        const annualDrift = (parseFloat(document.getElementById('drift').value) || 0) / 100;
+        const annualVol = (parseFloat(document.getElementById('volatility').value) || 0) / 100;
 
         const dt = 1 / 252;
         const muDaily = (annualDrift - 0.5 * Math.pow(annualVol, 2)) * dt;
@@ -305,13 +303,12 @@ function updateUI(results, days, sims) {
     document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     
-    // Executive Summary with Confidence Level & Hover Icon
-    const symbol = document.getElementById('symbol').value.toUpperCase();
+    const symbol = (document.getElementById('symbol').value || "Asset").toUpperCase();
     const startP = results[0][0];
     const medP = p50[days];
     const highP = p90[days];
     const lowP = p10[days];
-    const volVal = parseFloat(document.getElementById('volatility').value);
+    const volVal = parseFloat(document.getElementById('volatility').value) || 0;
     
     const changePct = (((medP - startP) / startP) * 100).toFixed(1);
     const rangePct = (((highP - lowP) / startP) * 100).toFixed(1);
@@ -380,16 +377,29 @@ function calculateProbability() {
 }
 
 function resetForm() { location.reload(); }
+
 function downloadCSV() {
+    if (!currentResults.labels.length) return alert("Generate forecast first.");
+    const symbol = (document.getElementById('symbol').value || "Asset").toUpperCase();
     let csv = "Day,Pessimistic,Neutral,Optimistic\n";
     currentResults.labels.forEach((l, i) => { csv += `${l},${currentResults.p10[i]},${currentResults.p50[i]},${currentResults.p90[i]}\n`; });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.setAttribute('href', url); a.setAttribute('download', 'forecast.csv'); a.click();
+    const a = document.createElement('a'); 
+    a.setAttribute('href', url); 
+    a.setAttribute('download', `${symbol}_Forecast.csv`); 
+    a.click();
 }
+
 function saveChartImage() {
-    const a = document.createElement('a'); a.href = chart.toBase64Image(); a.download = 'forecast_chart.png'; a.click();
+    if (!chart) return alert("Generate forecast first.");
+    const symbol = (document.getElementById('symbol').value || "Asset").toUpperCase();
+    const a = document.createElement('a'); 
+    a.href = chart.toBase64Image(); 
+    a.download = `${symbol}_Chart.png`; 
+    a.click();
 }
+
 window.onload = () => { setPreset('neutral', document.getElementById('btn-neut')); };
 </script>
 </body>

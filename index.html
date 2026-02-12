@@ -279,16 +279,40 @@ function updateUI(results, days, sims) {
         data: {
             labels: labels,
             datasets: [
-                { label: '90th', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0, tension: 0.1 },
-                { label: '50th', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0, tension: 0.1 },
-                { label: '10th', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0, tension: 0.1 }
+                { label: 'Optimistic Path', data: p90, borderColor: '#166534', borderWidth: 2, pointRadius: 0, tension: 0.1 },
+                { label: 'Neutral Path', data: p50, borderColor: '#1e293b', borderWidth: 4, pointRadius: 0, tension: 0.1 },
+                { label: 'Pessimistic Path', data: p10, borderColor: '#991b1b', borderWidth: 2, pointRadius: 0, tension: 0.1 }
             ]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false, 
-            plugins: { legend: { position: 'bottom' } },
-            scales: { y: { ticks: { callback: v => '$' + v } } }
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: { 
+                legend: { position: 'bottom' },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 25, 53, 0.9)',
+                    titleFont: { size: 12, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) { label += ': '; }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: { 
+                y: { ticks: { callback: v => '$' + v } },
+                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } }
+            }
         }
     });
 }

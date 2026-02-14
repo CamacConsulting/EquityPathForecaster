@@ -140,7 +140,7 @@
             <p class="input-note">Target for success probability calculation.</p>
 
             <label style="margin-top: 15px;">Simulations (Strict Limit: 100k)</label>
-            <input type="number" id="sims" value="50000" min="1" max="100000" onchange="if(this.value>100000)this.value=100000;">
+            <input type="text" id="sims" value="50,000" oninput="formatSimsInput(this)">
             <p class="input-note">Maximum allowed: 100,000 for performance stability.</p>
         </div>
         
@@ -222,6 +222,17 @@ const crosshairPlugin = {
     }
 };
 
+function formatSimsInput(el) {
+    let val = el.value.replace(/\D/g, "");
+    if (val !== "") {
+        let num = parseInt(val);
+        if (num > 100000) num = 100000;
+        el.value = num.toLocaleString();
+    } else {
+        el.value = "";
+    }
+}
+
 function toggleAdvanced() {
     const d = document.getElementById('advanced-drawer'), t = document.querySelector('.advanced-toggle');
     const open = d.style.display === 'block';
@@ -249,12 +260,12 @@ function analyzeAndRun() {
     const price = parseFloat(document.getElementById('manualPrice').value);
     const sym = document.getElementById('symbol').value;
     const days = parseInt(document.getElementById('days').value);
-    let sims = parseInt(document.getElementById('sims').value);
+    let simsRaw = document.getElementById('sims').value.replace(/,/g, "");
+    let sims = parseInt(simsRaw);
 
-    // Strict Enforcement of 100k cap
     if (sims > 100000) {
         sims = 100000;
-        document.getElementById('sims').value = 100000;
+        document.getElementById('sims').value = "100,000";
     }
 
     if (!sym || !price || !days) return alert("Please fill in Ticker, Price, and Time Horizon.");

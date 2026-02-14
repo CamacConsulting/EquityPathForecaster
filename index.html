@@ -113,7 +113,7 @@
 
         <div>
             <label>Current Price ($)</label>
-            <input type="number" id="manualPrice" placeholder="0.00" step="0.01">
+            <input type="text" id="manualPrice" placeholder="0.00" oninput="formatNumberInput(this, true)">
             <p class="input-note">The starting market value for simulations.</p>
 
             <span class="advanced-toggle" onclick="toggleAdvanced()">+ SHOW ADVANCED SETTINGS</span>
@@ -132,11 +132,11 @@
 
         <div>
             <label>Time Horizon (Days)</label>
-            <input type="number" id="days" placeholder="Days...">
+            <input type="text" id="days" placeholder="Days..." oninput="formatNumberInput(this, false)">
             <p class="input-note">Duration of the forecast period.</p>
 
             <label style="margin-top: 15px;">Price Target ($)</label>
-            <input type="number" id="priceTarget" placeholder="Goal Price..." oninput="calculateProbability()">
+            <input type="text" id="priceTarget" placeholder="Goal Price..." oninput="formatNumberInput(this, true); calculateProbability()">
             <p class="input-note">Target for success probability calculation.</p>
 
             <label style="margin-top: 15px;">Simulations (Strict Limit: 100k)</label>
@@ -222,6 +222,27 @@ const crosshairPlugin = {
     }
 };
 
+// Universal formatting for Price and Horizon
+function formatNumberInput(el, allowDecimal) {
+    let cursorPosition = el.selectionStart;
+    let originalLength = el.value.length;
+    
+    let val = el.value.replace(/[^\d.]/g, "");
+    if (!allowDecimal) val = val.replace(/\./g, "");
+    
+    const parts = val.split(".");
+    if (parts.length > 2) val = parts[0] + "." + parts.slice(1).join("");
+    
+    if (val !== "") {
+        let formatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        if (parts.length > 1) formatted += "." + parts[1].substring(0, 2);
+        el.value = formatted;
+    }
+    
+    let newLength = el.value.length;
+    el.setSelectionRange(cursorPosition + (newLength - originalLength), cursorPosition + (newLength - originalLength));
+}
+
 function formatSimsInput(el) {
     let val = el.value.replace(/\D/g, "");
     if (val !== "") {
@@ -231,6 +252,11 @@ function formatSimsInput(el) {
     } else {
         el.value = "";
     }
+}
+
+// Clean commas for math
+function cleanNum(str) {
+    return parseFloat(str.replace(/,/g, "")) || 0;
 }
 
 function toggleAdvanced() {
@@ -257,11 +283,10 @@ function updateDriftContext() {
 }
 
 function analyzeAndRun() {
-    const price = parseFloat(document.getElementById('manualPrice').value);
+    const price = cleanNum(document.getElementById('manualPrice').value);
     const sym = document.getElementById('symbol').value;
-    const days = parseInt(document.getElementById('days').value);
-    let simsRaw = document.getElementById('sims').value.replace(/,/g, "");
-    let sims = parseInt(simsRaw);
+    const days = cleanNum(document.getElementById('days').value);
+    let sims = cleanNum(document.getElementById('sims').value);
 
     if (sims > 100000) {
         sims = 100000;
@@ -270,12 +295,12 @@ function analyzeAndRun() {
 
     if (!sym || !price || !days) return alert("Please fill in Ticker, Price, and Time Horizon.");
     document.getElementById('loader').style.display = 'block';
-    document.getElementById('livePrice').innerText = `$${price.toFixed(2)}`;
+    document.getElementById('livePrice').innerText = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     setTimeout(() => { runMonteCarlo(price, sims); }, 100);
 }
 
 function runMonteCarlo(startPrice, simsCount) {
-    const days = parseInt(document.getElementById('days').value);
+    const days = cleanNum(document.getElementById('days').value);
     const sims = simsCount || 50000;
     const dr = parseFloat(document.getElementById('drift').value)/100, vo = parseFloat(document.getElementById('volatility').value)/100;
     const dt = 1/252, dDrift = (dr - 0.5 * vo**2) * dt, dVol = vo * Math.sqrt(dt);
@@ -303,14 +328,14 @@ function updateUI(res, days, sims) {
 
         if (t % 5 === 0 || t === days) {
             const ret = ((p50v - startPrice) / startPrice * 100).toFixed(2);
-            rows += `<tr><td>Day ${t}</td><td>$${p10v.toFixed(2)}</td><td>$${p50v.toFixed(2)}</td><td>$${p90v.toFixed(2)}</td><td class="${ret >= 0 ? "return-pos" : "return-neg"}">${ret}%</td></tr>`;
+            rows += `<tr><td>Day ${t}</td><td>$${p10v.toLocaleString(undefined, {minimumFractionDigits: 2})}</td><td>$${p50v.toLocaleString(undefined, {minimumFractionDigits: 2})}</td><td>$${p90v.toLocaleString(undefined, {minimumFractionDigits: 2})}</td><td class="${ret >= 0 ? "return-pos" : "return-neg"}">${ret}%</td></tr>`;
         }
     }
     currentResults = { allPaths: res[days], p10, p50, p90, labels: lbls, startPrice: startPrice };
-    document.getElementById('targetDisplay').innerText = `$${p90[days].toFixed(2)}`;
+    document.getElementById('targetDisplay').innerText = `$${p90[days].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     document.querySelector("#dataTable tbody").innerHTML = rows;
     const sym = document.getElementById('symbol').value.toUpperCase();
-    document.getElementById('insightSummary').innerHTML = `<strong>${sym} Analysis:</strong> Median target $${p50[days].toFixed(2)}. Projected Range (80% confidence): $${p10[days].toFixed(2)} - $${p90[days].toFixed(2)}.`;
+    document.getElementById('insightSummary').innerHTML = `<strong>${sym} Analysis:</strong> Median target $${p50[days].toLocaleString(undefined, {minimumFractionDigits: 2})}. Projected Range (80% confidence): $${p10[days].toLocaleString(undefined, {minimumFractionDigits: 2})} - $${p90[days].toLocaleString(undefined, {minimumFractionDigits: 2})}.`;
     
     calculateProbability();
     if (chart) chart.destroy();
@@ -331,7 +356,7 @@ function updateUI(res, days, sims) {
 }
 
 function calculateProbability() {
-    const tgt = parseFloat(document.getElementById('priceTarget').value);
+    const tgt = cleanNum(document.getElementById('priceTarget').value);
     const d = document.getElementById('probDisplay'), c = document.getElementById('probCard');
     if (!tgt || !currentResults.allPaths.length) return;
     const p = (currentResults.allPaths.filter(x => x >= tgt).length / currentResults.allPaths.length) * 100;
